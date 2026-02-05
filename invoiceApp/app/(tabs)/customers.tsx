@@ -12,5 +12,3 @@ const customers = () => {
 }
 
 export default customers
-
-const styles = StyleSheet.create({})
