@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const business = () => {
+const Business = () => {
   return (
     <View>
       <Text>business</Text>
@@ -9,6 +9,5 @@ const business = () => {
   )
 }
 
-export default business
+export default Business
 
-const styles = StyleSheet.create({})
