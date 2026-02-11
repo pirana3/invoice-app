@@ -1,12 +1,12 @@
-import { Tabs } from 'expo-router'
+import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 
 export  default function TabsLayout() {
   return (
-    <Tabs>
-        <Tabs.Screen
-        name = "index"
+    <NativeTabs>
+        <NativeTabs.Trigger
+        name = "(profile)"
         options={{
             title: "Profile",
             
@@ -14,7 +14,7 @@ export  default function TabsLayout() {
         }}
         />
 
-        <Tabs.Screen
+        <NativeTabs.Trigger
         name = "invoices"
         options={{
             title: "Invoice",
@@ -22,7 +22,7 @@ export  default function TabsLayout() {
         }}
         />
 
-        <Tabs.Screen
+        <NativeTabs.Trigger
         name = "estimate"
         options={{
             title: "Estimate",
@@ -30,14 +30,14 @@ export  default function TabsLayout() {
         }}
         />
 
-        <Tabs.Screen
+        <NativeTabs.Trigger
         name = "stats"
         options={{
             title: "Stats",
             
         }}
         />
-        <Tabs.Screen
+        <NativeTabs.Trigger
         name = "customers"
         options={{
             title: "Customers",
@@ -45,7 +45,7 @@ export  default function TabsLayout() {
         }}
         />
 
-    </Tabs>
+    </NativeTabs>
   );
 }
 
