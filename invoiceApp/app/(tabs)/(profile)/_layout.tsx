@@ -14,6 +14,10 @@ export default function ProfileLayout() {
     >
       <TopTabs.Screen name="index" options={{ title: 'Business' }} />
       <TopTabs.Screen name="employees" options={{ title: 'Employees' }} />
+      <TopTabs.Screen name="products" options={{title: 'Products'}} />
+      <TopTabs.Screen name="projects" options={{title: 'Projects'}} />
+      <TopTabs.Screen name="documents" options={{title: 'Documents'}} />
+
     </TopTabs>
   );
 }
