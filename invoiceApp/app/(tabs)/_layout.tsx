@@ -15,7 +15,7 @@ export  default function TabsLayout() {
         />
 
         <NativeTabs.Trigger
-        name = "invoices"
+        name = "(invoice)"
         options={{
             title: "Invoice",
             
@@ -23,7 +23,7 @@ export  default function TabsLayout() {
         />
 
         <NativeTabs.Trigger
-        name = "estimate"
+        name = "(estimate)"
         options={{
             title: "Estimate",
             
@@ -31,14 +31,14 @@ export  default function TabsLayout() {
         />
 
         <NativeTabs.Trigger
-        name = "stats"
+        name = "(stats)"
         options={{
             title: "Stats",
             
         }}
         />
         <NativeTabs.Trigger
-        name = "customers"
+        name = "(customers)"
         options={{
             title: "Customers",
             
