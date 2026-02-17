@@ -13,7 +13,6 @@ export default function ProfileLayout() {
       }}
     >
       <TopTabs.Screen name="index" options={{ title: 'Estimate' }} />
-      <TopTabs.Screen name="employees" options={{ title: 'Employees' }} />
     </TopTabs>
   );
 }
