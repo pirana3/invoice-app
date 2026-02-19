@@ -1,11 +1,13 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { withLayoutContext } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Tab = createMaterialTopTabNavigator();
 const TopTabs = withLayoutContext(Tab.Navigator);
 
 export default function ProfileLayout() {
   return (
+
     <TopTabs
       screenOptions={{
         tabBarIndicatorStyle: { backgroundColor: '#000' },
@@ -19,5 +21,6 @@ export default function ProfileLayout() {
       <TopTabs.Screen name="documents" options={{title: 'Documents'}} />
 
     </TopTabs>
+ 
   );
 }
