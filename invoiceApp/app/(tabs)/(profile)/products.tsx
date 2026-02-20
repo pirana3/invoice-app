@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
-import productButton from '@/components/productButton'
+import ProductButton from '@/components/ProductButton'
 import React from 'react'
 
 const products = () => {
   return (
     <View>
       <Text>products</Text>
-      <productButton/>
+      <ProductButton/>
     </View>
   )
 }
