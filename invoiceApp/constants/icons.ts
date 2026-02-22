@@ -1,5 +1,5 @@
-import productadd from "@/assets/icons/productadd.png";
+import add from "../assets/icons/add.png";
 
 export const icons = {
-    productadd
+    add
 };
