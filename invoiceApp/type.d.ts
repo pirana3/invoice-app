@@ -6,4 +6,5 @@ interface productButtonProps{
     productIcon?: React.ReactNode;
     textStyle?: string;
     isLoading?: boolean;
+    icon?: any;
 }
