@@ -14,7 +14,29 @@ interface employeeButtonProps {
     title?: string;
     style?: string;
     icon?: any;
-    productIcon?: React.ReactNode;
+    employeeIcon?: React.ReactNode;
+    textStyle?: string;
+    isLoading?: boolean;
+    icon?: any;
+}
+
+interface projectButtonProps{
+    onPress?: () => void;
+    title?: string;
+    style?: string;
+    icon?: any;
+    projectIcon?: React.ReactNode;
+    textStyle?: string;
+    isLoading: boolean;
+    icon?: any;
+}
+
+interface documentsButtonProps{
+    onPress?: () => void;
+    title?: string;
+    style?: string;
+    icon?: any;
+    documentsIcon?: React.ReactNode;
     textStyle?: string;
     isLoading?: boolean;
     icon?: any;
