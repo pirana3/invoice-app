@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native';
+import EmployeeButton from '@/components/EmployeeButton';
 import React from 'react'
 
 const employees = () => {
   return (
     <View>
       <Text>employees</Text>
+      <EmployeeButton/>
     </View>
   )
 }

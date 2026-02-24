@@ -6,4 +6,8 @@
     .product-btn{
         @apply flex flex-row justify-center rounded;
     }
+
+    .employee-btn{
+        @apply flex flex-row justify-center rounded;
+    }
 }
