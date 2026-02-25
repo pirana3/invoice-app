@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View } from 'react-native';
+import DocumentsButton from '@/components/DocumentsButton';
+import React from 'react';
 
 const documents = () => {
   return (
     <View>
       <Text>documents</Text>
+      <DocumentsButton/>
     </View>
   )
 }

@@ -1,14 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View, Pressable, ActivityIndicator, Image} from 'react-native';
+import { documentsButtonProps } from '@/type';
 import React from 'react'
+import { icons } from '@/constants/icons';
+import cn from "clsx"
 
-const DocumentsButton = () => {
+const DocumentsButton = ({
+    onPress,
+    title = "add Item",
+    style,
+    textStyle,
+    isLoading = false,
+    icon,
+}: documentsButtonProps) => {
   return (
-    <View>
-      <Text>DocumentsButton</Text>
-    </View>
+    <Pressable className={cn("product-btn", style)} onPress={onPress}>
+        <Image source={icon || icons.add} resizeMode="contain" className="size-5" />
+        <View>
+            {isLoading ? (
+                <ActivityIndicator size="small" color="white" />
+            ) : (
+                <Text className={cn("text-white-100", textStyle)}>{title}</Text>
+            )}
+        </View>
+    </Pressable>
   )
 }
 
 export default DocumentsButton
 
-const styles = StyleSheet.create({})

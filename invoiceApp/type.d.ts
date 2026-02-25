@@ -27,7 +27,7 @@ interface projectButtonProps{
     icon?: any;
     projectIcon?: React.ReactNode;
     textStyle?: string;
-    isLoading: boolean;
+    isLoading?: boolean;
     icon?: any;
 }
 
