@@ -1,14 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View, TextInput } from 'react-native';
 import React from 'react'
 
 const projectScreen = () => {
   return (
     <View>
-      <Text>projectScreen</Text>
+      <TextInput
+      />
     </View>
   )
 }
 
 export default projectScreen
-
-const styles = StyleSheet.create({})

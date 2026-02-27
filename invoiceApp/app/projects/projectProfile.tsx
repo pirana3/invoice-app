@@ -10,5 +10,3 @@ const projectProfile = () => {
 }
 
 export default projectProfile
-
-const styles = StyleSheet.create({})
