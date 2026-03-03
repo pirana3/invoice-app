@@ -10,5 +10,15 @@ export const initDatabase = () => {
       details TEXT NOT NULL DEFAULT '',
       price REAL NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS businessesinfo (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      bname TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone REAL NOT NULL,
+      address TEXT NOT NULL,
+      industry TEXT NOT NULL,
+      logo TEXT
+    );
   `);
 };
