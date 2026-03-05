@@ -41,3 +41,14 @@ interface documentsButtonProps{
     isLoading?: boolean;
     icon?: any;
 }
+
+interface businessInfoButtonProps{
+    onPress?: () => void;
+    title?: string;
+    style?: string;
+    icon?: any;
+    businessInfoIcon?: React.ReactNode;
+    textStyle?: string;
+    isLoading?: boolean;
+    icon?: any;
+}

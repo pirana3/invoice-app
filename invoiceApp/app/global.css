@@ -10,4 +10,8 @@
     .employee-btn{
         @apply flex flex-row justify-center rounded;
     }
+
+    .businessinfo-btn{
+        @apply flex flex-row justify-center rounded;
+    }
 }
