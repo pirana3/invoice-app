@@ -1,15 +1,25 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Text, View } from 'react-native';
+import React from 'react';
+import EnglishButton from '@/components/EnglishButton';
+import SpanishButton from '@/components/SpanishButton';
+import { useLanguage } from '@/service/language';
 
-const chooseLanguage = () => {
+const ChooseLanguage = () => {
+  const { t } = useLanguage();
+
   return (
-    <View>
-      <Text>Please choose a language</Text>
-      <Text>Por favor, eliga un idioma</Text>
+    <View className="flex-1 items-center justify-center gap-4 bg-white px-6">
+      <Text className="text-xl font-semibold text-black">{t('choose_language_title')}</Text>
+      <View className="w-full flex-row gap-3">
+        <View className="flex-1">
+          <EnglishButton />
+        </View>
+        <View className="flex-1">
+          <SpanishButton />
+        </View>
+      </View>
     </View>
-  )
-}
+  );
+};
 
-export default chooseLanguage
-
-const styles = StyleSheet.create({})
+export default ChooseLanguage;

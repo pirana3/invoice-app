@@ -11,6 +11,7 @@ const companyDetail = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [industry, setIndustry] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
     const parsedPhone = Number(phone);
