@@ -1,19 +1,44 @@
 import { Alert, Text, TextInput, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { createBusinessInfo } from '@/database/businessinfodb';
+import useFetch from '@/service/usefetch';
 import { setOnboardingComplete } from '@/database/appstate';
 import BusinessinfoButton from '@/components/BusinessinfoButton';
+import {
+  createBusinessInfo,
+  getBusinessInfo,
+  updateBusinessInfo,
+} from '@/database/businessinfodb';
 
 const CompanyDetail = () => {
   const router = useRouter();
+  const { data, loading, refetch } = useFetch(getBusinessInfo);
+
   const [bname, setBname] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [industry, setIndustry] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  const latestInfo = data?.[0] ?? null;
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  useEffect(() => {
+    if (!latestInfo) return;
+
+    setBname(latestInfo.bname);
+    setEmail(latestInfo.email);
+    setPhone(String(latestInfo.phone));
+    setAddress(latestInfo.address);
+    setIndustry(latestInfo.industry);
+  }, [latestInfo]);
 
   const handleSave = async () => {
     const parsedPhone = Number(phone);
@@ -45,15 +70,29 @@ const CompanyDetail = () => {
 
     try {
       setIsSaving(true);
-      await createBusinessInfo(
-        bname.trim(),
-        email.trim(),
-        parsedPhone,
-        address.trim(),
-        industry.trim()
-      );
-      await setOnboardingComplete(true);
-      router.replace('/(tabs)/(profile)');
+
+      if (latestInfo) {
+        await updateBusinessInfo(
+          latestInfo.id,
+          bname.trim(),
+          email.trim(),
+          parsedPhone,
+          address.trim(),
+          industry.trim(),
+          latestInfo.logo
+        );
+        router.back();
+      } else {
+        await createBusinessInfo(
+          bname.trim(),
+          email.trim(),
+          parsedPhone,
+          address.trim(),
+          industry.trim()
+        );
+        await setOnboardingComplete(true);
+        router.replace('/(tabs)/(profile)');
+      }
     } catch (error) {
       console.error(error);
       Alert.alert('Save failed', 'Could not save business info.');
@@ -62,9 +101,19 @@ const CompanyDetail = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 gap-2 bg-white px-4 py-6">
-      <Text>Please enter your company details</Text>
+      <Text>
+        {latestInfo ? 'Edit your company details' : 'Please enter your company details'}
+      </Text>
 
       <TextInput
         onChangeText={setBname}
@@ -103,7 +152,7 @@ const CompanyDetail = () => {
       />
 
       <BusinessinfoButton
-        title="Save Info"
+        title={latestInfo ? 'Save Changes' : 'Save Info'}
         onPress={handleSave}
         isLoading={isSaving}
         style="mt-3"
