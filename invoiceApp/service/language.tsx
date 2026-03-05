@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { getSavedLanguage, saveLanguage } from '@/database/appstate';
 
 type Language = 'en' | 'es';
 
@@ -15,18 +16,36 @@ const translations = {
     choose_language_title: 'Please choose a language',
     english: 'English',
     spanish: 'Spanish',
+    continue: 'Continue',
   },
   es: {
     choose_language_title: 'Por favor, elija un idioma',
     english: 'Ingles',
     spanish: 'Espanol',
+    continue: 'Continuar',
   },
 } as const;
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>('en');
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const saved = await getSavedLanguage();
+      if (saved) {
+        setLanguageState(saved);
+      }
+    };
+
+    loadLanguage();
+  }, []);
+
+  const setLanguage = (nextLanguage: Language) => {
+    setLanguageState(nextLanguage);
+    void saveLanguage(nextLanguage);
+  };
 
   const value = useMemo<LanguageContextValue>(() => {
     return {
@@ -46,4 +65,3 @@ export const useLanguage = () => {
   }
   return context;
 };
-
