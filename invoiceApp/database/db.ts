@@ -31,9 +31,16 @@ export const initDatabase = () => {
       ename TEXT NOT NULL,
       eemail TEXT NOT NULL,
       ephone REAL NOT NULL,
+      eage INTEGER NOT NULL,
+      eposition TEXT NOT NULL,
       erole TEXT NOT NULL,
+      edetails TEXT NOT NULL DEFAULT '',
+      epay REAL NOT NULL,
+      eperformance REAL NOT NULL,
+      elanguage TEXT NOT NULL,
+      eyears INTEGER NOT NULL,
       ephoto TEXT,
-      
+
       )
   `);
 };
