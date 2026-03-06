@@ -1,6 +1,7 @@
-import { Alert, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Text, TextInput, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 
 import useFetch from '@/service/usefetch';
 import { setOnboardingComplete } from '@/database/appstate';
@@ -20,6 +21,7 @@ const CompanyDetail = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [industry, setIndustry] = useState('');
+  const [logo, setLogo] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const latestInfo = data?.[0] ?? null;
@@ -38,7 +40,27 @@ const CompanyDetail = () => {
     setPhone(String(latestInfo.phone));
     setAddress(latestInfo.address);
     setIndustry(latestInfo.industry);
+    setLogo(latestInfo.logo ?? '');
   }, [latestInfo]);
+
+  const handlePickLogo = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert('Permission needed', 'Please allow photo library access to choose a logo.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setLogo(result.assets[0].uri);
+    }
+  };
 
   const handleSave = async () => {
     const parsedPhone = Number(phone);
@@ -70,6 +92,7 @@ const CompanyDetail = () => {
 
     try {
       setIsSaving(true);
+      const cleanLogo = logo.trim() || undefined;
 
       if (latestInfo) {
         await updateBusinessInfo(
@@ -79,7 +102,7 @@ const CompanyDetail = () => {
           parsedPhone,
           address.trim(),
           industry.trim(),
-          latestInfo.logo
+          cleanLogo
         );
         router.back();
       } else {
@@ -88,7 +111,8 @@ const CompanyDetail = () => {
           email.trim(),
           parsedPhone,
           address.trim(),
-          industry.trim()
+          industry.trim(),
+          cleanLogo
         );
         await setOnboardingComplete(true);
         router.replace('/(tabs)/(profile)');
@@ -150,6 +174,27 @@ const CompanyDetail = () => {
         placeholder="Industry"
         className="rounded-md border border-gray-300 px-3 py-2"
       />
+
+      <BusinessinfoButton
+        title={logo.trim() ? 'Change Business Photo' : 'Upload Business Photo (Optional)'}
+        onPress={handlePickLogo}
+        style="mt-1"
+      />
+
+      {logo.trim() ? (
+        <BusinessinfoButton
+          title="Remove Photo"
+          onPress={() => setLogo('')}
+          style="mt-1 bg-red-500"
+        />
+      ) : null}
+
+      {logo.trim() ? (
+        <Image
+          source={{ uri: logo.trim() }}
+          className="h-24 w-24 self-start rounded-md border border-gray-300"
+        />
+      ) : null}
 
       <BusinessinfoButton
         title={latestInfo ? 'Save Changes' : 'Save Info'}

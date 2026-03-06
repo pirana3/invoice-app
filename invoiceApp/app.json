@@ -40,7 +40,13 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Invoice App to access your photos for business logo upload."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

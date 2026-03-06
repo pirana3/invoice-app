@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 
 import BusinessinfoButton from '@/components/BusinessinfoButton';
@@ -39,6 +39,12 @@ const ProfileBusiness = () => {
       <Text className="mb-2 text-lg font-semibold">Business Information</Text>
       {latestInfo ? (
         <View className="gap-2">
+          {latestInfo.logo ? (
+            <Image
+              source={{ uri: latestInfo.logo }}
+              className="mb-2 h-24 w-24 rounded-md border border-gray-300"
+            />
+          ) : null}
           <Text>Company Name: {latestInfo.bname}</Text>
           <Text>Company Email: {latestInfo.email}</Text>
           <Text>Phone Number: {latestInfo.phone}</Text>
