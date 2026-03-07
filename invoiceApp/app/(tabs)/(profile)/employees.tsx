@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import EmployeeButton from '@/components/EmployeeButton';
+import EmployeeButton from '@/components/EmployeesButton';
 import React from 'react'
 
 const employees = () => {
