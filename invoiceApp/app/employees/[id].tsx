@@ -68,8 +68,27 @@ const EmployeeProfileScreen = () => {
 
         try{
             setIsSaving(true);
-            const updated = await updateEmployees(emplo)
+            const updated = await updateEmployees(employeesid, ename.trim(), eemail.trim(), parsedEphone, Number(eage), eposition.trim(), erole.trim(), edetails.trim(), Number(epay), Number(eperformance), elanguage.trim(), Number(eyears), ephoto.trim());
+            if (!updated) {
+                Alert.alert('Update failed', 'Employee no longer exists.');
+                router.back();
+                return;
+            }
+            await refetch();
+            setIsEditing(false);
+        } catch (saveError) {
+            console.error(saveError);
+            Alert.alert('Update failed', 'Could not update this Employee.');
+        } finally {
+            setIsSaving(false);
         }
+    };
+
+    const handleDelete = () => {
+        if (!employees) return;
+        Alert.alert('Delete product', `Delete "${employees.ename}"?` , [
+            { text:}
+        ])
     }
 
     return (
