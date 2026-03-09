@@ -1,6 +1,6 @@
 import {db} from '@/database/db';
 
-export type Employee = {
+export type Employees = {
     id: number;
     ename: string;
     eemail: string;
@@ -16,7 +16,7 @@ export type Employee = {
     ephoto?: string;
 };
 
-export const createEmployee = async (
+export const createEmployees = async (
     ename: string,
     eemail: string,
     ephone: number,
@@ -49,20 +49,20 @@ export const createEmployee = async (
     return result.lastInsertRowId;
 };
 
-export const getEmployees = async (): Promise<Employee[]> => {
-    return db.getAllSync<Employee>(
+export const getEmployees = async (): Promise<Employees[]> => {
+    return db.getAllSync<Employees>(
         `SELECT id, ename, eemail, ephone, eage, eposition, erole, edetails, epay, eperformance, elanguage, eyears, ephoto FROM employees ORDER BY ID DESC`
     );
 };
 
-export const getEmployeeById = async (id: number): Promise<Employee | null> => {
-    return db.getFirstSync<Employee>(
+export const getEmployeesById = async (id: number): Promise<Employees | null> => {
+    return db.getFirstSync<Employees>(
         `SELECT id, name, eemail, ephone, eage, eposition, erole, edetails, epay, eperformance, elanguage, eyears, ephoto FROM emplotees WHERE id = ?`,
         id
     );
 };
 
-export const updateEmployee = async (
+export const updateEmployees = async (
     id: number,
     ename: string,
     eemail: string,
@@ -98,7 +98,7 @@ export const updateEmployee = async (
 
 };
 
-export const delteEmployee = async (id: number): Promise<boolean> => {
+export const deleteEmployees = async (id: number): Promise<boolean> => {
     const result = db.runSync(`DELETE FROM eployees WHERE id = ?`, id);
     return result.changes > 0;
 }

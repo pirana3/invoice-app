@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-
 import { deleteProduct, getProductById, updateProduct } from '@/database/productdb';
 import useFetch from '@/service/usefetch';
 
