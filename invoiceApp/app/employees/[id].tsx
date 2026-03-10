@@ -68,6 +68,10 @@ const EmployeeProfileScreen = () => {
 
         try{
             setIsSaving(true);
+            if (isNew){
+                await createEmployees(ename.trim(), eemail.trim(), parsedEphone, Number(eage), eposition.trim(), erole.trim(), edetails.trim(), Number(epay), Number(eperformance), elanguage.trim(), Number(eyears), ephoto.trim());
+                router.back();
+            } else if (employees) { 
             const updated = await updateEmployees(employeesid, ename.trim(), eemail.trim(), parsedEphone, Number(eage), eposition.trim(), erole.trim(), edetails.trim(), Number(epay), Number(eperformance), elanguage.trim(), Number(eyears), ephoto.trim());
             if (!updated) {
                 Alert.alert('Update failed', 'Employee no longer exists.');
@@ -76,6 +80,7 @@ const EmployeeProfileScreen = () => {
             }
             await refetch();
             setIsEditing(false);
+        }
         } catch (saveError) {
             console.error(saveError);
             Alert.alert('Update failed', 'Could not update this Employee.');
@@ -107,7 +112,7 @@ const EmployeeProfileScreen = () => {
         ]);
     };
 
-    if(!canFetch) {
+    if(!canFetch && !isNew) {
         return (
             <View className="flex-1 items-center justify bg-white px-4">
                 <Text className="text-red-500"> Invalid employee ID</Text>
@@ -115,7 +120,7 @@ const EmployeeProfileScreen = () => {
         );
     }
 
-    if (loading) {
+    if (!isNew && loading) {
         return (
             <View className = "flex-1 items-center justify-center bg-white px-4">
                 <ActivityIndicator size="small" color="#111827" />
@@ -123,7 +128,7 @@ const EmployeeProfileScreen = () => {
         );
     }
 
-    if (error) {
+    if (!isNew && error) {
         return (
             <View className="flex-1 items-center justify-center bg-white px-4">
                 <Text className= "text-red-500"> Could not load Employee info</Text>
@@ -131,7 +136,7 @@ const EmployeeProfileScreen = () => {
         );
     }
 
-    if(!employees) {
+    if(!isNew && !employees) {
         return (
             <View className= " flex-1 items-center justify-center bg-white px-4">
                 <Text className="text-gray-500"> Employee not found</Text>
