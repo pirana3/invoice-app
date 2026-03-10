@@ -14,10 +14,10 @@ const EmployeeProfileScreen = () => {
     const fetchEmployees = useCallback(() => getEmployees(), [employeesId]);
     const [isEditing, setIsEditing] = useState(false);
     const [ename, setEname] = useState('');
-    const [eemail, setEeamil] = useState('');
+    const [eemail, setEemail] = useState('');
     const [ephone, setEphone] = useState('');
     const [eage, setEage] = useState('');
-    const [eposition, setEpsition] = useState('');
+    const [eposition, setEposition] = useState('');
     const [erole, setErole] = useState('');
     const [edetails, setEdetails] = useState('');
     const [epay, setEpay] = useState('');
@@ -26,7 +26,7 @@ const EmployeeProfileScreen = () => {
     const [eyears, setEyears] = useState('');
     const [ephoto, setEphoto] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [isDeleting, setISDeleting] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const { data: employees, loading, error, refetch } = useFetch(
         fetchEmployees,
@@ -36,10 +36,10 @@ const EmployeeProfileScreen = () => {
     useEffect(() => {
         if (!employees) return;
         setEname(employees.ename);
-        setEeamil(employees.eemail);
+        setEemail(employees.eemail);
         setEphone(String(employees.ephone));
         setEage(String(employees.eage));
-        setEpsition(employees.eposition);
+        setEposition(employees.eposition);
         setErole(employees.erole);
         setEdetails(employees.edetails);
         setEpay(String(employees.epay));
@@ -87,14 +87,88 @@ const EmployeeProfileScreen = () => {
     const handleDelete = () => {
         if (!employees) return;
         Alert.alert('Delete product', `Delete "${employees.ename}"?` , [
-            { text:}
-        ])
+            { text: 'Cancel', style: 'cancel'},
+            {
+                text: 'Delete',
+                style: 'destructive' ,
+                onPress: async () => {
+                    try {
+                        setIsDeleting(true);
+                        await deleteEmployees(employeesId);
+                        router.back();
+                    } catch (deleteError) {
+                        console.error(deleteError);
+                        Alert.alert('Delete failed', 'Employees info could not be deleted please try again.');
+                    } finally {
+                        setIsDeleting(false);
+                    }
+                },
+            },
+        ]);
+    };
+
+    if(!canFetch) {
+        return (
+            <View className="flex-1 items-center justify bg-white px-4">
+                <Text className="text-red-500"> Invalid employee ID</Text>
+            </View>
+        );
+    }
+
+    if (loading) {
+        return (
+            <View className = "flex-1 items-center justify-center bg-white px-4">
+                <ActivityIndicator size="small" color="#111827" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View className="flex-1 items-center justify-center bg-white px-4">
+                <Text className= "text-red-500"> Could not load Employee info</Text>
+            </View>
+        );
+    }
+
+    if(!employees) {
+        return (
+            <View className= " flex-1 items-center justify-center bg-white px-4">
+                <Text className="text-gray-500"> Employee not found</Text>
+            </View>
+        );
     }
 
     return (
-    <View>
-      <Text>[id]</Text>
-    </View>
+        <ScrollView className="flex-1 items-center justify-center bg-white px-4">
+            {isEditing ? (
+                <>
+                    <TextInput
+                        value={ename}
+                        onChangeText={setEname}
+                        placeholder="Enter employee name"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-black"
+                    />
+                    <TextInput 
+                        value={eemail}
+                        onChangeText={setEemail}
+                        placeholder=' Enter Employees Email'
+                        className="rounded-md border border-gray-300 px-3 py-2 text-black"                    
+                    />
+                    <TextInput
+                        value={ephone}
+                        onChangeText={setEphone}
+                        placeholder='Enter Employees phone number'
+                        keyboardType="numeric"
+                        className="rounded-md border border-gray-300 px-3 py-2 text-black"
+                    />
+                    <TextInput
+                        value
+                    />
+            
+                </>
+            )}
+        </ScrollView>>
   )
 }
 

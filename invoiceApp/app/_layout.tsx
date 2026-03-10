@@ -20,7 +20,6 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
-          <Stack.Screen name="products/productScreen" options={{ title: "New Product" }} />
           <Stack.Screen name="products/[id]" options={{ title: "Product" }} />
         </Stack>
       </SafeAreaProvider>

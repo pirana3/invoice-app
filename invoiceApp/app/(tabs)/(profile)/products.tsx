@@ -22,7 +22,7 @@ const Products = () => {
     <View className="flex-1 bg-white px-4 py-4">
       <ProductButton
         title="Add Product"
-        onPress={() => router.push('/products/productScreen')}
+        onPress={() => router.push('/products/new')}
         style="mb-4"
       />
 

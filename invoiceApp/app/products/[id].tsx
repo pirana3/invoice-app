@@ -1,17 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { deleteProduct, getProductById, updateProduct } from '@/database/productdb';
+import { createProduct, deleteProduct, getProductById, updateProduct } from '@/database/productdb';
 import useFetch from '@/service/usefetch';
 
 const ProductProfileScreen = () => {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const isNew = rawId === 'new' || rawId === undefined;
   const productId = Number(rawId);
-  const canFetch = Number.isFinite(productId);
+  const canFetch = !isNew && Number.isFinite(productId);
   const fetchProduct = useCallback(() => getProductById(productId), [productId]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isNew);
   const [name, setName] = useState('');
   const [details, setDetails] = useState('');
   const [price, setPrice] = useState('');
@@ -30,10 +31,11 @@ const ProductProfileScreen = () => {
     setPrice(String(product.price));
   }, [product]);
 
+  const canEdit = useMemo(() => isNew || isEditing, [isNew, isEditing]);
+
   const handleSave = async () => {
     const parsedPrice = Number(price);
 
-    if (!product) return;
     if (!name.trim()) {
       Alert.alert('Missing name', 'Please enter a product name.');
       return;
@@ -45,17 +47,22 @@ const ProductProfileScreen = () => {
 
     try {
       setIsSaving(true);
-      const updated = await updateProduct(product.id, name.trim(), details.trim(), parsedPrice);
-      if (!updated) {
-        Alert.alert('Update failed', 'Product no longer exists.');
+      if (isNew) {
+        await createProduct(name.trim(), details.trim(), parsedPrice);
         router.back();
-        return;
+      } else if (product) {
+        const updated = await updateProduct(product.id, name.trim(), details.trim(), parsedPrice);
+        if (!updated) {
+          Alert.alert('Update failed', 'Product no longer exists.');
+          router.back();
+          return;
+        }
+        await refetch();
+        setIsEditing(false);
       }
-      await refetch();
-      setIsEditing(false);
     } catch (saveError) {
       console.error(saveError);
-      Alert.alert('Update failed', 'Could not update this product.');
+      Alert.alert('Save failed', 'Could not save this product.');
     } finally {
       setIsSaving(false);
     }
@@ -84,7 +91,7 @@ const ProductProfileScreen = () => {
     ]);
   };
 
-  if (!canFetch) {
+  if (!canFetch && !isNew) {
     return (
       <View className="flex-1 items-center justify-center bg-white px-4">
         <Text className="text-red-500">Invalid product ID.</Text>
@@ -92,7 +99,7 @@ const ProductProfileScreen = () => {
     );
   }
 
-  if (loading) {
+  if (!isNew && loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="small" color="#111827" />
@@ -100,7 +107,7 @@ const ProductProfileScreen = () => {
     );
   }
 
-  if (error) {
+  if (!isNew && error) {
     return (
       <View className="flex-1 items-center justify-center bg-white px-4">
         <Text className="text-red-500">Could not load this product.</Text>
@@ -108,7 +115,7 @@ const ProductProfileScreen = () => {
     );
   }
 
-  if (!product) {
+  if (!isNew && !product) {
     return (
       <View className="flex-1 items-center justify-center bg-white px-4">
         <Text className="text-gray-500">Product not found.</Text>
@@ -118,7 +125,7 @@ const ProductProfileScreen = () => {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 py-6">
-      {isEditing ? (
+      {canEdit ? (
         <>
           <TextInput
             value={name}
@@ -143,14 +150,22 @@ const ProductProfileScreen = () => {
         </>
       ) : (
         <>
-          <Text className="text-2xl font-semibold text-black">{product.name}</Text>
-          <Text className="mt-2 text-base text-gray-700">{product.details || 'No description'}</Text>
-          <Text className="mt-6 text-lg font-semibold text-black">${product.price.toFixed(2)}</Text>
+          {product ? (
+            <>
+              <Text className="text-2xl font-semibold text-black">{product.name}</Text>
+              <Text className="mt-2 text-base text-gray-700">
+                {product.details || 'No description'}
+              </Text>
+              <Text className="mt-6 text-lg font-semibold text-black">
+                ${product.price.toFixed(2)}
+              </Text>
+            </>
+          ) : null}
         </>
       )}
 
       <View className="mt-8 flex-row gap-3">
-        {isEditing ? (
+        {canEdit ? (
           <>
             <Pressable
               onPress={handleSave}
@@ -160,23 +175,27 @@ const ProductProfileScreen = () => {
               {isSaving ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
-                <Text className="font-semibold text-white">Save Changes</Text>
+                <Text className="font-semibold text-white">
+                  {isNew ? 'Save Product' : 'Save Changes'}
+                </Text>
               )}
             </Pressable>
-            <Pressable
-              onPress={() => {
-                if (product) {
-                  setName(product.name);
-                  setDetails(product.details);
-                  setPrice(String(product.price));
-                }
-                setIsEditing(false);
-              }}
-              disabled={isSaving || isDeleting}
-              className="flex-1 items-center rounded-md border border-gray-300 py-3"
-            >
-              <Text className="font-semibold text-black">Cancel</Text>
-            </Pressable>
+            {!isNew ? (
+              <Pressable
+                onPress={() => {
+                  if (product) {
+                    setName(product.name);
+                    setDetails(product.details);
+                    setPrice(String(product.price));
+                  }
+                  setIsEditing(false);
+                }}
+                disabled={isSaving || isDeleting}
+                className="flex-1 items-center rounded-md border border-gray-300 py-3"
+              >
+                <Text className="font-semibold text-black">Cancel</Text>
+              </Pressable>
+            ) : null}
           </>
         ) : (
           <>
