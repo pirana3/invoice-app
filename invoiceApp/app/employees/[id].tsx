@@ -1,180 +1,384 @@
-import React, {useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { deleteEmployees, getEmployees, updateEmployees } from '@/database/employeesdb';
+import { createEmployees, deleteEmployees, getEmployeesById, updateEmployees } from '@/database/employeesdb';
 import useFetch from '@/service/usefetch';
 
-
 const EmployeeProfileScreen = () => {
-    const router = useRouter();
-    const params = useLocalSearchParams<{ id?: string | string[] }>();
-    const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
-    const employeesId =Number(rawId);
-    const canFetch = Number.isFinite(employeesId);
-    const fetchEmployees = useCallback(() => getEmployees(), [employeesId]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [ename, setEname] = useState('');
-    const [eemail, setEemail] = useState('');
-    const [ephone, setEphone] = useState('');
-    const [eage, setEage] = useState('');
-    const [eposition, setEposition] = useState('');
-    const [erole, setErole] = useState('');
-    const [edetails, setEdetails] = useState('');
-    const [epay, setEpay] = useState('');
-    const [eperformance, setEperformance] = useState('');
-    const [elanguage, setElanguage] = useState('');
-    const [eyears, setEyears] = useState('');
-    const [ephoto, setEphoto] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const isNew = rawId === 'new' || rawId === undefined;
+  const employeeId = Number(rawId);
+  const canFetch = !isNew && Number.isFinite(employeeId);
+  const fetchEmployee = useCallback(() => getEmployeesById(employeeId), [employeeId]);
 
-    const { data: employees, loading, error, refetch } = useFetch(
-        fetchEmployees,
-        canFetch
-    );
+  const [isEditing, setIsEditing] = useState(isNew);
+  const [ename, setEname] = useState('');
+  const [eemail, setEemail] = useState('');
+  const [ephone, setEphone] = useState('');
+  const [eage, setEage] = useState('');
+  const [eposition, setEposition] = useState('');
+  const [erole, setErole] = useState('');
+  const [edetails, setEdetails] = useState('');
+  const [epay, setEpay] = useState('');
+  const [eperformance, setEperformance] = useState('');
+  const [elanguage, setElanguage] = useState('');
+  const [eyears, setEyears] = useState('');
+  const [ephoto, setEphoto] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-    useEffect(() => {
-        if (!employees) return;
-        setEname(employees.ename);
-        setEemail(employees.eemail);
-        setEphone(String(employees.ephone));
-        setEage(String(employees.eage));
-        setEposition(employees.eposition);
-        setErole(employees.erole);
-        setEdetails(employees.edetails);
-        setEpay(String(employees.epay));
-        setEperformance(String(employees.eperformance));
-        setElanguage(employees.elanguage);
-        setEyears(String(employees.eyears));
-        setEphoto(employees.ephoto ?? '');
-    }, [employees]);
+  const { data: employee, loading, error, refetch } = useFetch(
+    fetchEmployee,
+    canFetch
+  );
 
-    const handleSave = async () => {
-        const parsedPhone = Number(ephone);
+  useEffect(() => {
+    if (!employee) return;
+    setEname(employee.ename);
+    setEemail(employee.eemail);
+    setEphone(String(employee.ephone));
+    setEage(String(employee.eage));
+    setEposition(employee.eposition);
+    setErole(employee.erole);
+    setEdetails(employee.edetails);
+    setEpay(String(employee.epay));
+    setEperformance(String(employee.eperformance));
+    setElanguage(employee.elanguage);
+    setEyears(String(employee.eyears));
+    setEphoto(employee.ephoto ?? '');
+  }, [employee]);
 
-        if (!employees) return;
-        if (!ename.trim()) {
-            Alert.alert('Missing Employees name' , 'Please enter your Employees name.');
-            return;
-        }
-        if (!Number.isFinite(parsedEphone) || parsedEphone < 0) {
-            Alert.alert(' Invalid phone number', 'Please enter a your employees phone number');
-            return;
-        }
-        if (!Number.isFinite(parsedEpay) || pasredEpay < 0){
-            Alert.alert(' Invalid pay' , 'Please enter employees actual Paycheck');
-            return;
-        }
+  const canEdit = useMemo(() => isNew || isEditing, [isNew, isEditing]);
 
-        try{
-            setIsSaving(true);
-            if (isNew){
-                await createEmployees(ename.trim(), eemail.trim(), parsedEphone, Number(eage), eposition.trim(), erole.trim(), edetails.trim(), Number(epay), Number(eperformance), elanguage.trim(), Number(eyears), ephoto.trim());
-                router.back();
-            } else if (employees) { 
-            const updated = await updateEmployees(employeesid, ename.trim(), eemail.trim(), parsedEphone, Number(eage), eposition.trim(), erole.trim(), edetails.trim(), Number(epay), Number(eperformance), elanguage.trim(), Number(eyears), ephoto.trim());
-            if (!updated) {
-                Alert.alert('Update failed', 'Employee no longer exists.');
-                router.back();
-                return;
-            }
-            await refetch();
-            setIsEditing(false);
-        }
-        } catch (saveError) {
-            console.error(saveError);
-            Alert.alert('Update failed', 'Could not update this Employee.');
-        } finally {
-            setIsSaving(false);
-        }
-    };
+  const handleSave = async () => {
+    const parsedPhone = Number(ephone);
+    const parsedAge = Number(eage);
+    const parsedPay = Number(epay);
+    const parsedPerformance = Number(eperformance);
+    const parsedYears = Number(eyears);
 
-    const handleDelete = () => {
-        if (!employees) return;
-        Alert.alert('Delete product', `Delete "${employees.ename}"?` , [
-            { text: 'Cancel', style: 'cancel'},
-            {
-                text: 'Delete',
-                style: 'destructive' ,
-                onPress: async () => {
-                    try {
-                        setIsDeleting(true);
-                        await deleteEmployees(employeesId);
-                        router.back();
-                    } catch (deleteError) {
-                        console.error(deleteError);
-                        Alert.alert('Delete failed', 'Employees info could not be deleted please try again.');
-                    } finally {
-                        setIsDeleting(false);
-                    }
-                },
-            },
-        ]);
-    };
-
-    if(!canFetch && !isNew) {
-        return (
-            <View className="flex-1 items-center justify bg-white px-4">
-                <Text className="text-red-500"> Invalid employee ID</Text>
-            </View>
-        );
+    if (!ename.trim()) {
+      Alert.alert('Missing name', 'Please enter the employee name.');
+      return;
+    }
+    if (!eemail.trim()) {
+      Alert.alert('Missing email', 'Please enter the employee email.');
+      return;
+    }
+    if (!Number.isFinite(parsedPhone) || parsedPhone < 0) {
+      Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
+      return;
+    }
+    if (!Number.isFinite(parsedAge) || parsedAge < 0) {
+      Alert.alert('Invalid age', 'Please enter a valid age.');
+      return;
+    }
+    if (!Number.isFinite(parsedPay) || parsedPay < 0) {
+      Alert.alert('Invalid pay', 'Please enter a valid pay amount.');
+      return;
+    }
+    if (!Number.isFinite(parsedPerformance) || parsedPerformance < 0) {
+      Alert.alert('Invalid performance', 'Please enter a valid performance value.');
+      return;
+    }
+    if (!Number.isFinite(parsedYears) || parsedYears < 0) {
+      Alert.alert('Invalid years', 'Please enter a valid years value.');
+      return;
     }
 
-    if (!isNew && loading) {
-        return (
-            <View className = "flex-1 items-center justify-center bg-white px-4">
-                <ActivityIndicator size="small" color="#111827" />
-            </View>
+    try {
+      setIsSaving(true);
+      if (isNew) {
+        await createEmployees(
+          ename.trim(),
+          eemail.trim(),
+          parsedPhone,
+          parsedAge,
+          eposition.trim(),
+          erole.trim(),
+          edetails.trim(),
+          parsedPay,
+          parsedPerformance,
+          elanguage.trim(),
+          parsedYears,
+          ephoto.trim()
         );
-    }
-
-    if (!isNew && error) {
-        return (
-            <View className="flex-1 items-center justify-center bg-white px-4">
-                <Text className= "text-red-500"> Could not load Employee info</Text>
-            </View>
+        router.back();
+      } else if (employee) {
+        const updated = await updateEmployees(
+          employee.id,
+          ename.trim(),
+          eemail.trim(),
+          parsedPhone,
+          parsedAge,
+          eposition.trim(),
+          erole.trim(),
+          edetails.trim(),
+          parsedPay,
+          parsedPerformance,
+          elanguage.trim(),
+          parsedYears,
+          ephoto.trim()
         );
+        if (!updated) {
+          Alert.alert('Update failed', 'Employee no longer exists.');
+          router.back();
+          return;
+        }
+        await refetch();
+        setIsEditing(false);
+      }
+    } catch (saveError) {
+      console.error(saveError);
+      Alert.alert('Save failed', 'Could not save this employee.');
+    } finally {
+      setIsSaving(false);
     }
+  };
 
-    if(!isNew && !employees) {
-        return (
-            <View className= " flex-1 items-center justify-center bg-white px-4">
-                <Text className="text-gray-500"> Employee not found</Text>
-            </View>
-        );
-    }
+  const handleDelete = () => {
+    if (!employee) return;
+    Alert.alert('Delete employee', `Delete "${employee.ename}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setIsDeleting(true);
+            await deleteEmployees(employee.id);
+            router.back();
+          } catch (deleteError) {
+            console.error(deleteError);
+            Alert.alert('Delete failed', 'Could not delete this employee.');
+          } finally {
+            setIsDeleting(false);
+          }
+        },
+      },
+    ]);
+  };
 
+  if (!canFetch && !isNew) {
     return (
-        <ScrollView className="flex-1 items-center justify-center bg-white px-4">
-            {isEditing ? (
-                <>
-                    <TextInput
-                        value={ename}
-                        onChangeText={setEname}
-                        placeholder="Enter employee name"
-                        className="rounded-md border border-gray-300 px-3 py-2 text-black"
-                    />
-                    <TextInput 
-                        value={eemail}
-                        onChangeText={setEemail}
-                        placeholder=' Enter Employees Email'
-                        className="rounded-md border border-gray-300 px-3 py-2 text-black"                    
-                    />
-                    <TextInput
-                        value={ephone}
-                        onChangeText={setEphone}
-                        placeholder='Enter Employees phone number'
-                        keyboardType="numeric"
-                        className="rounded-md border border-gray-300 px-3 py-2 text-black"
-                    />
-                    <TextInput
-                        value
-                    />
-            
-                </>
-            )}
-        </ScrollView>>
-  )
-}
+      <View className="flex-1 items-center justify-center bg-white px-4">
+        <Text className="text-red-500">Invalid employee ID.</Text>
+      </View>
+    );
+  }
 
-export default EmployeeProfileScreen
+  if (!isNew && loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="small" color="#111827" />
+      </View>
+    );
+  }
+
+  if (!isNew && error) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white px-4">
+        <Text className="text-red-500">Could not load this employee.</Text>
+      </View>
+    );
+  }
+
+  if (!isNew && !employee) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white px-4">
+        <Text className="text-gray-500">Employee not found.</Text>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView className="flex-1 bg-white px-4 py-6">
+      {canEdit ? (
+        <>
+          <TextInput
+            value={ename}
+            onChangeText={setEname}
+            placeholder="Employee name"
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={eemail}
+            onChangeText={setEemail}
+            placeholder="Employee email"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={ephone}
+            onChangeText={setEphone}
+            placeholder="Phone number"
+            keyboardType="numeric"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={eage}
+            onChangeText={setEage}
+            placeholder="Age"
+            keyboardType="numeric"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={eposition}
+            onChangeText={setEposition}
+            placeholder="Position"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={erole}
+            onChangeText={setErole}
+            placeholder="Role"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={edetails}
+            onChangeText={setEdetails}
+            placeholder="Details"
+            multiline
+            className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={epay}
+            onChangeText={setEpay}
+            placeholder="Pay"
+            keyboardType="numeric"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={eperformance}
+            onChangeText={setEperformance}
+            placeholder="Performance"
+            keyboardType="numeric"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={elanguage}
+            onChangeText={setElanguage}
+            placeholder="Language"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={eyears}
+            onChangeText={setEyears}
+            placeholder="Years"
+            keyboardType="numeric"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={ephoto}
+            onChangeText={setEphoto}
+            placeholder="Photo URL"
+            autoCapitalize="none"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </>
+      ) : (
+        <>
+          {employee ? (
+            <>
+              <Text className="text-2xl font-semibold text-black">{employee.ename}</Text>
+              <Text className="mt-2 text-base text-gray-700">{employee.eemail}</Text>
+              <Text className="mt-2 text-base text-gray-700">{employee.ephone}</Text>
+              <Text className="mt-2 text-base text-gray-700">Age: {employee.eage}</Text>
+              <Text className="mt-2 text-base text-gray-700">Position: {employee.eposition}</Text>
+              <Text className="mt-2 text-base text-gray-700">Role: {employee.erole}</Text>
+              <Text className="mt-4 text-base text-gray-700">
+                {employee.edetails || 'No details'}
+              </Text>
+              <Text className="mt-6 text-lg font-semibold text-black">
+                Pay: ${employee.epay.toFixed(2)}
+              </Text>
+              <Text className="mt-2 text-base text-gray-700">
+                Performance: {employee.eperformance}
+              </Text>
+              <Text className="mt-2 text-base text-gray-700">
+                Language: {employee.elanguage}
+              </Text>
+              <Text className="mt-2 text-base text-gray-700">
+                Years: {employee.eyears}
+              </Text>
+              {employee.ephoto ? (
+                <Text className="mt-2 text-xs text-gray-500">Photo: {employee.ephoto}</Text>
+              ) : null}
+            </>
+          ) : null}
+        </>
+      )}
+
+      <View className="mt-8 flex-row gap-3">
+        {canEdit ? (
+          <>
+            <Pressable
+              onPress={handleSave}
+              disabled={isSaving || isDeleting}
+              className="flex-1 items-center rounded-md bg-black py-3"
+            >
+              {isSaving ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="font-semibold text-white">
+                  {isNew ? 'Save Employee' : 'Save Changes'}
+                </Text>
+              )}
+            </Pressable>
+            {!isNew ? (
+              <Pressable
+                onPress={() => {
+                  if (employee) {
+                    setEname(employee.ename);
+                    setEemail(employee.eemail);
+                    setEphone(String(employee.ephone));
+                    setEage(String(employee.eage));
+                    setEposition(employee.eposition);
+                    setErole(employee.erole);
+                    setEdetails(employee.edetails);
+                    setEpay(String(employee.epay));
+                    setEperformance(String(employee.eperformance));
+                    setElanguage(employee.elanguage);
+                    setEyears(String(employee.eyears));
+                    setEphoto(employee.ephoto ?? '');
+                  }
+                  setIsEditing(false);
+                }}
+                disabled={isSaving || isDeleting}
+                className="flex-1 items-center rounded-md border border-gray-300 py-3"
+              >
+                <Text className="font-semibold text-black">Cancel</Text>
+              </Pressable>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <Pressable
+              onPress={() => setIsEditing(true)}
+              disabled={isDeleting}
+              className="flex-1 items-center rounded-md bg-black py-3"
+            >
+              <Text className="font-semibold text-white">Edit</Text>
+            </Pressable>
+            <Pressable
+              onPress={handleDelete}
+              disabled={isDeleting}
+              className="flex-1 items-center rounded-md border border-red-300 bg-red-50 py-3"
+            >
+              {isDeleting ? (
+                <ActivityIndicator size="small" color="#dc2626" />
+              ) : (
+                <Text className="font-semibold text-red-600">Delete</Text>
+              )}
+            </Pressable>
+          </>
+        )}
+      </View>
+    </ScrollView>
+  );
+};
+
+export default EmployeeProfileScreen;

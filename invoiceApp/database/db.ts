@@ -27,7 +27,7 @@ export const initDatabase = () => {
     );
 
     CREATE TABLE IF NOT EXISTS employees (
-      id INTEGER PRIMARY KEY AUTOINCREMENT<
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       ename TEXT NOT NULL,
       eemail TEXT NOT NULL,
       ephone REAL NOT NULL,
@@ -39,8 +39,7 @@ export const initDatabase = () => {
       eperformance REAL NOT NULL,
       elanguage TEXT NOT NULL,
       eyears INTEGER NOT NULL,
-      ephoto TEXT,
-
-      )
+      ephoto TEXT
+    );
   `);
 };

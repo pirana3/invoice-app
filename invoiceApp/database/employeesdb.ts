@@ -51,13 +51,13 @@ export const createEmployees = async (
 
 export const getEmployees = async (): Promise<Employees[]> => {
     return db.getAllSync<Employees>(
-        `SELECT id, ename, eemail, ephone, eage, eposition, erole, edetails, epay, eperformance, elanguage, eyears, ephoto FROM employees ORDER BY ID DESC`
+        `SELECT id, ename, eemail, ephone, eage, eposition, erole, edetails, epay, eperformance, elanguage, eyears, ephoto FROM employees ORDER BY id DESC`
     );
 };
 
 export const getEmployeesById = async (id: number): Promise<Employees | null> => {
     return db.getFirstSync<Employees>(
-        `SELECT id, name, eemail, ephone, eage, eposition, erole, edetails, epay, eperformance, elanguage, eyears, ephoto FROM emplotees WHERE id = ?`,
+        `SELECT id, ename, eemail, ephone, eage, eposition, erole, edetails, epay, eperformance, elanguage, eyears, ephoto FROM employees WHERE id = ?`,
         id
     );
 };
@@ -78,7 +78,7 @@ export const updateEmployees = async (
     ephoto?: string
 ): Promise<boolean> => {
     const result = db.runSync(
-        `UPDATE employees SET ename = ?, eemail = ?, ephone = ?, eage = ?, eposition = ?, erole = ?, edetails = ?, epay = ?, eperfromance = ?, elanguage = ?, eyears = ?, ephots = ? WHERE id = ?`,
+        `UPDATE employees SET ename = ?, eemail = ?, ephone = ?, eage = ?, eposition = ?, erole = ?, edetails = ?, epay = ?, eperformance = ?, elanguage = ?, eyears = ?, ephoto = ? WHERE id = ?`,
         ename,
         eemail,
         ephone,
@@ -99,6 +99,6 @@ export const updateEmployees = async (
 };
 
 export const deleteEmployees = async (id: number): Promise<boolean> => {
-    const result = db.runSync(`DELETE FROM eployees WHERE id = ?`, id);
+    const result = db.runSync(`DELETE FROM employees WHERE id = ?`, id);
     return result.changes > 0;
 }
