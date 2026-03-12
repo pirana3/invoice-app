@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
 import { createEmployees, deleteEmployees, getEmployeesById, updateEmployees } from '@/database/employeesdb';
 import useFetch from '@/service/usefetch';
 
@@ -51,6 +53,48 @@ const EmployeeProfileScreen = () => {
   }, [employee]);
 
   const canEdit = useMemo(() => isNew || isEditing, [isNew, isEditing]);
+
+  const handlePickPhoto = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        'Permission needed',
+        'Please allow photo library access to select an employee photo.'
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      quality: 0.85,
+    });
+
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      setEphoto(result.assets[0].uri);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        'Permission needed',
+        'Please allow camera access to take an employee photo.'
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      quality: 0.85,
+    });
+
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      setEphoto(result.assets[0].uri);
+    }
+  };
 
   const handleSave = async () => {
     const parsedPhone = Number(ephone);
@@ -197,6 +241,35 @@ const EmployeeProfileScreen = () => {
     <ScrollView className="flex-1 bg-white px-4 py-6">
       {canEdit ? (
         <>
+          <View className="items-start">
+            {ephoto ? (
+              <Image
+                source={{ uri: ephoto }}
+                contentFit="cover"
+                style={{ width: 140, height: 140, borderRadius: 12 }}
+              />
+            ) : (
+              <View className="h-36 w-36 items-center justify-center rounded-xl border border-gray-300">
+                <Text className="text-xs text-gray-500">No photo</Text>
+              </View>
+            )}
+            <View className="mt-3 flex-row gap-2">
+              <Pressable
+                onPress={handlePickPhoto}
+                className="rounded-md border border-gray-300 px-3 py-2"
+              >
+                <Text className="text-sm font-medium text-black">
+                  {ephoto ? 'Change photo' : 'Add photo'}
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={handleTakePhoto}
+                className="rounded-md border border-gray-300 px-3 py-2"
+              >
+                <Text className="text-sm font-medium text-black">Take photo</Text>
+              </Pressable>
+            </View>
+          </View>
           <TextInput
             value={ename}
             onChangeText={setEname}
@@ -271,13 +344,6 @@ const EmployeeProfileScreen = () => {
             keyboardType="numeric"
             className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
           />
-          <TextInput
-            value={ephoto}
-            onChangeText={setEphoto}
-            placeholder="Photo URL"
-            autoCapitalize="none"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
         </>
       ) : (
         <>
@@ -305,7 +371,11 @@ const EmployeeProfileScreen = () => {
                 Years: {employee.eyears}
               </Text>
               {employee.ephoto ? (
-                <Text className="mt-2 text-xs text-gray-500">Photo: {employee.ephoto}</Text>
+                <Image
+                  source={{ uri: employee.ephoto }}
+                  contentFit="cover"
+                  style={{ width: 180, height: 180, borderRadius: 12, marginTop: 12 }}
+                />
               ) : null}
             </>
           ) : null}
