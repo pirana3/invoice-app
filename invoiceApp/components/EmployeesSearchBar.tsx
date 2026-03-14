@@ -25,6 +25,7 @@ const EmployeesSearchBar = () => {
             <TextInput 
             />
         </View>
+        lu
         <TouchableOpacity>
             <Image/>
         </TouchableOpacity>
