@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Pressable } from 'react-native';
 import {router, useLocalSearchParams} from "expo-router";
 import React, {useState} from 'react';
 import { eCategories } from '@/constants/data';
@@ -18,9 +18,19 @@ const EmployeeFilter = () => {
     router.setParams({fileter: category});;
   };
   return (
-    <View>
-      <Text>EmployeeFilter</Text>
-    </View>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      className="mt-3 mb-2"
+    >
+      {eCategories.map((eCategory) => (
+        <Pressable>
+          <Text>
+
+          </Text>
+        </Pressable>
+
+    </ScrollView>
   )
 }
 
