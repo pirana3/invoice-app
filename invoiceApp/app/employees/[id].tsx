@@ -5,6 +5,8 @@ import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { createEmployees, deleteEmployees, getEmployeesById, updateEmployees } from '@/database/employeesdb';
 import useFetch from '@/service/usefetch';
+import EPositionModal from '@/app/employees/ePositionModal';
+import { ePositions } from '@/constants/data';
 
 const EmployeeProfileScreen = () => {
   const router = useRouter();
@@ -30,6 +32,7 @@ const EmployeeProfileScreen = () => {
   const [ephoto, setEphoto] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPositionModalOpen, setIsPositionModalOpen] = useState(false);
 
   const { data: employee, loading, error, refetch } = useFetch(
     fetchEmployee,
@@ -298,12 +301,14 @@ const EmployeeProfileScreen = () => {
             keyboardType="numeric"
             className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
           />
-          <TextInput
-            value={eposition}
-            onChangeText={setEposition}
-            placeholder="Position"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <Pressable
+            onPress={() => setIsPositionModalOpen(true)}
+            className="mt-3 rounded-md border border-gray-300 px-3 py-3"
+          >
+            <Text className={`text-sm ${eposition ? 'text-black' : 'text-gray-500'}`}>
+              {eposition || 'Select rank'}
+            </Text>
+          </Pressable>
           <TextInput
             value={erole}
             onChangeText={setErole}
@@ -343,6 +348,16 @@ const EmployeeProfileScreen = () => {
             placeholder="Years"
             keyboardType="numeric"
             className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <EPositionModal
+            isVisible={isPositionModalOpen}
+            options={ePositions}
+            selectedValue={eposition}
+            onSelect={(value) => {
+              setEposition(value);
+              setIsPositionModalOpen(false);
+            }}
+            onClose={() => setIsPositionModalOpen(false)}
           />
         </>
       ) : (
