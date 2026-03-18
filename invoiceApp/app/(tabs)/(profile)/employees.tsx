@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, ScrollView } from 'react-native';
+import { View, ActivityIndicator, ScrollView } from 'react-native';
 import EmployeeButton from '@/components/EmployeesButton';
 import EmployeesSearchBar from '@/components/EmployeesSearchBar';
 import EmployeesProfile from '@/app/employees/employeesProfile';
@@ -6,9 +6,10 @@ import NoResults from '@/components/NoResults';
 import { getEmployees, searchEmployees, type Employees } from '@/database/employeesdb';
 import { useLocalSearchParams, router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
+import EmployeeRatingFilter from '@/components/EmployeeRatingFilter';
 
 const employees = () => {
-  const params = useLocalSearchParams<{ query?: string }>();
+  const params = useLocalSearchParams<{ query?: string; rating?: string }>();
   const [allEmployees, setAllEmployees] = useState<Employees[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employees[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,15 +32,20 @@ const employees = () => {
     loadEmployees();
   }, []);
 
-  // Filter employees when search query changes
+  // Filter employees when search query or rating changes
   useEffect(() => {
     const filterEmployees = async () => {
+      const parsedRating = Number(params.rating);
+      const hasRating = Number.isFinite(parsedRating) && parsedRating > 0;
+      const applyRatingFilter = (list: Employees[]) =>
+        hasRating ? list.filter((employee) => employee.eperformance >= parsedRating) : list;
+
       if (!params.query || params.query.trim() === '') {
-        setFilteredEmployees(allEmployees);
+        setFilteredEmployees(applyRatingFilter(allEmployees));
       } else {
         try {
           const results = await searchEmployees(params.query);
-          setFilteredEmployees(results);
+          setFilteredEmployees(applyRatingFilter(results));
         } catch (error) {
           console.error('Error searching employees:', error);
           setFilteredEmployees([]);
@@ -48,7 +54,7 @@ const employees = () => {
     };
 
     filterEmployees();
-  }, [params.query, allEmployees]);
+  }, [params.query, params.rating, allEmployees]);
 
   const handleAddEmployee = () => {
     router.push('/employees/[id]');
@@ -63,6 +69,9 @@ const employees = () => {
       <View className="py-4">
         {/* Search Bar */}
         <EmployeesSearchBar />
+        <View className="px-4">
+          <EmployeeRatingFilter />
+        </View>
 
         {/* Add Employee Button */}
         <View className="px-4 mt-4 mb-4">

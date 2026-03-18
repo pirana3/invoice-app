@@ -7,6 +7,7 @@ import { createEmployees, deleteEmployees, getEmployeesById, updateEmployees } f
 import useFetch from '@/service/usefetch';
 import EPositionModal from '@/app/employees/ePositionModal';
 import { ePositions } from '@/constants/data';
+import EmployeeRating from '@/components/EmployeeRating';
 
 const EmployeeProfileScreen = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ const EmployeeProfileScreen = () => {
   const [erole, setErole] = useState('');
   const [edetails, setEdetails] = useState('');
   const [epay, setEpay] = useState('');
-  const [eperformance, setEperformance] = useState('');
+  const [eperformance, setEperformance] = useState(0);
   const [elanguage, setElanguage] = useState('');
   const [eyears, setEyears] = useState('');
   const [ephoto, setEphoto] = useState('');
@@ -49,7 +50,7 @@ const EmployeeProfileScreen = () => {
     setErole(employee.erole);
     setEdetails(employee.edetails);
     setEpay(String(employee.epay));
-    setEperformance(String(employee.eperformance));
+    setEperformance(employee.eperformance);
     setElanguage(employee.elanguage);
     setEyears(String(employee.eyears));
     setEphoto(employee.ephoto ?? '');
@@ -126,8 +127,8 @@ const EmployeeProfileScreen = () => {
       Alert.alert('Invalid pay', 'Please enter a valid pay amount.');
       return;
     }
-    if (!Number.isFinite(parsedPerformance) || parsedPerformance < 0) {
-      Alert.alert('Invalid performance', 'Please enter a valid performance value.');
+    if (!Number.isFinite(parsedPerformance) || parsedPerformance < 0 || parsedPerformance > 5) {
+      Alert.alert('Invalid performance', 'Please enter a valid rating between 0 and 5.');
       return;
     }
     if (!Number.isFinite(parsedYears) || parsedYears < 0) {
@@ -329,13 +330,17 @@ const EmployeeProfileScreen = () => {
             keyboardType="numeric"
             className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
           />
-          <TextInput
-            value={eperformance}
-            onChangeText={setEperformance}
-            placeholder="Performance"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <View className="mt-3 rounded-md border border-gray-300 px-3 py-3">
+            <Text className="text-xs text-gray-500">Performance rating</Text>
+            <View className="mt-2">
+              <EmployeeRating
+                value={eperformance}
+                onChange={setEperformance}
+                size={24}
+                showValue
+              />
+            </View>
+          </View>
           <TextInput
             value={elanguage}
             onChangeText={setElanguage}
@@ -377,7 +382,7 @@ const EmployeeProfileScreen = () => {
                 Pay: ${employee.epay.toFixed(2)}
               </Text>
               <Text className="mt-2 text-base text-gray-700">
-                Performance: {employee.eperformance}
+                Performance: {employee.eperformance.toFixed(1)} / 5
               </Text>
               <Text className="mt-2 text-base text-gray-700">
                 Language: {employee.elanguage}
@@ -425,7 +430,7 @@ const EmployeeProfileScreen = () => {
                     setErole(employee.erole);
                     setEdetails(employee.edetails);
                     setEpay(String(employee.epay));
-                    setEperformance(String(employee.eperformance));
+                    setEperformance(employee.eperformance);
                     setElanguage(employee.elanguage);
                     setEyears(String(employee.eyears));
                     setEphoto(employee.ephoto ?? '');
