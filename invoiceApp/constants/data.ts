@@ -22,12 +22,13 @@ export const eYears = [
 ]
 
 export const ePay = [
-  { label: '$0-1000', min: 0, max: 1000},
-  { label: '$1001-1500', min: 1001, max: 1500},
-  { label: '$1501-2000', min: 1501, max: 2000},
-  { label: '$2001-2500', min: 2001, max: 2500},
-  { label: '$2501-3000', min: 2501, max: 3000},
-  { label: '$3001+', min: 3001, max: Infinity}
+  { label: '$0-500', min: 0, max: 500},
+  { label: '$500-1000', min : 500, max: 1000},
+  { label: '$1000-1500', min: 1000, max: 1500},
+  { label: '$1500-2000', min: 1500, max: 2000},
+  { label: '$2000-2500', min: 2000, max: 2500},
+  { label: '$2500-3000', min: 2500, max: 3000},
+  { label: '$3000+', min: 3000, max: Infinity}
 ]
 
 export const eAges = [

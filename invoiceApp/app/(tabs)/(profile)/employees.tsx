@@ -7,7 +7,7 @@ import { getEmployees, searchEmployees, type Employees } from '@/database/employ
 import { useLocalSearchParams, router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import EmployeeFilter from '@/components/EmployeeFilter';
-import { eYears } from '@/constants/data';
+import { eAges, ePay, eYears } from '@/constants/data';
 
 const employees = () => {
   const params = useLocalSearchParams<{
@@ -15,6 +15,8 @@ const employees = () => {
     rating?: string;
     position?: string;
     years?: string;
+    age?: string;
+    pay?: string;
   }>();
   const [allEmployees, setAllEmployees] = useState<Employees[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employees[]>([]);
@@ -45,9 +47,13 @@ const employees = () => {
       const hasRating = Number.isFinite(parsedRating) && parsedRating > 0;
       const positionFilter = params.position ? String(params.position) : '';
       const yearsFilter = params.years ? String(params.years) : '';
+      const ageFilter = params.age ? String(params.age) : '';
+      const payFilter = params.pay ? String(params.pay) : '';
       const yearsRange = yearsFilter
         ? eYears.find((range) => range.label === yearsFilter)
         : undefined;
+      const ageRange = ageFilter ? eAges.find((range) => range.label === ageFilter) : undefined;
+      const payRange = payFilter ? ePay.find((range) => range.label === payFilter) : undefined;
 
       const applyFilters = (list: Employees[]) => {
         let next = list;
@@ -57,6 +63,16 @@ const employees = () => {
         if (yearsRange) {
           next = next.filter(
             (employee) => employee.eyears >= yearsRange.min && employee.eyears <= yearsRange.max
+          );
+        }
+        if (ageRange) {
+          next = next.filter(
+            (employee) => employee.eage >= ageRange.min && employee.eage <= ageRange.max
+          );
+        }
+        if (payRange) {
+          next = next.filter(
+            (employee) => employee.epay >= payRange.min && employee.epay <= payRange.max
           );
         }
         if (hasRating) {
@@ -79,7 +95,7 @@ const employees = () => {
     };
 
     filterEmployees();
-  }, [params.query, params.rating, params.position, params.years, allEmployees]);
+  }, [params.query, params.rating, params.position, params.years, params.age, params.pay, allEmployees]);
 
   const handleAddEmployee = () => {
     router.push('/employees/[id]');
