@@ -5,18 +5,33 @@ import { icons } from '../constants/icons';
 
 const { star, emptystar, halfstar } = icons;
 
-const clampRating = (value) => Math.max(0, Math.min(5, Math.round(value * 2) / 2));
+type EmployeeRatingProps = {
+  value?: number;
+  onChange?: (value: number) => void;
+  size?: number;
+  disabled?: boolean;
+  showValue?: boolean;
+};
 
-const EmployeeRating = ({ value = 0, onChange, size = 24, disabled = false, showValue = false }) => {
+const clampRating = (value: number) =>
+  Math.max(0, Math.min(5, Math.round(value * 2) / 2));
+
+const EmployeeRating = ({
+  value = 0,
+  onChange,
+  size = 24,
+  disabled = false,
+  showValue = false,
+}: EmployeeRatingProps) => {
   const rating = useMemo(() => clampRating(value), [value]);
 
-  const getStarIcon = (index) => {
+  const getStarIcon = (index: number) => {
     if (rating >= index) return star;
     if (rating >= index - 0.5) return halfstar;
     return emptystar;
   };
 
-  const handleSelect = (nextValue) => {
+  const handleSelect = (nextValue: number) => {
     if (disabled || !onChange) return;
     onChange(clampRating(nextValue));
   };

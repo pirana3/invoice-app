@@ -3,8 +3,13 @@ import React, { useState } from 'react';
 import { useDebouncedCallback } from "use-debounce";
 import { icons } from '@/constants/icons';
 import { useLocalSearchParams, router } from 'expo-router';
+import cn from 'clsx';
 
-const EmployeesSearchBar = () => {
+type EmployeesSearchBarProps = {
+    containerClassName?: string;
+};
+
+const EmployeesSearchBar = ({ containerClassName }: EmployeesSearchBarProps) => {
     const params = useLocalSearchParams<{ query?: string }>();
     const [search, setSearch] = useState(params.query || '');
 
@@ -23,7 +28,7 @@ const EmployeesSearchBar = () => {
     };
 
     return (
-        <View className="flex flex-row items-center justify-between bg-gray-100 rounded-full px-4 py-2 mx-4">
+        <View className={cn("flex flex-row items-center justify-between bg-gray-100 rounded-full px-4 py-2 mx-4", containerClassName)}>
             <View className="flex flex-row items-center flex-1">
                 <Image 
                     source={icons.search} 
