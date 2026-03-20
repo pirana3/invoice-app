@@ -1,6 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 import DocumentsButton from '@/components/DocumentsButton';
 import React from 'react';
+import * as DocumentPicker from 'expo-document-picker';
+import DocumentImportButton from '@/components/DocumentImportButton';
+import DocumentDeleteButton from '@/components/DocumentDeleteButton';
 
 const documents = () => {
   return (
@@ -12,5 +15,3 @@ const documents = () => {
 }
 
 export default documents
-
-const styles = StyleSheet.create({})
