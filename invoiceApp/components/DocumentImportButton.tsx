@@ -10,5 +10,3 @@ const DocumentImportButton = () => {
 }
 
 export default DocumentImportButton
-
-const styles = StyleSheet.create({})

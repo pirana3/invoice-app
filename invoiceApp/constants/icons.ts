@@ -10,6 +10,11 @@ import settings from "../assets/icon/settings.png";
 import dropdownarrow from "../assets/icon/dropdownarrow.png";
 import backarrow from "../assets/icon/backarrow.png";
 import forwardarrow from "../assets/icon/forwardarrow.png";
+import adddocument from "../assets/icon/adddocument.png";
+import document from "../assets/icon/document.png";
+import editdocument from "../assets/icon/editdocument.png";
+import opendocument from "../assets/icon/opendocument.png";
+import saveddocument from "../assets/icon/saveddocument.png";
 
 
 export const icons = {
@@ -24,5 +29,10 @@ export const icons = {
   settings,
   dropdownarrow,
   backarrow,
-  forwardarrow
+  forwardarrow,
+  adddocument,
+  document,
+  editdocument,
+  opendocument,
+  saveddocument,
 };

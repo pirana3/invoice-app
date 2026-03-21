@@ -8,7 +8,7 @@ import DocumentDeleteButton from '@/components/DocumentDeleteButton';
 const documents = () => {
   return (
     <View>
-      <Text>documents</Text>
+       <Text>documents</Text>
       <DocumentsButton/>
     </View>
   )
