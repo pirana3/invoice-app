@@ -5,7 +5,7 @@ import React, {useState} from 'react'
 const DocumentImportButton = () => {
   return (
     <View>
-      <Text>DocumentImportButton</Text>
+      <Text>DocumentImportButon</Text>
     </View>
   )
 }
