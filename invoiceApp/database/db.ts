@@ -41,5 +41,12 @@ export const initDatabase = () => {
       eyears INTEGER NOT NULL,
       ephoto TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS bdocuments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      buri TEXT NOT NULL,
+      bdate TEXT NOT NULL
+    );
   `);
 };
