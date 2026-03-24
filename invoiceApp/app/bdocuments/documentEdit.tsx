@@ -11,4 +11,3 @@ const documentEdit = () => {
 
 export default documentEdit
 
-const styles = StyleSheet.create({})

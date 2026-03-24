@@ -22,7 +22,7 @@ const DocumentImportButton = () => {
             const bdate = new Date().toISOString();
 
             db.runSync(
-                `INSERT INTO bdcouments (title, buri, bdate) VALUES (?, ?, ?)`,
+                `INSERT INTO bdocuments (title, buri, bdate) VALUES (?, ?, ?)`,
                 title,
                 buri,
                 bdate
