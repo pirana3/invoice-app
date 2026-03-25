@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Text, View, Modal } from 'react-native';
 import Pdf from 'react-native-pdf';
 import React from 'react'
 
