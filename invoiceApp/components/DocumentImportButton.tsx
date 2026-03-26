@@ -3,7 +3,11 @@ import * as DocumentPicker from 'expo-document-picker';
 import React, { useState } from 'react';
 import { db } from '@/database/db';
 
-const DocumentImportButton = () => {
+type DocumentImportButtonProps = {
+    onImported?: (id: number) => void;
+};
+
+const DocumentImportButton = ({ onImported }: DocumentImportButtonProps) => {
     const [docName, setDocName] = useState<string | null>(null);
 
     const pickDocument = async () => {
@@ -21,7 +25,7 @@ const DocumentImportButton = () => {
             const buri = asset.uri;
             const bdate = new Date().toISOString();
 
-            db.runSync(
+            const insertResult = db.runSync(
                 `INSERT INTO bdocuments (title, buri, bdate) VALUES (?, ?, ?)`,
                 title,
                 buri,
@@ -29,6 +33,9 @@ const DocumentImportButton = () => {
             );
 
             setDocName(title);
+            if (insertResult?.lastInsertRowId) {
+                onImported?.(Number(insertResult.lastInsertRowId));
+            }
         } catch (error) {
             console.error('Document import failed:', error);
             Alert.alert('Import failed', 'Could not save this document. Please try again.');

@@ -55,5 +55,16 @@ export const initDatabase = () => {
       data TEXT NOT NULL,
       createdAt TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS document_annotations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      documentId INTEGER NOT NULL,
+      type TEXT NOT NULL,
+      x REAL NOT NULL,
+      y REAL NOT NULL,
+      data TEXT,
+      kind TEXT,
+      createdAt TEXT NOT NULL
+    );
   `);
 };
