@@ -48,5 +48,12 @@ export const initDatabase = () => {
       buri TEXT NOT NULL,
       bdate TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS signatures (
+      id INTEGER PRIMARY KEY,
+      kind TEXT NOT NULL,
+      data TEXT NOT NULL,
+      createdAt TEXT NOT NULL
+    );
   `);
 };
