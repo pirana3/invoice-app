@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import React from 'react'
 
-const index = () => {
+const inovicesList = () => {
   return (
     <View>
       <Text>index</Text>
@@ -9,6 +9,4 @@ const index = () => {
   )
 }
 
-export default index
-
-const styles = StyleSheet.create({})
+export default inovicesList

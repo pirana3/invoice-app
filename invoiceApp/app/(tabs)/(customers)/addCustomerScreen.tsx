@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const customersList = () => {
+const addCustomerScreen = () => {
   return (
     <View>
-      <Text>index</Text>
+      <Text>addCustomerScreen</Text>
     </View>
   )
 }
 
-export default customersList
+export default addCustomerScreen

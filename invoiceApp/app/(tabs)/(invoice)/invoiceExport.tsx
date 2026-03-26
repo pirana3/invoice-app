@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const customersList = () => {
+const invoiceExport = () => {
   return (
     <View>
-      <Text>index</Text>
+      <Text>invoiceExport</Text>
     </View>
   )
 }
 
-export default customersList
+export default invoiceExport
