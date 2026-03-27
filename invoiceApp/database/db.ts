@@ -66,5 +66,21 @@ export const initDatabase = () => {
       kind TEXT,
       createdAt TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS createinvoices (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      clientname TEXT NOT NULL,
+      invoicenumber REAL NOT NULL, 
+      invociedate REAL NOT NULL,
+      duedate REAL NOT NULL,
+      products TEXT NOT NULL,
+      totalamount REAL NOT NULL,
+      percentage REAL NOT NULL,
+      tax REAL NOT NULL,
+      notes TEXT NOT NULL,
+      termsandconditions TEXT NOT NULL DEFAULT '',
+      details TEXT NOT NULL DEFAULT '',
+      ); 
+      
   `);
 };
