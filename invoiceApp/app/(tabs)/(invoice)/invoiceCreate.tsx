@@ -7,7 +7,21 @@ import useFetch from '@/service/usefetch';
 
 
 const invoiceCreate = () => {
-    const router = useRouter()
+    const router = useRouter();
+    
+    const [clientname, setClientname] = useState('');
+    const [invoicenumber, setInvvoicenumber] = useState('');
+    const [invoicedate, setInvoicedate] = useState('');
+    const [duedate, setDudate] = useState('');
+    const [products, setProducts] = useState('');
+    const [totalamount, setTotalamount] = useState('');
+    const [percentage, setPercentage] = useState('');
+    const [tax, setTax] = useState('');
+    const [notes, setNotes] = useState('');
+    const [termsandconditions, setTermsandconditions] = useState('');
+    const [details, setDetails] = useState('');
+
+
 
   return (
     <View>
