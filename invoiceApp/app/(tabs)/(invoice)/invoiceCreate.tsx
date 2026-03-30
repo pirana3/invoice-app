@@ -25,7 +25,7 @@ const invoiceCreate = () => {
 
   return (
     <View>
-      <Text>New Invoice</Text>
+      <Text>New Invoie</Text>
 
       <TextInput
         
