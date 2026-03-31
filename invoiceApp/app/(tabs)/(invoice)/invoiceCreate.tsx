@@ -25,10 +25,10 @@ const invoiceCreate = () => {
 
   return (
     <View>
-      <Text>New Invoie</Text>
+      <Text>New Invoice</Text>
 
       <TextInput
-        
+
       />
     </View>
   )
