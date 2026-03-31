@@ -4,7 +4,6 @@ export type InvoiceContent = {
     id: number;
     invoicenumber: number;
     invoicedate: number;
-    duedate: number;
     clientname: string;
     products: string;
     totalamount:number;
@@ -20,7 +19,6 @@ export const updateInvoice = async(
     id: number,
     invoicenumber: number,
     invoicedate: number,
-    duedate: number,
     clientname: string,
     products: string,
     totalamount:number,
@@ -31,10 +29,9 @@ export const updateInvoice = async(
     details: string
 ): Promise<boolean> =>{
     const invoiceinfo = db.runSync(
-        `UPDATE createinvoces SET invoicenumber = ?, invoicedate = ?, duedate = ?, clientname = ?, products = ?, totalamount = ?, percentage = ?, tax = ?, notes = ?, termsandconditions = ?, details = ? WHERE id = ?`,
+        `UPDATE createinvoces SET invoicenumber = ?, invoicedate = ?, clientname = ?, products = ?, totalamount = ?, percentage = ?, tax = ?, notes = ?, termsandconditions = ?, details = ? WHERE id = ?`,
         invoicenumber,
         invoicedate,
-        duedate,
         clientname,
         products,
         totalamount,

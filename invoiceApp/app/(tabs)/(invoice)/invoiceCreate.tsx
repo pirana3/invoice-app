@@ -12,7 +12,6 @@ const invoiceCreate = () => {
     const [clientname, setClientname] = useState('');
     const [invoicenumber, setInvvoicenumber] = useState('');
     const [invoicedate, setInvoicedate] = useState('');
-    const [duedate, setDudate] = useState('');
     const [products, setProducts] = useState('');
     const [totalamount, setTotalamount] = useState('');
     const [percentage, setPercentage] = useState('');

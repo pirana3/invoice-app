@@ -72,7 +72,6 @@ export const initDatabase = () => {
       clientname TEXT NOT NULL,
       invoicenumber REAL NOT NULL, 
       invociedate REAL NOT NULL,
-      duedate REAL NOT NULL,
       products TEXT NOT NULL,
       totalamount REAL NOT NULL,
       percentage REAL NOT NULL,
@@ -81,6 +80,6 @@ export const initDatabase = () => {
       termsandconditions TEXT NOT NULL DEFAULT '',
       details TEXT NOT NULL DEFAULT '',
       ); 
-      
+
   `);
 };
