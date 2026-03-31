@@ -44,3 +44,12 @@ export const updateInvoice = async(
     );
     return invoiceinfo.changes > 0;
 };
+
+export const searchInvoice = async (query: string): Promise<InvoiceContent[]> => {
+    const searchTerm = `%${query}%`;
+    return db.getAllSync<InvoiceContent>(
+        `SELECT id, invoicenumber, invoicedate, clientname, products, totalamount, percentage, tax, notes, termsandconditions, details FROM createinvoices WHERE clientname LIKE ? OR products LIKE ? ORDER BY invoicenumber DESC`,
+        searchTerm,
+        searchTerm
+    )
+}
