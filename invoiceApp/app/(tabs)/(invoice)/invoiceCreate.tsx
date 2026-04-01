@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
+import { Directory, File, Paths } from 'expo-file-system';
 import { getBusinessInfo } from '@/database/businessinfodb';
 
 const invoiceCreate = () => {
@@ -122,12 +122,15 @@ const invoiceCreate = () => {
     }
     try {
       setIsSaving(true);
-      const dir = `${FileSystem.documentDirectory}invoices`;
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+      const invoicesDir = new Directory(Paths.document, 'invoices');
+      if (!invoicesDir.exists) {
+        invoicesDir.create({ intermediates: true });
+      }
       const filename = invoicenumber ? `invoice-${invoicenumber}.pdf` : `invoice-${Date.now()}.pdf`;
-      const dest = `${dir}/${filename}`;
-      await FileSystem.copyAsync({ from: pdfUri, to: dest });
-      Alert.alert('Saved', `Saved to ${dest}`);
+      const sourceFile = new File(pdfUri);
+      const destFile = new File(invoicesDir, filename);
+      sourceFile.copy(destFile);
+      Alert.alert('Saved', `Saved to ${destFile.uri}`);
     } catch (error) {
       console.error('Save failed:', error);
       Alert.alert('Save failed', 'Could not save the PDF.');

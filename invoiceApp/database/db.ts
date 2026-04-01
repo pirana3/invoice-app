@@ -81,5 +81,19 @@ export const initDatabase = () => {
       details TEXT NOT NULL DEFAULT '',
       ); 
 
+      CREATETABLE IF NOT EXISTS createestimates (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        clientname TEXT NOT NULL,
+        estimatenumber REAL NOT NULL,
+        estimatedate REAL NOT NULL,
+        estimateproducts TEXT NOT NULL,
+        estimatetotalamount REAL NOT NULL,
+        estimatepercentage REAL NOT NULL,
+        estimatetax REAL NOT NULL,
+        estiamtenotes TEXT NOT NULL,
+        estiamtetermsandconditions TEXT NOT NULL DEFAULT '',
+        estiamtedetails TEXT NOT NULL DEFAULT ''
+  );
+
   `);
 };
