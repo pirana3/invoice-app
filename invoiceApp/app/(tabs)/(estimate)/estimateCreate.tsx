@@ -10,7 +10,9 @@ import { getBusinessInfo} from '@/database/businessdb';
 const estimateCreate = () => {
     const router = useRouter();
     const [clientname, setCleintname] = useState('');
-    const []
+    const [estimatenumber, setEstimatenumber] = useState('');
+    const [estimatedate, setEstimatedate] = useState('');
+    const [estiamteproducts]
   return (
     <View>
       <Text>estimateCreate</Text>

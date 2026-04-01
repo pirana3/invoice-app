@@ -1,10 +1,17 @@
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, Text, TextInput, View, Image } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Directory, File, Paths } from 'expo-file-system';
 import { getBusinessInfo } from '@/database/businessinfodb';
+import { createInvoice, getInvoiceById, updateInvoice } from '@/database/invoicecontent';
+import { getProducts, type Product } from '@/database/productdb';
+import {
+  createInvoiceItem,
+  deleteInvoiceItemsByInvoiceId,
+  getInvoiceItemsByInvoiceId,
+} from '@/database/invoiceitemsdb';
 
 const invoiceCreate = () => {
   const router = useRouter();
@@ -27,6 +34,27 @@ const invoiceCreate = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [isSavingInvoice, setIsSavingInvoice] = useState(false);
+  const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<
+    Record<
+      number,
+      {
+        id: number;
+        name: string;
+        price: number;
+        qty: string;
+        unitPrice: string;
+        manualAmount: string;
+        useManual: boolean;
+      }
+    >
+  >({});
+
+  const params = useLocalSearchParams<{ id?: string }>();
+  const invoiceId = params.id ? Number(params.id) : NaN;
+  const isEditing = Number.isFinite(invoiceId);
 
   useEffect(() => {
     const loadLogo = async () => {
@@ -37,7 +65,92 @@ const invoiceCreate = () => {
     loadLogo();
   }, []);
 
-  const subtotal = useMemo(() => Number(totalamount) || 0, [totalamount]);
+  useEffect(() => {
+    const loadInvoice = async () => {
+      if (!isEditing) return;
+      const invoice = await getInvoiceById(invoiceId);
+      if (!invoice) return;
+      setClientname(invoice.clientname);
+      setInvvoicenumber(String(invoice.invoicenumber));
+      setInvoicedate(String(invoice.invoicedate));
+      setProducts(invoice.products);
+      setTotalamount(String(invoice.totalamount));
+      setPercentage(String(invoice.percentage));
+      setTax(String(invoice.tax));
+      setNotes(invoice.notes);
+      setTermsandconditions(invoice.termsandconditions);
+      setDetails(invoice.details);
+      const items = await getInvoiceItemsByInvoiceId(invoiceId);
+      if (items.length > 0) {
+        const mapped: Record<
+          number,
+          { id: number; name: string; price: number; qty: string; unitPrice: string; manualAmount: string; useManual: boolean }
+        > = {};
+        items.forEach((item) => {
+          const key = item.productId ?? item.id;
+          mapped[key] = {
+            id: key,
+            name: item.name,
+            price: Number(item.unitPrice ?? 0),
+            qty: String(item.quantity ?? 1),
+            unitPrice: String(item.unitPrice ?? 0),
+            manualAmount: String(item.manualAmount ?? 0),
+            useManual: item.useManual === 1,
+          };
+        });
+        setSelectedProducts(mapped);
+      } else {
+        try {
+          const parsed = JSON.parse(invoice.products);
+          if (Array.isArray(parsed)) {
+            const mapped: Record<
+              number,
+              { id: number; name: string; price: number; qty: string; unitPrice: string; manualAmount: string; useManual: boolean }
+            > = {};
+            parsed.forEach((item) => {
+              if (item?.id != null) {
+                mapped[item.id] = {
+                  id: item.id,
+                  name: item.name ?? 'Item',
+                  price: Number(item.price ?? 0),
+                  qty: '1',
+                  unitPrice: String(item.amount ?? 0),
+                  manualAmount: String(item.amount ?? 0),
+                  useManual: true,
+                };
+              }
+            });
+            setSelectedProducts(mapped);
+          }
+        } catch {}
+      }
+    };
+    loadInvoice();
+  }, [invoiceId, isEditing]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      const items = await getProducts();
+      setAllProducts(items);
+    };
+    if (isProductsModalOpen) {
+      loadProducts();
+    }
+  }, [isProductsModalOpen]);
+
+  const subtotal = useMemo(() => {
+    const selectedTotal = Object.values(selectedProducts).reduce((sum, item) => {
+      if (item.useManual) {
+        const manual = Number(item.manualAmount);
+        return Number.isFinite(manual) ? sum + manual : sum;
+      }
+      const qty = Number(item.qty);
+      const unit = Number(item.unitPrice);
+      if (!Number.isFinite(qty) || !Number.isFinite(unit)) return sum;
+      return sum + qty * unit;
+    }, 0);
+    return selectedTotal || Number(totalamount) || 0;
+  }, [selectedProducts, totalamount]);
   const taxAmount = useMemo(() => (subtotal * (Number(tax) || 0)) / 100, [subtotal, tax]);
   const discountAmount = useMemo(
     () => (subtotal * (Number(percentage) || 0)) / 100,
@@ -45,11 +158,40 @@ const invoiceCreate = () => {
   );
   const finalTotal = useMemo(() => subtotal + taxAmount - discountAmount, [subtotal, taxAmount, discountAmount]);
 
+  useEffect(() => {
+    if (Object.keys(selectedProducts).length === 0) {
+      setTotalamount('');
+      setProducts('');
+      return;
+    }
+    setTotalamount(subtotal.toFixed(2));
+    const payload = Object.values(selectedProducts).map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      amount: item.useManual
+        ? Number(item.manualAmount) || 0
+        : (Number(item.qty) || 0) * (Number(item.unitPrice) || 0),
+    }));
+    setProducts(JSON.stringify(payload));
+  }, [selectedProducts, subtotal]);
+
   const buildHtml = () => {
     const safe = (value: string) => value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const logoHtml = logoUri
       ? `<img src="${logoUri}" style="max-width:140px; max-height:140px; object-fit:contain;" />`
       : '';
+    let productLines = '';
+    try {
+      const parsed = JSON.parse(products);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        productLines = parsed
+          .map((item: { name: string; amount: number }) => `<div>${safe(item.name)} — $${Number(item.amount || 0).toFixed(2)}</div>`)
+          .join('');
+      }
+    } catch {
+      productLines = safe(products);
+    }
     return `
       <html>
         <head>
@@ -78,7 +220,7 @@ const invoiceCreate = () => {
 
           <div class="box">
             <div class="label">Products / Services</div>
-            <div style="margin-top:6px;">${safe(products)}</div>
+            <div style="margin-top:6px;">${productLines}</div>
           </div>
 
           <div class="box">
@@ -112,6 +254,112 @@ const invoiceCreate = () => {
       Alert.alert('PDF failed', 'Could not generate the invoice PDF.');
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleSaveInvoice = async () => {
+    const parsedInvoiceNumber = Number(invoicenumber);
+    const parsedInvoiceDate = Number(invoicedate);
+    const parsedTotal = Number(totalamount);
+    const parsedPercentage = Number(percentage);
+    const parsedTax = Number(tax);
+
+    if (!clientname.trim()) {
+      Alert.alert('Missing client', 'Please enter a client name.');
+      return;
+    }
+    if (!Number.isFinite(parsedInvoiceNumber)) {
+      Alert.alert('Invalid invoice number', 'Please enter a valid invoice number.');
+      return;
+    }
+    if (!Number.isFinite(parsedInvoiceDate)) {
+      Alert.alert('Invalid date', 'Please enter a valid invoice date.');
+      return;
+    }
+    if (!Number.isFinite(parsedTotal)) {
+      Alert.alert('Invalid total', 'Please enter a valid subtotal.');
+      return;
+    }
+    if (!Number.isFinite(parsedPercentage)) {
+      Alert.alert('Invalid discount', 'Please enter a valid discount.');
+      return;
+    }
+    if (!Number.isFinite(parsedTax)) {
+      Alert.alert('Invalid tax', 'Please enter a valid tax.');
+      return;
+    }
+
+    try {
+      setIsSavingInvoice(true);
+      if (subtotal <= 0) {
+        Alert.alert('Invalid total', 'Total amount must be greater than 0.');
+        return;
+      }
+
+      if (isEditing) {
+        await updateInvoice(
+          invoiceId,
+          parsedInvoiceNumber,
+          parsedInvoiceDate,
+          clientname.trim(),
+          products.trim(),
+          subtotal,
+          parsedPercentage,
+          parsedTax,
+          notes.trim(),
+          termsandconditions.trim(),
+          details.trim(),
+          0
+        );
+        await deleteInvoiceItemsByInvoiceId(invoiceId);
+        await Promise.all(
+          Object.values(selectedProducts).map((item) =>
+            createInvoiceItem(
+              invoiceId,
+              Number.isFinite(item.id) ? item.id : null,
+              item.name,
+              Number(item.qty) || 0,
+              Number(item.unitPrice) || 0,
+              item.useManual ? Number(item.manualAmount) || 0 : null,
+              item.useManual ? 1 : 0
+            )
+          )
+        );
+      } else {
+        const newId = await createInvoice(
+          parsedInvoiceNumber,
+          parsedInvoiceDate,
+          clientname.trim(),
+          products.trim(),
+          subtotal,
+          parsedPercentage,
+          parsedTax,
+          notes.trim(),
+          termsandconditions.trim(),
+          details.trim(),
+          0
+        );
+        await Promise.all(
+          Object.values(selectedProducts).map((item) =>
+            createInvoiceItem(
+              newId,
+              Number.isFinite(item.id) ? item.id : null,
+              item.name,
+              Number(item.qty) || 0,
+              Number(item.unitPrice) || 0,
+              item.useManual ? Number(item.manualAmount) || 0 : null,
+              item.useManual ? 1 : 0
+            )
+          )
+        );
+      }
+      Alert.alert('Saved', 'Invoice saved.');
+      router.back();
+    } catch (error) {
+      console.error('Invoice save failed:', error);
+      Alert.alert('Save failed', 'Could not save the invoice.');
+    } finally {
+      setIsSavingInvoice(false);
     }
   };
 
@@ -179,7 +427,7 @@ const invoiceCreate = () => {
   return (
     <ScrollView className="flex-1 bg-white px-4 py-6">
       <View className="flex-row items-center justify-between">
-        <Text className="text-lg font-semibold text-black">New Invoice</Text>
+        <Text className="text-lg font-semibold text-black">{isEditing ? 'Edit Invoice' : 'New Invoice'}</Text>
         <Pressable onPress={() => router.back()}>
           <Text className="text-sm font-medium text-gray-600">Close</Text>
         </Pressable>
@@ -225,17 +473,49 @@ const invoiceCreate = () => {
       />
       <TextInput
         value={products}
-        onChangeText={setProducts}
         placeholder="Products / Services"
         multiline
         className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
+        editable={false}
       />
+      <Pressable
+        onPress={() => setIsProductsModalOpen(true)}
+        className="mt-2 rounded-md border border-gray-300 px-3 py-3"
+      >
+        <Text className="text-sm text-black">Select products</Text>
+      </Pressable>
+      {Object.keys(selectedProducts).length > 0 ? (
+        <View className="mt-3 rounded-md border border-gray-200 bg-white p-3">
+          <View className="flex-row justify-between">
+            <Text className="text-xs font-semibold text-gray-500">Item</Text>
+            <Text className="text-xs font-semibold text-gray-500">Total</Text>
+          </View>
+          {Object.values(selectedProducts).map((item) => {
+            const lineTotal = item.useManual
+              ? Number(item.manualAmount) || 0
+              : (Number(item.qty) || 0) * (Number(item.unitPrice) || 0);
+            return (
+              <View key={item.id} className="mt-2 flex-row items-start justify-between">
+                <View className="flex-1 pr-3">
+                  <Text className="text-sm font-medium text-black">{item.name}</Text>
+                  <Text className="text-xs text-gray-500">
+                    {item.useManual
+                      ? `Manual: $${Number(item.manualAmount || 0).toFixed(2)}`
+                      : `Qty ${item.qty} × $${Number(item.unitPrice || 0).toFixed(2)}`}
+                  </Text>
+                </View>
+                <Text className="text-sm font-semibold text-black">${lineTotal.toFixed(2)}</Text>
+              </View>
+            );
+          })}
+        </View>
+      ) : null}
       <TextInput
         value={totalamount}
-        onChangeText={setTotalamount}
-        placeholder="Subtotal"
+        placeholder="Subtotal (calculated)"
         keyboardType="numeric"
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+        editable={false}
       />
       <View className="mt-3 flex-row gap-3">
         <TextInput
@@ -288,6 +568,20 @@ const invoiceCreate = () => {
           )}
         </Pressable>
         <Pressable
+          onPress={handleSaveInvoice}
+          className="flex-1 items-center rounded-md border border-gray-300 py-3"
+          disabled={isSavingInvoice}
+        >
+          {isSavingInvoice ? (
+            <ActivityIndicator size="small" color="#111827" />
+          ) : (
+            <Text className="font-semibold text-black">Save Invoice</Text>
+          )}
+        </Pressable>
+      </View>
+
+      <View className="mt-3 flex-row gap-3">
+        <Pressable
           onPress={handleSavePdf}
           className="flex-1 items-center rounded-md border border-gray-300 py-3"
           disabled={isSaving}
@@ -299,7 +593,6 @@ const invoiceCreate = () => {
           )}
         </Pressable>
       </View>
-
       <View className="mt-3 flex-row gap-3">
         <Pressable
           onPress={handleSharePdf}
@@ -324,6 +617,132 @@ const invoiceCreate = () => {
           )}
         </Pressable>
       </View>
+      <Modal visible={isProductsModalOpen} animationType="slide">
+        <View className="flex-1 bg-white px-4 py-6">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-lg font-semibold text-black">Select products</Text>
+            <Pressable onPress={() => setIsProductsModalOpen(false)}>
+              <Text className="text-sm font-medium text-gray-600">Done</Text>
+            </Pressable>
+          </View>
+
+          {allProducts.length === 0 ? (
+            <Text className="mt-6 text-sm text-gray-500">No products saved yet.</Text>
+          ) : (
+            <ScrollView className="mt-4">
+              {allProducts.map((product) => {
+                const selected = selectedProducts[product.id];
+                return (
+                  <View
+                    key={product.id}
+                    className="mb-3 rounded-md border border-gray-200 bg-white p-3"
+                  >
+                    <View className="flex-row items-center justify-between">
+                      <View>
+                        <Text className="text-sm font-semibold text-black">{product.name}</Text>
+                        <Text className="text-xs text-gray-500">${product.price.toFixed(2)}</Text>
+                      </View>
+                      <Pressable
+                        onPress={() => {
+                          setSelectedProducts((prev) => {
+                            const next = { ...prev };
+                            if (next[product.id]) {
+                              delete next[product.id];
+                            } else {
+                              next[product.id] = {
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                qty: '1',
+                                unitPrice: product.price.toFixed(2),
+                                manualAmount: product.price.toFixed(2),
+                                useManual: false,
+                              };
+                            }
+                            return next;
+                          });
+                        }}
+                        className={`rounded-full px-3 py-1 ${selected ? 'bg-black' : 'bg-gray-100'}`}
+                      >
+                        <Text className={`text-xs ${selected ? 'text-white' : 'text-gray-700'}`}>
+                          {selected ? 'Selected' : 'Select'}
+                        </Text>
+                      </Pressable>
+                    </View>
+                    {selected ? (
+                      <View className="mt-3">
+                        <View className="flex-row items-center justify-between">
+                          <Text className="text-xs text-gray-500">Use manual amount</Text>
+                          <Pressable
+                            onPress={() =>
+                              setSelectedProducts((prev) => ({
+                                ...prev,
+                                [product.id]: { ...prev[product.id], useManual: !prev[product.id].useManual },
+                              }))
+                            }
+                            className={`rounded-full px-3 py-1 ${selected.useManual ? 'bg-black' : 'bg-gray-100'}`}
+                          >
+                            <Text className={`text-xs ${selected.useManual ? 'text-white' : 'text-gray-700'}`}>
+                              {selected.useManual ? 'Manual' : 'Auto'}
+                            </Text>
+                          </Pressable>
+                        </View>
+                        {selected.useManual ? (
+                          <View className="mt-3">
+                            <Text className="text-xs text-gray-500">Manual amount</Text>
+                            <TextInput
+                              value={selected.manualAmount}
+                              onChangeText={(text) =>
+                                setSelectedProducts((prev) => ({
+                                  ...prev,
+                                  [product.id]: { ...prev[product.id], manualAmount: text },
+                                }))
+                              }
+                              keyboardType="numeric"
+                              className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
+                            />
+                          </View>
+                        ) : (
+                          <View className="mt-3 flex-row gap-3">
+                            <View className="flex-1">
+                              <Text className="text-xs text-gray-500">Qty</Text>
+                              <TextInput
+                                value={selected.qty}
+                                onChangeText={(text) =>
+                                  setSelectedProducts((prev) => ({
+                                    ...prev,
+                                    [product.id]: { ...prev[product.id], qty: text },
+                                  }))
+                                }
+                                keyboardType="numeric"
+                                className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
+                              />
+                            </View>
+                            <View className="flex-1">
+                              <Text className="text-xs text-gray-500">Unit price</Text>
+                              <TextInput
+                                value={selected.unitPrice}
+                                onChangeText={(text) =>
+                                  setSelectedProducts((prev) => ({
+                                    ...prev,
+                                    [product.id]: { ...prev[product.id], unitPrice: text },
+                                  }))
+                                }
+                                keyboardType="numeric"
+                                className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
+                              />
+                            </View>
+                          </View>
+                        )}
+                      </View>
+                    ) : null}
+                  </View>
+                );
+              })}
+            </ScrollView>
+          )}
+        </View>
+      </Modal>
       {pdfUri ? (
         <Text className="mt-3 text-xs text-gray-500">PDF ready to export.</Text>
       ) : null}

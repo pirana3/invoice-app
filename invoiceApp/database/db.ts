@@ -71,7 +71,7 @@ export const initDatabase = () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       clientname TEXT NOT NULL,
       invoicenumber REAL NOT NULL, 
-      invociedate REAL NOT NULL,
+      invoicedate REAL NOT NULL,
       products TEXT NOT NULL,
       totalamount REAL NOT NULL,
       percentage REAL NOT NULL,
@@ -79,9 +79,21 @@ export const initDatabase = () => {
       notes TEXT NOT NULL,
       termsandconditions TEXT NOT NULL DEFAULT '',
       details TEXT NOT NULL DEFAULT '',
+      completed INTEGER NOT NULL DEFAULT 0
       ); 
 
-      CREATETABLE IF NOT EXISTS createestimates (
+    CREATE TABLE IF NOT EXISTS invoice_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      invoiceId INTEGER NOT NULL,
+      productId INTEGER,
+      name TEXT NOT NULL,
+      quantity REAL NOT NULL,
+      unitPrice REAL NOT NULL,
+      manualAmount REAL,
+      useManual INTEGER NOT NULL DEFAULT 0
+    );
+
+      CREATE TABLE IF NOT EXISTS createestimates (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         clientname TEXT NOT NULL,
         estimatenumber REAL NOT NULL,
@@ -96,4 +108,5 @@ export const initDatabase = () => {
   );
 
   `);
+
 };
