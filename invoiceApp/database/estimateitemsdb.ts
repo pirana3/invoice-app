@@ -19,7 +19,7 @@ export const getEstimateItemsByEstimateId = async (estimateId: number): Promise<
     );
 };
 
-export const delteEstimateItemsByEstimateId = async (estimateId: number): Promise<boolean> => {
+export const deleteEstimateItemsByEstimateId = async (estimateId: number): Promise<boolean> => {
     const result = db.runSync(`DELETE FROM estimate_items WHERE estimateId = ?`, estimateId);
     return result.changes > 0;
 };

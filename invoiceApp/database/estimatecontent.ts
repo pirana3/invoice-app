@@ -104,12 +104,12 @@ export const searchEstimates = async (query: string): Promise<EstimateContent[]>
     )
 };
 
-export const deleteInvoice = async (id: number): Promise<boolean> =>{
+export const deleteEstimates = async (id: number): Promise<boolean> =>{
     const result = db.runSync(`DELETE FROM createestimates WHERE id = ?`, id);
     return result.changes > 0;
 };
 
-export const toggleEstimateCompletion = async (id: number, completed: boolean): Promise<boolean> => {
+export const toggleEstimateCompleted = async (id: number, completed: boolean): Promise<boolean> => {
     const result = db.runSync(`UPDATE createestimates SET estimatecompleted = ? WHERE id = ?`, completed ? 1 : 0, id);
     return result.changes > 0;
 }

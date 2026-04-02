@@ -6,12 +6,12 @@ import * as Sharing from 'expo-sharing';
 import { Directory, File, Paths} from 'expo-file-system';
 import { getBusinessInfo} from '@/database/businessinfodb';
 import { createEstimate, getEstimateById, updateEstiamte } from '@/database/estimatecontent';
-import { getProducts } from '@/database/productdb';
+import { getProducts, type Product } from '@/database/productdb';
 import {
-    createInvoiceItem,
-    deleteInvoiceItemsByInvoiceId,
-    getInvoiceItemsByInvoiceId,
-} from '@/database/invoiceitemsdb';
+    createEstimateItem,
+    deleteEstimateItemsByEstimateId,
+    getEstimateItemsByEstimateId,
+} from '@/database/estimateitemsdb';
 
 
 const estimateCreate = () => {
@@ -27,8 +27,84 @@ const estimateCreate = () => {
     const [estiamtetermsandconditions, setEstiamtetermsandconditions] = useState('');
     const [estiamtedetails, setEstiamtedetails] = useState('');
 
-    const[logoUri, setLogoUri] = useState<string | null>(null);
-    
+    const [logoUri, setLogoUri] = useState<string | null>(null);
+    const [centerLogo, setCenterLogo] = useState(false);
+    const [pdfUri, setPdfUri] = useState<string | null>(null);
+    const [isGenerating, SetIsGeneraating] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+    const [isPrinting, setIsPrinting] = useState(false);
+    const [isSavingInvoice, setIsSavingInvoice] = useState(false);
+    const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
+    const [selectedProducts, setSelectedProducts] = useState<
+        Record<
+            number,
+            {
+                id: number;
+                name: String;
+                price: number;
+                qty: String;
+                unitPrice: String;
+                manualPrice: String;
+                useManual: boolean;
+            }
+        >
+    >({});
+
+    const params = useLocalSearchParams<{ id?: string }>();
+    const invoiceId = params.id ? Number(params.id) : NaN;
+    const isEditing = Number.isFinite(estimateId);
+
+    useEffect(() => {
+        const loadLogo = async () => {
+            const buisnesses = await getBusinessInfo();
+            const latest = buisnesses?.[0];
+            setLogoUri(latest?.logo || null);
+        };
+        loadLogo();
+    }, []);
+
+    useEffect(() => {
+        const loadEstimate = async () => {
+            if (!isEditing) return;
+            const estiamte = await getEstimateById(estiamteId);
+            if (!estiamte) return;
+            setCleintname(estiamte.clientname);
+            setEstimatenumber(String(estiamte.estimatenumber));
+            setEstimatedate(String(estiamte.estimatedate));
+            setEstimateproducts(estiamte.estiamteproducts); 
+            setEstimatetotalamount(String(estiamte.estiamtetotalamount));
+            setEstimatepercentage(String(estiamte.estiamntepercentage));
+            setEstimatetax(String(estiamte.estiamtetax));
+            setEstiamtenotes(estiamte.estiamtenotes);
+            setEstiamtetermsandconditions(estiamte.estiamtetermsandconditions);
+            setEstiamtedetails(estiamte.estiamtedetails);
+            const items = await getEstimateItemsByEstimateId(estiamteId);
+            if(items.length > 0) {
+                const mapped: Record<
+                    number,
+                    { id: number; name: String; price: number; qty: String; unitPrice: String; manualPrice: String; useManual: boolean }
+                > = {};
+                items.forEach((item) => {
+                    const key = item.productId || item.id;
+                    mapped[key] = {
+                        id: key,
+                        name: item.estimatename,
+                        price: Number(item.unitPrice ?? 0),
+                        qty: String(item.estimatequantity ?? 1),
+                        unitPrice: String(item.unitPrice ?? 0),
+                        manualAmount: String(item.manualAmount ?? 0),
+                        useManual: item.estimateuseManual === 1,
+                    },
+                });
+                setSelectedProducts(mapped);
+            } else {
+                
+            }
+        }
+    })
+
   return (
     <View>
       <Text>estimateCreate</Text>
