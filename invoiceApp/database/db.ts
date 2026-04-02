@@ -104,8 +104,20 @@ export const initDatabase = () => {
         estimatetax REAL NOT NULL,
         estiamtenotes TEXT NOT NULL,
         estiamtetermsandconditions TEXT NOT NULL DEFAULT '',
-        estiamtedetails TEXT NOT NULL DEFAULT ''
-  );
+        estiamtedetails TEXT NOT NULL DEFAULT '',
+        estimatecompleted INTEGER NOT NULL DEFAULT 0
+        );
+
+      CREATE TABLE IF NOT EXISTS estimateitems (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        estimateId INTEGER NOT NULL,
+        productId INTEGER,
+        estiamtename TEXT NOT NULL,
+        estimatequantity REAL NOT NULL,
+        estimateunitPrice REAL NOT NULL,
+        estimatemanualAmount REAL,
+        estimateuseManual INTEGER NOT NULL DEFAULT 0
+      );
 
   `);
 
