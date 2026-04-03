@@ -2,8 +2,8 @@ import { Text, View, ActivityIndicator, Alert, ScrollView, Pressable} from 'reac
 import EstemateProfile from '@/app/(tabs)/(estimate)/estimateProfile';
 import { getEstimates, searchEstimates, deleteEstimates, toggleEstimateCompleted, type EstimateContent } from '@/database/estimatecontent';
 import { useLocalSearchParams, router } from 'expo-router';
-import Estiamte
-import React from 'react'
+import EstiamteSearch from '@/components/EstimateSearch';
+import React, { useEffect, useState} from 'react';
 
 const index = () => {
   return (
