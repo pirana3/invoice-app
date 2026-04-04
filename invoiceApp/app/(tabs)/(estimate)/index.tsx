@@ -8,7 +8,7 @@ import React, { useEffect, useState} from 'react';
 const index = () => {
   return (
     <View>
-      <Text>index</Text>
+      <Text>inde</Text>
     </View>
   )
 }
