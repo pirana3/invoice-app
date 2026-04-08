@@ -119,6 +119,19 @@ export const initDatabase = () => {
         estimateuseManual INTEGER NOT NULL DEFAULT 0
       );
 
+      CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cname TEXT NOT NULL,
+        cemail TEXT NOT NULL,
+        cphone REAL NOT NULL,
+        caddress TEXT NOT NULL,
+        ccity TEXT NOT NULL,
+        cstate TEXT NOT NULL,
+        ccompany TEXT NOT NULL,
+        cdetails TEXT NOT NULL DEFAULT '',
+        cphoto TEXT
+        );
+
   `);
 
 };
