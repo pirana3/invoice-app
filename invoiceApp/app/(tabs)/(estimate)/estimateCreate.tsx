@@ -102,9 +102,57 @@ const estimateCreate = () => {
             } else {
                 try {
                     const parsed = JSON.parse(estimate.products);
-                    if (Array)
-                }
+                    if (Array.isArray(parsed)) {
+                        const mapped: Record<
+                            number,
+                            { id: number; name: String; price: number; qty: String; unitPrice: String; manualPrice: String; useManual: boolean }
+                        > = {};
+                        parsed.forEach((item) => {
+                            if (item?.id != null){
+                                mapped[item.id] = {
+                                    id: item.id,
+                                    name: item.name ?? 'Item',
+                                    price: Number(item.price ?? 0),
+                                    qty: '1',
+                                    unitPrice: String(item.amount ?? 0),
+                                    manualAmount: String(item.amount ?? 0),
+                                    useManual: false,
+                                };
+                            }
+                        });
+                        setSelectedProducts(mapped);
+                    }
+                } catch {}
             }
+        };
+        loadEstimate();
+    }, [estimateId, isEditing]);
+
+    useEffect(() => {
+        const loadProducts = async () => {
+            const items = await getProducts();
+            setAllProducts(items);
+        };
+        if (isProductsModalOpen){
+            loadProducts();
+        }
+    }, [isProductsModalOpen]);
+
+    const subtotal = useMemo(() => {
+        const selectTotal = Object.values(selectedProdcuts).reduce((sum, item) => {
+            const selectedTotal = Object.values(selectedProducts).reduce((sum, item) => {
+                const manual = Number(item.manualAmount);
+                return Number.isFinite(manual) ? sum + manual : sum;
+            }
+            const qty = Number(item.qty);
+            const unit = Number(item.unitPrice);
+            if (!Number.isFinite(qty) || !Number.isFinite(unit)) return sum;
+            return sum + qty * unit;
+        }, 0);
+        return selectTotal || Number(totalamount) || 0;
+    }, [selectedProducts, totalamount]);
+    const taxAm
+    }
         }
     })
 
