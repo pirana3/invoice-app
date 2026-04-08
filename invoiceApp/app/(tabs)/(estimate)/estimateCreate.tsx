@@ -100,7 +100,10 @@ const estimateCreate = () => {
                 });
                 setSelectedProducts(mapped);
             } else {
-                
+                try {
+                    const parsed = JSON.parse(estimate.products);
+                    if (Array)
+                }
             }
         }
     })
