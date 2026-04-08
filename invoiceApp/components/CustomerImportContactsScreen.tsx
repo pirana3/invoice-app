@@ -21,7 +21,7 @@ const CustomerImportContactsScreen = ({
   onSelect,
 }: CustomerImportContactsScreenProps) => {
   const [loading, setLoading] = useState(false);
-  const [contacts, setContacts] = useState<Contacts.Contact[]>([]);
+  const [contacts, setContacts] = useState<Contacts.ExistingContact[]>([]);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const CustomerImportContactsScreen = ({
               const phone = contact.phoneNumbers?.[0]?.number;
               return (
                 <Pressable
-                  key={contact.id}
+                  key={contact.id ?? `${contact.name}-${contact.company ?? ''}`}
                   onPress={() =>
                     onSelect({
                       name: contact.name ?? 'Unknown',
