@@ -102,17 +102,17 @@ export const initDatabase = () => {
         estimatetotalamount REAL NOT NULL,
         estimatepercentage REAL NOT NULL,
         estimatetax REAL NOT NULL,
-        estiamtenotes TEXT NOT NULL,
-        estiamtetermsandconditions TEXT NOT NULL DEFAULT '',
-        estiamtedetails TEXT NOT NULL DEFAULT '',
+        estimatenotes TEXT NOT NULL,
+        estimatetermsandconditions TEXT NOT NULL DEFAULT '',
+        estimatedetails TEXT NOT NULL DEFAULT '',
         estimatecompleted INTEGER NOT NULL DEFAULT 0
-        );
+      );
 
-      CREATE TABLE IF NOT EXISTS estimateitems (
+      CREATE TABLE IF NOT EXISTS estimate_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         estimateId INTEGER NOT NULL,
         productId INTEGER,
-        estiamtename TEXT NOT NULL,
+        estimatename TEXT NOT NULL,
         estimatequantity REAL NOT NULL,
         estimateunitPrice REAL NOT NULL,
         estimatemanualAmount REAL,

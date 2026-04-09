@@ -1,22 +1,22 @@
 import { Text, View, ActivityIndicator, Alert, ScrollView, Pressable} from 'react-native';
 import EstimateProfile from '@/app/(tabs)/(estimate)/estimateProfile';
-import { getEstimates, searchEstimates, deleteEstimates, toggleEstimateCompleted, type EstimateContent } from '@/database/estimatecontent';
+import { convertEstimateToInvoice, getEstimates, searchEstimates, deleteEstimates, toggleEstimateCompleted, type EstimateContent } from '@/database/estimatecontent';
 import { useLocalSearchParams, router } from 'expo-router';
 import EstimateSearch from '@/components/EstimateSearch';
 import React, { useEffect, useState} from 'react';
 
 const estimateContentList = () => {
   const params = useLocalSearchParams<{ query?: string}>();
-  const [allEstimates, setAllEstiamtes] = useState<EstimateContent[]>([]);
-  const [fillteredEstimates, setFillteredEstimates] = useState<EstimateContent[]>([]);
+  const [allEstimates, setAllEstimates] = useState<EstimateContent[]>([]);
+  const [filteredEstimates, setFilteredEstimates] = useState<EstimateContent[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadEstimates = async () => {
     try{
       setLoading(true);
       const data = await getEstimates();
-      setAllEstiamtes(data);
-      setFillteredEstimates(data);
+      setAllEstimates(data);
+      setFilteredEstimates(data);
     } catch (error){
       console.error('Error loading estiamtes:', error);
     } finally {
@@ -29,20 +29,20 @@ const estimateContentList = () => {
   }, []);
 
   useEffect(() => {
-    const fillterEstimates = async () => {
+    const filterEstimates = async () => {
       if (!params.query || params.query.trim() === ''){
-        setFillteredEstimates(allEstimates);
+        setFilteredEstimates(allEstimates);
       } else {
         try {
           const results = await searchEstimates(params.query);
-          setFillteredEstimates(results);
+          setFilteredEstimates(results);
         } catch (error){
           console.error('Error searching estimates:', error);
-          setFillteredEstimates([]);
+          setFilteredEstimates([]);
         }
       }
     };
-    fillterEstimates();
+    filterEstimates();
   }, [params.query, allEstimates]);
 
   const handleCreate = () => {
@@ -68,10 +68,20 @@ const estimateContentList = () => {
   };
 
   const handleToggleCompleted = async (estimate: EstimateContent) => {
-    const next = estimate.completed ? 0 : 1;
+    const next = estimate.estimatecompleted ? 0 : 1;
     await toggleEstimateCompleted(estimate.id, next);
+    if (next === 1) {
+      await convertEstimateToInvoice(estimate.id);
+    }
     loadEstimates();
-  }
+  };
+
+  const handleConvert = async (estimate: EstimateContent) => {
+    await convertEstimateToInvoice(estimate.id);
+    await toggleEstimateCompleted(estimate.id, 1);
+    loadEstimates();
+    router.push('/(tabs)/(invoice)/invoiceCreate' as never);
+  };
 
   return (
     <ScrollView className='flex-1 bg-gray-50'>
@@ -88,7 +98,7 @@ const estimateContentList = () => {
             </Pressable>
         </View>
 
-        {laoding ? (
+        {loading ? (
           <View className='flex-1 items-center justify-center py-10'>
             <ActivityIndicator size="large" color="#111827" />
           </View>
@@ -98,7 +108,7 @@ const estimateContentList = () => {
           </View>
         ) : (
           <View className="px-4 mt-4">
-            {fillteredEstimates.map((estimate) => (
+            {filteredEstimates.map((estimate) => (
               <EstimateProfile
                 key={estimate.id}
                 estimate={estimate}
@@ -106,6 +116,7 @@ const estimateContentList = () => {
                 onEdit={() => handleEdit(estimate.id)}
                 onDelete={() => handleDelete(estimate)}
                 onToggleCompleted={() => handleToggleCompleted(estimate)}
+                onConvert={() => handleConvert(estimate)}
               />
             ))}
           </View>
@@ -116,4 +127,3 @@ const estimateContentList = () => {
 }
 
 export default estimateContentList;
-

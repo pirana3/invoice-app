@@ -6,16 +6,16 @@ export type EstimateItem = {
     productId?: number | null;
     estimatename: string;
     estimatequantity: number;
-    estimateunitprice: number;
-    estimatemanualamount?: number | null;
-    estimateusemanual: number;
+    estimateunitPrice: number;
+    estimatemanualAmount?: number | null;
+    estimateuseManual: number;
 };
 
 export const getEstimateItemsByEstimateId = async (estimateId: number): Promise<EstimateItem[]> => {
     return db.getAllSync<EstimateItem>(
         `SELECT id, estimateId, productId, estimatename, estimatequantity, estimateunitPrice, estimatemanualAmount, estimateuseManual
          FROM estimate_items WHERE estimateId = ? ORDER BY id ASC`,
-         estimateId
+        estimateId
     );
 };
 
@@ -35,14 +35,14 @@ export const createEstimateItem = async (
 ): Promise<number> => {
     const result = db.runSync(
         `INSERT INTO estimate_items (estimateId, productId, estimatename, estimatequantity, estimateunitPrice, estimatemanualAmount, estimateuseManual)
-            VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            estimateId,
-            productId,
-            estimatename,
-            estimatequantity,
-            estimateunitPrice,
-            estimatemanualAmount,
-            estimateuseManual
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        estimateId,
+        productId,
+        estimatename,
+        estimatequantity,
+        estimateunitPrice,
+        estimatemanualAmount,
+        estimateuseManual
     );
     return result.lastInsertRowId;
 };
