@@ -14,7 +14,7 @@ import adddocument from "../assets/icon/adddocument.png";
 import document from "../assets/icon/document.png";
 import editdocument from "../assets/icon/editdocument.png";
 import opendocument from "../assets/icon/opendocument.png";
-import saveddocument from "../assets/icon/saveddocument.png";
+import saveddocument from "../assets/icon/savedocument.png";
 
 
 export const icons = {
