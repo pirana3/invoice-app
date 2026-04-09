@@ -69,18 +69,36 @@ const estimateContentList = () => {
 
   const handleToggleCompleted = async (estimate: EstimateContent) => {
     const next = estimate.estimatecompleted ? 0 : 1;
-    await toggleEstimateCompleted(estimate.id, next);
     if (next === 1) {
-      await convertEstimateToInvoice(estimate.id);
+      Alert.alert('Mark as won', `Convert estimate #${estimate.estimatenumber} to an invoice?`, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Convert',
+          onPress: async () => {
+            await toggleEstimateCompleted(estimate.id, 1);
+            await convertEstimateToInvoice(estimate.id);
+            loadEstimates();
+          },
+        },
+      ]);
+      return;
     }
+    await toggleEstimateCompleted(estimate.id, 0);
     loadEstimates();
   };
 
   const handleConvert = async (estimate: EstimateContent) => {
-    await convertEstimateToInvoice(estimate.id);
-    await toggleEstimateCompleted(estimate.id, 1);
-    loadEstimates();
-    router.push('/(tabs)/(invoice)/invoiceCreate' as never);
+    Alert.alert('Convert estimate', `Convert estimate #${estimate.estimatenumber} to an invoice?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Convert',
+        onPress: async () => {
+          await convertEstimateToInvoice(estimate.id);
+          await toggleEstimateCompleted(estimate.id, 1);
+          loadEstimates();
+        },
+      },
+    ]);
   };
 
   return (
