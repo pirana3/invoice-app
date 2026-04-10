@@ -7,6 +7,7 @@ import { Directory, File, Paths } from 'expo-file-system';
 import { getBusinessInfo } from '@/database/businessinfodb';
 import { createInvoice, getInvoiceById, updateInvoice } from '@/database/invoicecontent';
 import { getProducts, type Product } from '@/database/productdb';
+import { useLanguage } from '@/service/language';
 import {
   createInvoiceItem,
   deleteInvoiceItemsByInvoiceId,
@@ -15,6 +16,7 @@ import {
 
 const invoiceCreate = () => {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [clientname, setClientname] = useState('');
   const [invoicenumber, setInvvoicenumber] = useState('');
@@ -265,34 +267,26 @@ const invoiceCreate = () => {
     const parsedTax = Number(tax);
 
     if (!clientname.trim()) {
-      Alert.alert('Missing client', 'Please enter a client name.');
+      Alert.alert(t('invoice_client_missing'));
       return;
     }
     if (!Number.isFinite(parsedInvoiceNumber)) {
-      Alert.alert('Invalid invoice number', 'Please enter a valid invoice number.');
+      Alert.alert(t('invoice_number_invalid'));
       return;
     }
     if (!Number.isFinite(parsedInvoiceDate)) {
-      Alert.alert('Invalid date', 'Please enter a valid invoice date.');
+      Alert.alert(t('invoice_date_invalid'));
       return;
     }
     if (!Number.isFinite(parsedTotal)) {
-      Alert.alert('Invalid total', 'Please enter a valid subtotal.');
-      return;
-    }
-    if (!Number.isFinite(parsedPercentage)) {
-      Alert.alert('Invalid discount', 'Please enter a valid discount.');
-      return;
-    }
-    if (!Number.isFinite(parsedTax)) {
-      Alert.alert('Invalid tax', 'Please enter a valid tax.');
+      Alert.alert(t('invoice_total_invalid'));
       return;
     }
 
     try {
       setIsSavingInvoice(true);
       if (subtotal <= 0) {
-        Alert.alert('Invalid total', 'Total amount must be greater than 0.');
+        Alert.alert(t('invoice_total_invalid'));
         return;
       }
 
@@ -353,11 +347,11 @@ const invoiceCreate = () => {
           )
         );
       }
-      Alert.alert('Saved', 'Invoice saved.');
+      Alert.alert(t('invoice_saved'));
       router.back();
     } catch (error) {
       console.error('Invoice save failed:', error);
-      Alert.alert('Save failed', 'Could not save the invoice.');
+      Alert.alert(t('invoice_fail_save'));
     } finally {
       setIsSavingInvoice(false);
     }
@@ -365,7 +359,7 @@ const invoiceCreate = () => {
 
   const handleSavePdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf'));
       return;
     }
     try {
@@ -381,7 +375,7 @@ const invoiceCreate = () => {
       Alert.alert('Saved', `Saved to ${destFile.uri}`);
     } catch (error) {
       console.error('Save failed:', error);
-      Alert.alert('Save failed', 'Could not save the PDF.');
+      Alert.alert(t('invoice_no_save_pdf'));
     } finally {
       setIsSaving(false);
     }
@@ -389,7 +383,7 @@ const invoiceCreate = () => {
 
   const handleSharePdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf'));
       return;
     }
     try {
@@ -402,7 +396,7 @@ const invoiceCreate = () => {
       await Sharing.shareAsync(pdfUri);
     } catch (error) {
       console.error('Share failed:', error);
-      Alert.alert('Share failed', 'Could not share the PDF.');
+      Alert.alert('');
     } finally {
       setIsSharing(false);
     }

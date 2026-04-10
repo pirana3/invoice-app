@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Image, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-
+import { useLanguage } from '@/service/language';
 import BusinessinfoButton from '@/components/BusinessinfoButton';
 import useFetch from '@/service/usefetch';
 import { getBusinessInfo } from '@/database/businessinfodb';
@@ -9,7 +9,7 @@ import { getBusinessInfo } from '@/database/businessinfodb';
 const ProfileBusiness = () => {
   const router = useRouter();
   const { data, loading, error, refetch } = useFetch(getBusinessInfo);
-
+  const { t } = useLanguage();
   const latestInfo = data?.[0] ?? null;
 
   useFocusEffect(
@@ -21,7 +21,7 @@ const ProfileBusiness = () => {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <Text>Loading...</Text>
+        <Text>{t('business_index')}</Text>
       </View>
     );
   }
@@ -29,14 +29,14 @@ const ProfileBusiness = () => {
   if (error) {
     return (
       <View className="flex-1 items-center justify-center bg-white px-4">
-        <Text className="text-red-500">Could not load business info.</Text>
+        <Text className="text-red-500">{t('business_cant_load')}</Text>
       </View>
     );
   }
 
   return (
     <View className="flex-1 gap-2 bg-white px-4 py-4">
-      <Text className="mb-2 text-lg font-semibold">Business Information</Text>
+      <Text className="mb-2 text-lg font-semibold">{t('business_info')}</Text>
       {latestInfo ? (
         <View className="gap-2">
           {latestInfo.logo ? (
@@ -52,7 +52,7 @@ const ProfileBusiness = () => {
           <Text>Industry: {latestInfo.industry}</Text>
         </View>
       ) : (
-        <Text>No business information saved yet.</Text>
+        <Text>{t('business_info_not_saved')}</Text>
       )}
 
       <BusinessinfoButton

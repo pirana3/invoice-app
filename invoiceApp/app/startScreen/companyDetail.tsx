@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import useFetch from '@/service/usefetch';
 import { setOnboardingComplete } from '@/database/appstate';
 import BusinessinfoButton from '@/components/BusinessinfoButton';
+import { useLanguage } from '@/service/language';
 import {
   createBusinessInfo,
   getBusinessInfo,
@@ -14,6 +15,7 @@ import {
 
 const CompanyDetail = () => {
   const router = useRouter();
+  const { t } = useLanguage();
   const { data, loading, refetch } = useFetch(getBusinessInfo);
 
   const [bname, setBname] = useState('');
@@ -47,7 +49,7 @@ const CompanyDetail = () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please allow photo library access to choose a logo.');
+      Alert.alert(t('business_permission_needed'), t('business_permission_message'));
       return;
     }
 
@@ -66,27 +68,27 @@ const CompanyDetail = () => {
     const parsedPhone = Number(phone);
 
     if (!bname.trim()) {
-      Alert.alert('Missing name', 'Please enter your company name.');
+      Alert.alert(t('business_missing_name'), t('business_missing_name'));
       return;
     }
 
     if (!email.trim()) {
-      Alert.alert('Missing email', 'Please enter your company email.');
+      Alert.alert(t('business_missing_email'), t('business_missing_email'));
       return;
     }
 
     if (!Number.isFinite(parsedPhone)) {
-      Alert.alert('Invalid phone', 'Please enter a valid phone number.');
+      Alert.alert(t('business_invalid_phone'), t('business_invalid_phone'));
       return;
     }
 
     if (!address.trim()) {
-      Alert.alert('Missing address', 'Please enter your company address.');
+      Alert.alert(t('business_missing_address'), t('business_missing_address'));
       return;
     }
 
     if (!industry.trim()) {
-      Alert.alert('Missing industry', 'Please enter your company industry.');
+      Alert.alert(t('business_missing_industry'), t('business_missing_industry'));
       return;
     }
 
@@ -119,7 +121,7 @@ const CompanyDetail = () => {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Save failed', 'Could not save business info.');
+      Alert.alert(t('business_save_failed'), t('business_save_failed'));
     } finally {
       setIsSaving(false);
     }
@@ -128,7 +130,7 @@ const CompanyDetail = () => {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <Text>Loading...</Text>
+        <Text>{t('business_loading')}</Text>
       </View>
     );
   }
@@ -136,27 +138,27 @@ const CompanyDetail = () => {
   return (
     <View className="flex-1 gap-2 bg-white px-4 py-6">
       <Text>
-        {latestInfo ? 'Edit your company details' : 'Please enter your company details'}
+        {latestInfo ? t('business_title_edit') : t('business_title_new')}
       </Text>
 
       <TextInput
         onChangeText={setBname}
         value={bname}
-        placeholder="Company Name"
+        placeholder={t('business_name')}
         className="rounded-md border border-gray-300 px-3 py-2"
       />
 
       <TextInput
         onChangeText={setEmail}
         value={email}
-        placeholder="Company Email"
+        placeholder={t('business_email')}
         className="rounded-md border border-gray-300 px-3 py-2"
       />
 
       <TextInput
         onChangeText={setPhone}
         value={phone}
-        placeholder="Phone Number"
+        placeholder={t('business_phone')}
         keyboardType="numeric"
         className="rounded-md border border-gray-300 px-3 py-2"
       />
@@ -164,26 +166,26 @@ const CompanyDetail = () => {
       <TextInput
         onChangeText={setAddress}
         value={address}
-        placeholder="Address"
+        placeholder={t('business_address')}
         className="rounded-md border border-gray-300 px-3 py-2"
       />
 
       <TextInput
         onChangeText={setIndustry}
         value={industry}
-        placeholder="Industry"
+        placeholder={t('business_industry')}
         className="rounded-md border border-gray-300 px-3 py-2"
       />
 
       <BusinessinfoButton
-        title={logo.trim() ? 'Change Business Photo' : 'Upload Business Photo (Optional)'}
+        title={logo.trim() ? t('business_photo_change') : t('business_photo_upload')}
         onPress={handlePickLogo}
         style="mt-1"
       />
 
       {logo.trim() ? (
         <BusinessinfoButton
-          title="Remove Photo"
+          title={t('business_photo_remove')}
           onPress={() => setLogo('')}
           style="mt-1 bg-red-500"
         />
@@ -197,7 +199,7 @@ const CompanyDetail = () => {
       ) : null}
 
       <BusinessinfoButton
-        title={latestInfo ? 'Save Changes' : 'Save Info'}
+        title={latestInfo ? t('business_save_changes') : t('business_save_info')}
         onPress={handleSave}
         isLoading={isSaving}
         style="mt-3"
