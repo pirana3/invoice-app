@@ -12,6 +12,7 @@ type EstimateProfileProps = {
 };
 
 const estimateProfile = ({ estimate, onPress, onEdit, onDelete, onToggleCompleted, onConvert }: EstimateProfileProps) => {
+  if (!estimate) return null;
   return (
     <Pressable onPress={onPress} className="mb-3 rounded-md border border-gray-200 bg-white p-4">
       <View className="flex-row items-start justify-between">

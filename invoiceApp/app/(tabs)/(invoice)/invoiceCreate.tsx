@@ -412,7 +412,7 @@ const invoiceCreate = () => {
       await Print.printAsync({ uri: pdfUri });
     } catch (error) {
       console.error('Print failed:', error);
-      Alert.alert('Print failed', 'Could not print the PDF.');
+      Alert.alert(t('invoice_print_failed'));
     } finally {
       setIsPrinting(false);
     }

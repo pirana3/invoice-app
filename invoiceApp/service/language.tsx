@@ -50,9 +50,11 @@ const translations = {
     invoice_total_invalid: 'Invalid total, Please enter a valid total.',
     invoice_saved: 'Invovice Saved',
     invoice_fail_save: 'Invoice did not save properly, Could not save the invoice',
-    invoice_no_pdf: 'No PDF, Generate Pdf first.',
-    invoice_no_save_pdf: 'Saved failed, Could not save PDF',
-    invoice_shared_failed: 'Share failed, Could not share the PDF'
+    invoice_no_pdf: 'No Invoice, Generate Invoice first.',
+    invoice_no_save_pdf: 'Saved failed, Could not save Invoice',
+    invoice_shared_failed: 'Share failed, Sharing is not available on this device',
+    invoice_print_failed: ' Print failed, Could not print the Invoice',
+
 
   },
   es: {
@@ -93,9 +95,10 @@ const translations = {
     invoice_total_invalid: 'Total invalido, Por favor ingrese un total valido.',
     invoice_saved: 'Invoice Guardado',
     invoice_fail_save: 'Invoice no se guardo, No se pudo guardar el Invoice.',
-    invoice_no_pdf: 'No PDF, Generar el PDF primero.',
-    invoice_no_save_pdf: 'Error al guardar, No se pudo guardar el PDF',
-    invoice_shared_failed: 'Error al compartir, No se pudo compatir el PDF',
+    invoice_no_pdf: 'No PDF, Generar el Invoice primero.',
+    invoice_no_save_pdf: 'Error al guardar, No se pudo guardar el Invoice',
+    invoice_shared_failed: 'Error al compartir, No se pudo compatir el Invoice',
+    invoice_print_failed: 'Imprimir fallo, No se Pudo Iimprimir el Invoice'
 
   },
 } as const;

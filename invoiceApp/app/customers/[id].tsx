@@ -55,7 +55,8 @@ const CustomerProfileScreen = () => {
   const canEdit = useMemo(() => isNew || isEditing, [isNew, isEditing]);
 
   const handleSave = async () => {
-    const parsedPhone = Number(cphone);
+    const normalizedPhone = cphone.replace(/\D/g, '');
+    const parsedPhone = Number(normalizedPhone);
 
     if (!cname.trim()) {
       Alert.alert('Missing name', 'Please enter the customer name.');
@@ -65,7 +66,7 @@ const CustomerProfileScreen = () => {
       Alert.alert('Missing email', 'Please enter the customer email.');
       return;
     }
-    if (!Number.isFinite(parsedPhone) || parsedPhone < 0) {
+    if (!Number.isFinite(parsedPhone) || parsedPhone < 0 || !normalizedPhone) {
       Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
       return;
     }

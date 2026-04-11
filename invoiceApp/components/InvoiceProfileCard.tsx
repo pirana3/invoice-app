@@ -1,24 +1,24 @@
 import { Text, View, Pressable } from 'react-native';
 import React from 'react';
-
 import type { InvoiceContent } from '@/database/invoicecontent';
 
-type InvoiceProfileProps ={
-    invocies: InvoiceContent;
-    onPress: () => void;
-    onEdit: () => void;
-    onDelete: () => void;
-    onToggleCompleted: () => void;
-}
+type InvoiceProfileProps = {
+  invocies: InvoiceContent;
+  onPress: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onToggleCompleted: () => void;
+};
 
-const inoviceProfile = ({ invocies, onPress, onEdit, onDelete, onToggleCompleted }: InvoiceProfileProps) => {
+const InvoiceProfileCard = ({ invocies, onPress, onEdit, onDelete, onToggleCompleted }: InvoiceProfileProps) => {
+  if (!invocies) return null;
   return (
     <Pressable onPress={onPress} className="mb-3 rounded-md border border-gray-200 bg-white p-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
           <Text className="text-base font-semibold text-black">{invocies.clientname}</Text>
           <Text className="mt-1 text-sm text-gray-600" numberOfLines={2}>
-        {invocies.products || 'No description'}
+            {invocies.products || 'No description'}
           </Text>
         </View>
         <Pressable
@@ -42,7 +42,7 @@ const inoviceProfile = ({ invocies, onPress, onEdit, onDelete, onToggleCompleted
         </View>
       </View>
     </Pressable>
-  )
-}
+  );
+};
 
-export default inoviceProfile
+export default InvoiceProfileCard;

@@ -10,6 +10,7 @@ type CustomersProfileProps = {
 };
 
 const customersProfile = ({ customer, isMain, associatesCount, onPress }: CustomersProfileProps) => {
+  if (!customer) return null;
   return (
     <Pressable onPress={onPress} className="mb-3 rounded-md border border-gray-200 bg-white p-4">
       <View className="flex-row items-center justify-between">

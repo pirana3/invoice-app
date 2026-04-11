@@ -1,5 +1,5 @@
 import { ActivityIndicator, Alert, ScrollView, Text, View, Pressable } from 'react-native';
-import InoviceProfile from '@/app/(tabs)/(invoice)/inoviceProfile';
+import InvoiceProfileCard from '@/components/InvoiceProfileCard';
 import { getInvoices, searchInvoice, deleteInvoice, toggleInvoiceCompleted, type InvoiceContent } from '@/database/invoicecontent';
 import { useLocalSearchParams, router } from 'expo-router';
 import InvoiceSearch from '@/components/InvoiceSearch';
@@ -99,7 +99,7 @@ const invoiceContentList = () => {
         ) : (
           <View className="px-4 mt-4">
             {filteredInvoices.map((invoice) => (
-              <InoviceProfile
+              <InvoiceProfileCard
                 key={invoice.id}
                 invocies={invoice}
                 onPress={() => handleEdit(invoice.id)}

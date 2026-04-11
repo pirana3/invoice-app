@@ -1,6 +1,7 @@
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import * as Contacts from 'expo-contacts';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type ContactPick = {
   name: string;
@@ -20,6 +21,7 @@ const CustomerImportContactsScreen = ({
   onClose,
   onSelect,
 }: CustomerImportContactsScreenProps) => {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState<Contacts.ExistingContact[]>([]);
   const [query, setQuery] = useState('');
@@ -60,7 +62,10 @@ const CustomerImportContactsScreen = ({
 
   return (
     <Modal visible={isVisible} animationType="slide">
-      <View className="flex-1 bg-white px-4 py-6">
+      <View
+        className="flex-1 bg-white px-4"
+        style={{ paddingTop: Math.max(insets.top, 16), paddingBottom: Math.max(insets.bottom, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <Text className="text-lg font-semibold text-black">Import Contact</Text>
           <Pressable onPress={onClose}>

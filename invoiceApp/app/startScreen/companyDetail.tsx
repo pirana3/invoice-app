@@ -65,7 +65,8 @@ const CompanyDetail = () => {
   };
 
   const handleSave = async () => {
-    const parsedPhone = Number(phone);
+    const normalizedPhone = phone.replace(/\D/g, '');
+    const parsedPhone = Number(normalizedPhone);
 
     if (!bname.trim()) {
       Alert.alert(t('business_missing_name'), t('business_missing_name'));
@@ -77,7 +78,7 @@ const CompanyDetail = () => {
       return;
     }
 
-    if (!Number.isFinite(parsedPhone)) {
+    if (!Number.isFinite(parsedPhone) || !normalizedPhone) {
       Alert.alert(t('business_invalid_phone'), t('business_invalid_phone'));
       return;
     }

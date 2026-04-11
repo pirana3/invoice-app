@@ -101,7 +101,8 @@ const EmployeeProfileScreen = () => {
   };
 
   const handleSave = async () => {
-    const parsedPhone = Number(ephone);
+    const normalizedPhone = ephone.replace(/\D/g, '');
+    const parsedPhone = Number(normalizedPhone);
     const parsedAge = Number(eage);
     const parsedPay = Number(epay);
     const parsedPerformance = Number(eperformance);
@@ -115,7 +116,7 @@ const EmployeeProfileScreen = () => {
       Alert.alert('Missing email', 'Please enter the employee email.');
       return;
     }
-    if (!Number.isFinite(parsedPhone) || parsedPhone < 0) {
+    if (!Number.isFinite(parsedPhone) || parsedPhone < 0 || !normalizedPhone) {
       Alert.alert('Invalid phone number', 'Please enter a valid phone number.');
       return;
     }
