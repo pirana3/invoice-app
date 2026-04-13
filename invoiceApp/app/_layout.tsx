@@ -10,7 +10,7 @@ export default function RootLayout() {
   return (
     <LanguageProvider>
       <SafeAreaProvider>
-        <Stack>
+        <Stack screenOptions={{ headerBackTitle: "Back" }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="startScreen/chooseLanguage" options={{ title: "Choose Language" }} />
           <Stack.Screen name="startScreen/companyDetail" options={{ title: "Company Info" }} />
@@ -20,6 +20,7 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen name="employees/[id]" options={{ title: "Employee", href: null }} />
           <Stack.Screen name="products/[id]" options={{ title: "Product" }} />
         </Stack>
       </SafeAreaProvider>

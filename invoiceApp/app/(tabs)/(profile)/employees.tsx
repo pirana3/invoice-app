@@ -98,7 +98,7 @@ const employees = () => {
   }, [params.query, params.rating, params.position, params.years, params.age, params.pay, allEmployees]);
 
   const handleAddEmployee = () => {
-    router.push('/employees/[id]');
+    router.push('/employees/new');
   };
 
   const handleEmployeePress = (id: number) => {

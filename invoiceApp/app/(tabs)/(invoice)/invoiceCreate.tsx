@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Directory, File, Paths } from 'expo-file-system';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getBusinessInfo } from '@/database/businessinfodb';
 import { createInvoice, getInvoiceById, updateInvoice } from '@/database/invoicecontent';
 import { getProducts, type Product } from '@/database/productdb';
@@ -17,6 +18,7 @@ import {
 const invoiceCreate = () => {
   const router = useRouter();
   const { t } = useLanguage();
+  const insets = useSafeAreaInsets();
 
   const [clientname, setClientname] = useState('');
   const [invoicenumber, setInvvoicenumber] = useState('');
@@ -419,7 +421,11 @@ const invoiceCreate = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 py-6">
+    <ScrollView
+      className="flex-1 bg-white px-4 py-6"
+      contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
+      keyboardShouldPersistTaps="handled"
+    >
       <View className="flex-row items-center justify-between">
         <Text className="text-lg font-semibold text-black">{isEditing ? 'Edit Invoice' : 'New Invoice'}</Text>
         <Pressable onPress={() => router.back()}>
