@@ -1,9 +1,9 @@
 import { ActivityIndicator, Alert, ScrollView, Text, View, Pressable } from 'react-native';
 import InvoiceProfileCard from '@/components/InvoiceProfileCard';
 import { getInvoices, searchInvoice, deleteInvoice, toggleInvoiceCompleted, type InvoiceContent } from '@/database/invoicecontent';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import InvoiceSearch from '@/components/InvoiceSearch';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 const invoiceContentList = () => {
   const params = useLocalSearchParams<{ query?: string }>();
@@ -27,6 +27,12 @@ const invoiceContentList = () => {
   useEffect(() => {
     loadInvoices();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadInvoices();
+    }, [])
+  );
 
   useEffect(() => {
     const filterInvoices = async () => {

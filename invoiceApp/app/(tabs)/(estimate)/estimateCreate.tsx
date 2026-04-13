@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Directory, File, Paths } from 'expo-file-system';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getBusinessInfo } from '@/database/businessinfodb';
 import { createEstimate, getEstimateById, updateEstimate } from '@/database/estimatecontent';
 import { getProducts, type Product } from '@/database/productdb';
@@ -11,6 +12,7 @@ import { createEstimateItem, deleteEstimateItemsByEstimateId, getEstimateItemsBy
 
 const estimateCreate = () => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [clientname, setClientname] = useState('');
   const [estimatenumber, setEstimatenumber] = useState('');
@@ -32,6 +34,7 @@ const estimateCreate = () => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [isSavingEstimate, setIsSavingEstimate] = useState(false);
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
+  const [isSubtotalManuallySet, setIsSubtotalManuallySet] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<
     Record<
@@ -138,7 +141,10 @@ const estimateCreate = () => {
       setEstimateproducts('');
       return;
     }
-    setEstimatetotalamount(subtotal.toFixed(2));
+    // Only auto-calculate if user hasn't manually set the subtotal
+    if (!isSubtotalManuallySet) {
+      setEstimatetotalamount(subtotal.toFixed(2));
+    }
     const payload = Object.values(selectedProducts).map((item) => ({
       id: item.id,
       name: item.name,
@@ -148,7 +154,7 @@ const estimateCreate = () => {
         : (Number(item.qty) || 0) * (Number(item.unitPrice) || 0),
     }));
     setEstimateproducts(JSON.stringify(payload));
-  }, [selectedProducts, subtotal]);
+  }, [selectedProducts, subtotal, isSubtotalManuallySet]);
 
   const buildHtml = () => {
     const safe = (value: string) => value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -265,7 +271,7 @@ const estimateCreate = () => {
 
     try {
       setIsSavingEstimate(true);
-      if (subtotal <= 0) {
+      if (parsedTotal <= 0) {
         Alert.alert('Invalid total', 'Total amount must be greater than 0.');
         return;
       }
@@ -277,7 +283,7 @@ const estimateCreate = () => {
           parsedEstimateDate,
           clientname.trim(),
           estimateproducts.trim(),
-          subtotal,
+          parsedTotal,
           parsedPercentage,
           parsedTax,
           estimatenotes.trim(),
@@ -305,7 +311,7 @@ const estimateCreate = () => {
           parsedEstimateDate,
           clientname.trim(),
           estimateproducts.trim(),
-          subtotal,
+          parsedTotal,
           parsedPercentage,
           parsedTax,
           estimatenotes.trim(),
@@ -460,10 +466,13 @@ const estimateCreate = () => {
       </Pressable>
       <TextInput
         value={estimatetotalamount}
+        onChangeText={(text) => {
+          setEstimatetotalamount(text);
+          setIsSubtotalManuallySet(text.trim() !== '');
+        }}
         placeholder="Subtotal (calculated)"
         keyboardType="numeric"
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-        editable={false}
       />
       <View className="mt-3 flex-row gap-3">
         <TextInput
@@ -567,8 +576,8 @@ const estimateCreate = () => {
       </View>
 
       <Modal visible={isProductsModalOpen} animationType="slide">
-        <View className="flex-1 bg-white px-4 py-6">
-          <View className="flex-row items-center justify-between">
+        <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom }}>
+          <View className="flex-row items-center justify-between mb-6">
             <Text className="text-lg font-semibold text-black">Select products</Text>
             <Pressable onPress={() => setIsProductsModalOpen(false)}>
               <Text className="text-sm font-medium text-gray-600">Done</Text>

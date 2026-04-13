@@ -128,7 +128,22 @@ const employees = () => {
             <ActivityIndicator size="large" color="#0066cc" />
           </View>
         ) : filteredEmployees.length === 0 ? (
-          <NoResults />
+          allEmployees.length === 0 ? (
+            <NoResults
+              title="No employees yet"
+              subtitle="Add your first employee to get started."
+            />
+          ) : params.query && params.query.trim() !== '' ? (
+            <NoResults
+              title="No results"
+              subtitle="We couldn't find any employees matching that search."
+            />
+          ) : (
+            <NoResults
+              title="No matches"
+              subtitle="No employees match those filters."
+            />
+          )
         ) : (
           <View className="px-4">
             {filteredEmployees.map((employee) => (
