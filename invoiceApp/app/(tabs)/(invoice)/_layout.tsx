@@ -20,7 +20,7 @@ export default function ProfileLayout() {
       }}
     >
       <TopTabs.Screen name="index" options={{ title: "Invoice" }} />
-      <TopTabs.Screen name="invoiceCreate" options={{ href: null }} />
+      <TopTabs.Screen name="invoiceCreate" options={{ href: null, title: 'Create Invoice' }} />
 
     </TopTabs>
   );

@@ -20,6 +20,7 @@ export default function ProfileLayout() {
       }}
     >
       <TopTabs.Screen name="index" options={{ title: 'Estimate' }} />
+      <TopTabs.Screen name="estimateCreate" options={{title: 'Create Estimate'}} />
     </TopTabs>
   );
 }

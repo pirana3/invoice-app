@@ -74,6 +74,8 @@ const invoiceCreate = () => {
   useEffect(() => {
     const loadInvoice = async () => {
       if (!isEditing) return;
+      // Ensure we're in edit mode, not preview
+      setIsPreview(false);
       const invoice = await getInvoiceById(invoiceId);
       if (!invoice) return;
       setClientname(invoice.clientname);
@@ -138,8 +140,24 @@ const invoiceCreate = () => {
     if (isEditing) {
       setIsPreview(false);
       setIsSubtotalManuallySet(false);
+    } else {
+      // Reset form for new invoice
+      setClientname('');
+      setInvvoicenumber('');
+      setInvoicedate('');
+      setProducts('');
+      setTotalamount('');
+      setPercentage('');
+      setTax('');
+      setNotes('');
+      setTermsandconditions('');
+      setDetails('');
+      setSelectedProducts({});
+      setIsPreview(false);
+      setIsSubtotalManuallySet(false);
+      setPdfUri(null);
     }
-  }, [isEditing]);
+  }, [isEditing, invoiceId]);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -173,8 +191,11 @@ const invoiceCreate = () => {
 
   useEffect(() => {
     if (Object.keys(selectedProducts).length === 0) {
-      setTotalamount('');
-      setProducts('');
+      // Only clear if user hasn't manually set the subtotal
+      if (!isSubtotalManuallySet) {
+        setTotalamount('');
+        setProducts('');
+      }
       return;
     }
     // Only auto-calculate if user hasn't manually set the subtotal
@@ -264,7 +285,7 @@ const invoiceCreate = () => {
       const html = buildHtml();
       const file = await Print.printToFileAsync({ html });
       setPdfUri(file.uri);
-      Alert.alert('PDF ready', 'Your invoice PDF was generated.');
+      setIsPreview(true); // Show preview immediately
     } catch (error) {
       console.error('PDF generation failed:', error);
       Alert.alert('PDF failed', 'Could not generate the invoice PDF.');
@@ -380,7 +401,7 @@ const invoiceCreate = () => {
 
   const handleSavePdf = async () => {
     if (!pdfUri) {
-      Alert.alert(t('invoice_no_pdf'));
+      Alert.alert('No PDF yet', 'Generate the PDF first.');
       return;
     }
     try {
@@ -393,10 +414,10 @@ const invoiceCreate = () => {
       const sourceFile = new File(pdfUri);
       const destFile = new File(invoicesDir, filename);
       sourceFile.copy(destFile);
-      Alert.alert('Saved', `Saved to ${destFile.uri}`);
+      Alert.alert('Saved', 'PDF saved to invoices folder');
     } catch (error) {
       console.error('Save failed:', error);
-      Alert.alert(t('invoice_no_save_pdf'));
+      Alert.alert('Save failed', 'Could not save the PDF.');
     } finally {
       setIsSaving(false);
     }
@@ -584,13 +605,7 @@ const invoiceCreate = () => {
           placeholder="Invoice date (MM/DD/YYYY)"
           className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
-        <TextInput
-          value={products}
-          placeholder="Products / Services"
-          multiline
-          className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
-          editable={false}
-        />
+
         <Pressable
           onPress={() => setIsProductsModalOpen(true)}
           className="mt-2 rounded-md border border-gray-300 px-3 py-3"
@@ -627,10 +642,10 @@ const invoiceCreate = () => {
           value={totalamount}
           onChangeText={(text) => {
             setTotalamount(text);
-            setIsSubtotalManuallySet(text.trim() !== '');
+            setIsSubtotalManuallySet(true);
           }}
           placeholder="Subtotal (calculated)"
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
           className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
         <View className="mt-3 flex-row gap-3">

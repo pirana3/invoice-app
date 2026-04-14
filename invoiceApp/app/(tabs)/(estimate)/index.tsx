@@ -1,5 +1,5 @@
 import { Text, View, ActivityIndicator, Alert, ScrollView, Pressable} from 'react-native';
-import EstimateProfile from '@/app/(tabs)/(estimate)/estimateProfile';
+import EstimateProfileCard from '@/components/EstimateProfileCard';
 import { convertEstimateToInvoice, getEstimates, searchEstimates, deleteEstimates, toggleEstimateCompleted, type EstimateContent } from '@/database/estimatecontent';
 import { useLocalSearchParams, router } from 'expo-router';
 import EstimateSearch from '@/components/EstimateSearch';
@@ -127,7 +127,7 @@ const estimateContentList = () => {
         ) : (
           <View className="px-4 mt-4">
             {filteredEstimates.map((estimate) => (
-              <EstimateProfile
+              <EstimateProfileCard
                 key={estimate.id}
                 estimate={estimate}
                 onPress={() => handleEdit(estimate.id)}

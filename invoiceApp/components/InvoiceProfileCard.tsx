@@ -12,13 +12,24 @@ type InvoiceProfileProps = {
 
 const InvoiceProfileCard = ({ invocies, onPress, onEdit, onDelete, onToggleCompleted }: InvoiceProfileProps) => {
   if (!invocies) return null;
+
+  const getProductNames = (productsJson: string): string => {
+    try {
+      const parsed = JSON.parse(productsJson);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: { name: string }) => item.name).join(', ');
+      }
+    } catch {}
+    return 'No products';
+  };
+
   return (
     <Pressable onPress={onPress} className="mb-3 rounded-md border border-gray-200 bg-white p-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
           <Text className="text-base font-semibold text-black">{invocies.clientname}</Text>
           <Text className="mt-1 text-sm text-gray-600" numberOfLines={2}>
-            {invocies.products || 'No description'}
+            {getProductNames(invocies.products)}
           </Text>
         </View>
         <Pressable

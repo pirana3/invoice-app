@@ -34,6 +34,7 @@ const estimateCreate = () => {
   const [isPrinting, setIsPrinting] = useState(false);
   const [isSavingEstimate, setIsSavingEstimate] = useState(false);
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
   const [isSubtotalManuallySet, setIsSubtotalManuallySet] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<
@@ -67,6 +68,8 @@ const estimateCreate = () => {
   useEffect(() => {
     const loadEstimate = async () => {
       if (!isEditing) return;
+      // Ensure we're in edit mode, not preview
+      setIsPreview(false);
       const estimate = await getEstimateById(estimateId);
       if (!estimate) return;
       setClientname(estimate.clientname);
@@ -105,6 +108,29 @@ const estimateCreate = () => {
   }, [estimateId, isEditing]);
 
   useEffect(() => {
+    if (isEditing) {
+      setIsPreview(false);
+      setIsSubtotalManuallySet(false);
+    } else {
+      // Reset form for new estimate
+      setClientname('');
+      setEstimatenumber('');
+      setEstimatedate('');
+      setEstimateproducts('');
+      setEstimatetotalamount('');
+      setEstimatepercentage('');
+      setEstimatetax('');
+      setEstimatenotes('');
+      setEstimatetermsandconditions('');
+      setEstimatedetails('');
+      setSelectedProducts({});
+      setIsPreview(false);
+      setIsSubtotalManuallySet(false);
+      setPdfUri(null);
+    }
+  }, [isEditing, estimateId]);
+
+  useEffect(() => {
     const loadProducts = async () => {
       const items = await getProducts();
       setAllProducts(items);
@@ -137,8 +163,11 @@ const estimateCreate = () => {
 
   useEffect(() => {
     if (Object.keys(selectedProducts).length === 0) {
-      setEstimatetotalamount('');
-      setEstimateproducts('');
+      // Only clear if user hasn't manually set the subtotal
+      if (!isSubtotalManuallySet) {
+        setEstimatetotalamount('');
+        setEstimateproducts('');
+      }
       return;
     }
     // Only auto-calculate if user hasn't manually set the subtotal
@@ -228,7 +257,7 @@ const estimateCreate = () => {
       const html = buildHtml();
       const file = await Print.printToFileAsync({ html });
       setPdfUri(file.uri);
-      Alert.alert('PDF ready', 'Your estimate PDF was generated.');
+      setIsPreview(true); // Show preview immediately
     } catch (error) {
       console.error('PDF generation failed:', error);
       Alert.alert('PDF failed', 'Could not generate the estimate PDF.');
@@ -358,7 +387,7 @@ const estimateCreate = () => {
       const sourceFile = new File(pdfUri);
       const destFile = new File(estimatesDir, filename);
       sourceFile.copy(destFile);
-      Alert.alert('Saved', `Saved to ${destFile.uri}`);
+      Alert.alert('Saved', `Saved to estimates folder`);
     } catch (error) {
       console.error('Save failed:', error);
       Alert.alert('Save failed', 'Could not save the PDF.');
@@ -405,7 +434,11 @@ const estimateCreate = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 py-6">
+    <ScrollView
+      className="flex-1 bg-white px-4"
+      contentContainerStyle={{ paddingTop: 24, paddingBottom: insets.bottom + 120 }}
+      keyboardShouldPersistTaps="handled"
+    >
       <View className="flex-row items-center justify-between">
         <Text className="text-lg font-semibold text-black">{isEditing ? 'Edit Estimate' : 'New Estimate'}</Text>
         <Pressable onPress={() => router.back()}>
@@ -451,16 +484,9 @@ const estimateCreate = () => {
         placeholder="Estimate date (MM/DD/YYYY)"
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
-      <TextInput
-        value={estimateproducts}
-        placeholder="Products / Services"
-        multiline
-        className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
-        editable={false}
-      />
       <Pressable
         onPress={() => setIsProductsModalOpen(true)}
-        className="mt-2 rounded-md border border-gray-300 px-3 py-3"
+        className="mt-3 rounded-md border border-gray-300 px-3 py-3"
       >
         <Text className="text-sm text-black">Select products</Text>
       </Pressable>
@@ -468,10 +494,10 @@ const estimateCreate = () => {
         value={estimatetotalamount}
         onChangeText={(text) => {
           setEstimatetotalamount(text);
-          setIsSubtotalManuallySet(text.trim() !== '');
+          setIsSubtotalManuallySet(true);
         }}
         placeholder="Subtotal (calculated)"
-        keyboardType="numeric"
+        keyboardType="decimal-pad"
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
       <View className="mt-3 flex-row gap-3">

@@ -89,14 +89,21 @@ const EmployeeProfileScreen = () => {
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: 'images',
-      allowsEditing: true,
-      quality: 0.85,
-    });
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: 'images',
+        allowsEditing: true,
+        quality: 0.85,
+      });
 
-    if (!result.canceled && result.assets?.[0]?.uri) {
-      setEphoto(result.assets[0].uri);
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        setEphoto(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert(
+        'Camera not available',
+        'Camera is not available on simulator. Please use "Add photo" to select from your library instead.'
+      );
     }
   };
 

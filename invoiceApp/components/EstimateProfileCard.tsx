@@ -13,13 +13,24 @@ type EstimateProfileProps = {
 
 const estimateProfile = ({ estimate, onPress, onEdit, onDelete, onToggleCompleted, onConvert }: EstimateProfileProps) => {
   if (!estimate) return null;
+
+  const getProductNames = (productsJson: string): string => {
+    try {
+      const parsed = JSON.parse(productsJson);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: { name: string }) => item.name).join(', ');
+      }
+    } catch {}
+    return 'No products';
+  };
+
   return (
     <Pressable onPress={onPress} className="mb-3 rounded-md border border-gray-200 bg-white p-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
           <Text className="text-base font-semibold text-black">{estimate.clientname}</Text>
           <Text className="mt-1 text-sm text-gray-600" numberOfLines={2}>
-            {estimate.estimateproducts || 'No description'}
+            {getProductNames(estimate.estimateproducts)}
           </Text>
         </View>
         <Pressable

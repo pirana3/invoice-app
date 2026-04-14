@@ -44,11 +44,11 @@ const EmployeeRating = ({
           {!disabled ? (
             <>
               <Pressable
-                onPress={() => handleSelect(index - 0.5)}
+                onPress={() => handleSelect(index - 1)}
                 style={{ position: 'absolute', left: 0, top: 0, width: size / 2, height: size }}
               />
               <Pressable
-                onPress={() => handleSelect(index)}
+                onPress={() => handleSelect(index === 5 ? 5 : index - 0.5)}
                 style={{ position: 'absolute', right: 0, top: 0, width: size / 2, height: size }}
               />
             </>
