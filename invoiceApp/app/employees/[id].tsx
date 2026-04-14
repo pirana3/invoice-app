@@ -8,6 +8,7 @@ import useFetch from '@/service/usefetch';
 import EPositionModal from '@/app/employees/ePositionModal';
 import { ePositions } from '@/constants/data';
 import EmployeeRating from '@/components/EmployeeRating';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const EmployeeProfileScreen = () => {
   const router = useRouter();
@@ -28,7 +29,8 @@ const EmployeeProfileScreen = () => {
   const [edetails, setEdetails] = useState('');
   const [epay, setEpay] = useState('');
   const [eperformance, setEperformance] = useState(0);
-  const [elanguage, setElanguage] = useState('');
+  const [elanguages, setElanguages] = useState<string[]>([]);
+  const [tempLanguage, setTempLanguage] = useState('');
   const [eyears, setEyears] = useState('');
   const [ephoto, setEphoto] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -51,7 +53,8 @@ const EmployeeProfileScreen = () => {
     setEdetails(employee.edetails);
     setEpay(String(employee.epay));
     setEperformance(employee.eperformance);
-    setElanguage(employee.elanguage);
+    setElanguages(employee.elanguage ? employee.elanguage.split(',').map(l => l.trim()).filter(l => l) : []);
+    setTempLanguage('');
     setEyears(String(employee.eyears));
     setEphoto(employee.ephoto ?? '');
   }, [employee]);
@@ -114,6 +117,7 @@ const EmployeeProfileScreen = () => {
     const parsedPay = Number(epay);
     const parsedPerformance = Number(eperformance);
     const parsedYears = Number(eyears);
+    const languagesString = elanguages.join(', ');
 
     if (!ename.trim()) {
       Alert.alert('Missing name', 'Please enter the employee name.');
@@ -157,7 +161,7 @@ const EmployeeProfileScreen = () => {
           edetails.trim(),
           parsedPay,
           parsedPerformance,
-          elanguage.trim(),
+          languagesString,
           parsedYears,
           ephoto.trim()
         );
@@ -174,7 +178,7 @@ const EmployeeProfileScreen = () => {
           edetails.trim(),
           parsedPay,
           parsedPerformance,
-          elanguage.trim(),
+          languagesString,
           parsedYears,
           ephoto.trim()
         );
@@ -215,6 +219,23 @@ const EmployeeProfileScreen = () => {
         },
       },
     ]);
+  };
+
+  const handleAddLanguage = () => {
+    if (!tempLanguage.trim()) {
+      Alert.alert('Empty language', 'Please enter a language name.');
+      return;
+    }
+    if (elanguages.map(l => l.toLowerCase()).includes(tempLanguage.trim().toLowerCase())) {
+      Alert.alert('Duplicate language', 'This language is already added.');
+      return;
+    }
+    setElanguages([...elanguages, tempLanguage.trim()]);
+    setTempLanguage('');
+  };
+
+  const handleRemoveLanguage = (index: number) => {
+    setElanguages(elanguages.filter((_, i) => i !== index));
   };
 
   if (!canFetch && !isNew) {
@@ -349,12 +370,38 @@ const EmployeeProfileScreen = () => {
               />
             </View>
           </View>
-          <TextInput
-            value={elanguage}
-            onChangeText={setElanguage}
-            placeholder="Language"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <View className="mt-3 rounded-md border border-gray-300 px-3 py-3">
+            <Text className="text-xs text-gray-500">Languages</Text>
+            <View className="mt-2 flex-row gap-2">
+              <TextInput
+                value={tempLanguage}
+                onChangeText={setTempLanguage}
+                placeholder="Add language"
+                className="flex-1 rounded-md border border-gray-300 px-2 py-2 text-black"
+              />
+              <Pressable
+                onPress={handleAddLanguage}
+                className="items-center justify-center rounded-md bg-black px-3"
+              >
+                <Text className="text-white font-semibold">Add</Text>
+              </Pressable>
+            </View>
+            {elanguages.length > 0 && (
+              <View className="mt-3 flex-row flex-wrap gap-2">
+                {elanguages.map((language, index) => (
+                  <View
+                    key={`${language}-${index}`}
+                    className="flex-row items-center gap-1 rounded-full bg-gray-200 px-3 py-1"
+                  >
+                    <Text className="text-sm text-black">{language}</Text>
+                    <Pressable onPress={() => handleRemoveLanguage(index)}>
+                      <Text className="text-lg text-red-600 font-bold">×</Text>
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
           <TextInput
             value={eyears}
             onChangeText={setEyears}
@@ -393,7 +440,7 @@ const EmployeeProfileScreen = () => {
                 Performance: {employee.eperformance.toFixed(1)} / 5
               </Text>
               <Text className="mt-2 text-base text-gray-700">
-                Language: {employee.elanguage}
+                Languages: {employee.elanguage || 'Not specified'}
               </Text>
               <Text className="mt-2 text-base text-gray-700">
                 Years: {employee.eyears}

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Dimensions } from 'react-native';
+import { PieChart } from 'react-native-chart-kit';
 import type { InvoiceContent } from '@/database/invoicecontent';
 
 type StatsRevenueSummaryProps = {
@@ -7,19 +8,48 @@ type StatsRevenueSummaryProps = {
 };
 
 const StatsRevenueSummary = ({ invoices }: StatsRevenueSummaryProps) => {
-  const { gained, lost } = useMemo(() => {
-    const completed = invoices.filter((invoice) => invoice.completed === 1);
-    const pending = invoices.filter((invoice) => invoice.completed === 0);
-    const gainedValue = completed.reduce((sum, invoice) => sum + (Number(invoice.totalamount) || 0), 0);
-    const lostValue = pending.reduce((sum, invoice) => sum + (Number(invoice.totalamount) || 0), 0);
-    return { gained: gainedValue, lost: lostValue };
+  const { completed, pending, chartData } = useMemo(() => {
+    const completedInvoices = invoices.filter((invoice) => invoice.completed === 1);
+    const pendingInvoices = invoices.filter((invoice) => invoice.completed === 0);
+    const completedValue = completedInvoices.reduce((sum, invoice) => sum + (Number(invoice.totalamount) || 0), 0);
+    const pendingValue = pendingInvoices.reduce((sum, invoice) => sum + (Number(invoice.totalamount) || 0), 0);
+    return {
+      completed: completedValue,
+      pending: pendingValue,
+      chartData: [
+        { name: 'Completed', value: completedValue, color: '#10b981', legendFontColor: '#000', legendFontSize: 12 },
+        { name: 'Pending', value: pendingValue, color: '#ef4444', legendFontColor: '#000', legendFontSize: 12 },
+      ],
+    };
   }, [invoices]);
+
+  if (chartData.every((item) => item.value === 0)) {
+    return (
+      <View className="rounded-md border border-gray-200 bg-white p-4">
+        <Text className="text-base font-semibold text-black">Invoice Revenue Breakdown</Text>
+        <Text className="mt-4 text-sm text-gray-500">No invoices yet.</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="rounded-md border border-gray-200 bg-white p-4">
-      <Text className="text-base font-semibold text-black">Revenue Gained / Lost</Text>
-      <Text className="mt-2 text-sm text-gray-600">Gained: ${gained.toFixed(2)}</Text>
-      <Text className="mt-1 text-sm text-gray-600">Lost/Pending: ${lost.toFixed(2)}</Text>
+      <Text className="text-base font-semibold text-black">Invoice Revenue Breakdown</Text>
+      <PieChart
+        data={chartData}
+        width={Dimensions.get('window').width - 48}
+        height={220}
+        chartConfig={{
+          backgroundColor: '#ffffff',
+          backgroundGradientFrom: '#ffffff',
+          backgroundGradientTo: '#ffffff',
+          color: () => '#000',
+          labelColor: () => '#000',
+        }}
+        accessor="value"
+        backgroundColor="transparent"
+        paddingLeft="15"
+      />
     </View>
   );
 };

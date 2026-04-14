@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Dimensions } from 'react-native';
+import { PieChart } from 'react-native-chart-kit';
 import type { EstimateContent } from '@/database/estimatecontent';
 
 type StatsEstimateWinLossProps = {
@@ -7,21 +8,46 @@ type StatsEstimateWinLossProps = {
 };
 
 const StatsEstimateWinLoss = ({ estimates }: StatsEstimateWinLossProps) => {
-  const { total, won, lost, winRate } = useMemo(() => {
-    const totalCount = estimates.length;
+  const { won, pending, chartData } = useMemo(() => {
     const wonCount = estimates.filter((estimate) => estimate.estimatecompleted === 1).length;
-    const lostCount = totalCount - wonCount;
-    const rate = totalCount ? Math.round((wonCount / totalCount) * 100) : 0;
-    return { total: totalCount, won: wonCount, lost: lostCount, winRate: rate };
+    const pendingCount = estimates.length - wonCount;
+    return {
+      won: wonCount,
+      pending: pendingCount,
+      chartData: [
+        { name: 'Won', value: wonCount, color: '#10b981', legendFontColor: '#000', legendFontSize: 12 },
+        { name: 'Pending', value: pendingCount, color: '#f59e0b', legendFontColor: '#000', legendFontSize: 12 },
+      ],
+    };
   }, [estimates]);
+
+  if (chartData.every((item) => item.value === 0)) {
+    return (
+      <View className="rounded-md border border-gray-200 bg-white p-4">
+        <Text className="text-base font-semibold text-black">Estimates: Won vs Pending</Text>
+        <Text className="mt-4 text-sm text-gray-500">No estimates yet.</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="rounded-md border border-gray-200 bg-white p-4">
-      <Text className="text-base font-semibold text-black">Estimate Win/Loss</Text>
-      <Text className="mt-2 text-sm text-gray-600">Total estimates: {total}</Text>
-      <Text className="mt-1 text-sm text-gray-600">Won: {won}</Text>
-      <Text className="mt-1 text-sm text-gray-600">Lost/Pending: {lost}</Text>
-      <Text className="mt-3 text-sm font-semibold text-black">Win rate: {winRate}%</Text>
+      <Text className="text-base font-semibold text-black">Estimates: Won vs Pending</Text>
+      <PieChart
+        data={chartData}
+        width={Dimensions.get('window').width - 48}
+        height={220}
+        chartConfig={{
+          backgroundColor: '#ffffff',
+          backgroundGradientFrom: '#ffffff',
+          backgroundGradientTo: '#ffffff',
+          color: () => '#000',
+          labelColor: () => '#000',
+        }}
+        accessor="value"
+        backgroundColor="transparent"
+        paddingLeft="15"
+      />
     </View>
   );
 };
