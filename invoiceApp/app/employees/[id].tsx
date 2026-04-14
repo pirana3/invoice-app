@@ -8,7 +8,6 @@ import useFetch from '@/service/usefetch';
 import EPositionModal from '@/app/employees/ePositionModal';
 import { ePositions } from '@/constants/data';
 import EmployeeRating from '@/components/EmployeeRating';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const EmployeeProfileScreen = () => {
   const router = useRouter();
@@ -486,7 +485,8 @@ const EmployeeProfileScreen = () => {
                     setEdetails(employee.edetails);
                     setEpay(String(employee.epay));
                     setEperformance(employee.eperformance);
-                    setElanguage(employee.elanguage);
+                    setElanguages(employee.elanguage ? employee.elanguage.split(',').map(l => l.trim()).filter(l => l) : []);
+                    setTempLanguage('');
                     setEyears(String(employee.eyears));
                     setEphoto(employee.ephoto ?? '');
                   }
