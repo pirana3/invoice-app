@@ -70,7 +70,48 @@ const addCustomerScreen = () => {
   };
 
   const handleSave = async () => {
-    const nor
+    const normalizedPhone = cphone.replace(/\D/g, '');
+    const parsedPhone = Number(normalizedPhone);
+    
+    if (!cname.trim()) {
+      Alert.alert('Missing name', 'Please enter the customers name.');
+      return;
+    }
+    if (!ccompany.trim()){
+      Alert.alert('Missing Company name', 'Please enter the Customers Company name.');
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      if (isNew) {
+        await createCustomer(
+          cname.trim(),
+          cemail.trim(),
+          parsedPhone,
+          caddress.trim(),
+          ccity.trim(),
+          cstate.trim(),
+          ccompany.trim(),
+          cdetails.trim(),
+          cphoto.trim()
+        );
+        router.back();
+      } else if (customer) {
+        const updated = await updateCustomer(
+          customer.id,
+          cname.trim(),
+          cemail.trim(),
+          parsedPhone,
+          caddress.trim(),
+          ccity.trim(),
+          cstate.trim(),
+          ccompany.trim(),
+          cdetails.trim(),
+          cphoto.trim()
+        )
+      }
+    }
   }
 
 
