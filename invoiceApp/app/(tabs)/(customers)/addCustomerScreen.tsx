@@ -109,7 +109,20 @@ const addCustomerScreen = () => {
           ccompany.trim(),
           cdetails.trim(),
           cphoto.trim()
-        )
+        );
+        if (!updated){
+          Alert.alert('Update Failed', 'Customer no longer exists.');
+          router.back();
+          return;
+        }
+        await refetch();
+        setIsEditing(false);
+      }
+    } catch (saveError){
+      console.error(saveError)
+        Alert.alert('Save failed', 'Could not save this Customer.');
+      } finally{
+        setIsSaving(false);
       }
     }
   }
