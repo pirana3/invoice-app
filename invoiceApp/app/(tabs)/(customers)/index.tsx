@@ -75,7 +75,7 @@ const customersList = () => {
   }, [params.query, allCustomers]);
 
   const handleAddCustomer = () => {
-    router.push('/customers/[id]' as never);
+    router.push('/customers/new' as never);
   };
 
   return (
@@ -133,9 +133,8 @@ const customersList = () => {
         onSelect={(contact) => {
           setImportOpen(false);
           router.push({
-            pathname: '/customers/[id]',
+            pathname: '/customers/new',
             params: {
-              id: 'new',
               cname: contact.name,
               cemail: contact.email ?? '',
               cphone: contact.phone ?? '',

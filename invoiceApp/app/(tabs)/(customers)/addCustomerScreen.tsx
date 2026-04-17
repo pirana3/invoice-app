@@ -32,7 +32,7 @@ const addCustomerScreen = () => {
   const { data: customer, loading, error, refetch} = useFetch(
     fetchCustomer,
     canFetch
-  )
+  );
 
   useEffect(() => {
     if (!customer) return;
@@ -60,11 +60,11 @@ const addCustomerScreen = () => {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'image',
+      mediaTypes: 'images',
       allowsEditing: true,
       quality: 0.85,
     });
-    if (result.canceled && result.assets?.[0]?uri) {
+    if (!result.canceled && result.assets?.[0]?.uri) {
       setCphoto(result.assets[0].uri);
     }
   };
@@ -124,10 +124,62 @@ const addCustomerScreen = () => {
       } finally{
         setIsSaving(false);
       }
-    }
+  };
+
+    const handleDelete = () => {
+      if(!customer) return;
+      Alert.alert('Delete Customer', `Delete "${customer.cname}`, [
+        { text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setIsDeleting(true);
+              await deleteCustomer(customer.id);
+              router.back();
+            } catch (deleteError) {
+              console.error(deleteError);
+              Alert.alert('Delete failed', 'Could not delete this Customer.')
+            } finally {
+              setIsDeleting(false);
+            }
+          },
+        },
+      ]);
+  };
+
+  if (!canFetch && !isNew) {
+    return (
+      <View className='flex-1 items-center justify-center bg-white px-4'>
+        <Text className='text-red-500'>Invalid Customer ID.</Text>
+      </View>
+    );
   }
 
+  if (!isNew && loading) {
+      return (
+        <View className="flex-1 items-center justify-center bg-white">
+          <ActivityIndicator size="small" color="#111827" />
+        </View>
+      );
+    }
 
+  if (!isNew && error){
+    return (
+      <View className='flex-1 items-center justify-center bg-white px-4'>
+        <Text className='text-red-500'>Could not load Customer.</Text>
+      </View>
+    )
+  }
+
+  if (!isNew && !customer) {
+      return (
+        <View className="flex-1 items-center justify-center bg-white px-4">
+          <Text className="text-gray-500">Customer not found.</Text>
+        </View>
+      );
+    }
 
   return (
     <View>
