@@ -182,9 +182,25 @@ const addCustomerScreen = () => {
     }
 
   return (
-    <View>
-      <Text>addCustomerScreen</Text>
-    </View>
+    <ScrollView className='flex-1 bg-white px-4 py-6'>
+      {canEdit ? (
+        <>
+          <View className='items-start'>
+            {cphoto ? (
+              <Image
+                source={{ uri: cphoto}}
+                contentFit="cover"
+                style={{ width: 140, height: 140, borderRadius: 12 }}
+              />
+            ) : (
+              <View>
+                <Text> No Photo</Text>
+              </View>
+            )}
+          </View>
+        </>
+      )}
+    </ScrollView>
   )
 }
 
