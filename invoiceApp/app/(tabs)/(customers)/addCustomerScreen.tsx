@@ -193,11 +193,35 @@ const addCustomerScreen = () => {
                 style={{ width: 140, height: 140, borderRadius: 12 }}
               />
             ) : (
-              <View>
-                <Text> No Photo</Text>
+              <View className='h-36 w-36 items-c enter justify-center rounded-xl border border-gray-300'>
+                <Text className='text-xs text-gray-500'> No Photo</Text>
               </View>
             )}
+            <View className='mt-3 flex-row gap-2'>
+              <Pressable
+              onPress={handlePickPhoto}
+              className='rounded-md border border-gray-300 px-3 py-2'
+              >
+                <Text className='text-sm font-medium text-black'>
+                  {cphoto ? 'Change photo' : ' Add photo'}
+                </Text>
+              </Pressable>
+            </View>
           </View>
+          <TextInput
+            value={cname}
+            onChangeText={setCname}
+            placeholder='Customer name'
+            className='rounded-md norder border-gray-300 px-3 py-2 text-black'
+          />
+          <TextInput
+            value={cemail}
+            onChangeText={setCemail}
+            placeholder='Customer Email'
+            keyboardType='email-address'
+            autoCapitalize='none'
+            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
+          />
         </>
       )}
     </ScrollView>
