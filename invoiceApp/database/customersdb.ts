@@ -7,6 +7,7 @@ export type Customers = {
     cphone: number;
     caddress: string;
     ccity: string;
+    czip: number;
     cstate: string;
     ccompany: string;
     cdetails: string;
@@ -19,18 +20,20 @@ export const createCustomer = async (
     cphone: number,
     caddress: string,
     ccity: string,
+    czip: number,
     cstate: string,
     ccompany: string,
     cdetails: string,
     cphoto: string
 ): Promise<number> => {
     const result = db.runSync(
-        `INSERT INTO customers (cname, cemail, cphone, caddress, ccity, cstate, ccompany, cdetails, cphoto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO customers (cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         cname,
         cemail,
         cphone,
         caddress,
         ccity,
+        czip,
         cstate,
         ccompany,
         cdetails,
@@ -42,14 +45,14 @@ export const createCustomer = async (
 
 export const getCustomers = async (): Promise<Customers[]> => {
     return db.getAllSync<Customers>(
-        `SELECT id, cname, cemail, cphone, caddress, ccity, cstate, ccompany, cdetails, cphoto
+        `SELECT id, cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto
          FROM customers ORDER BY id DESC`
     );
 };
 
 export const getCustomerById = async (id: number): Promise<Customers | null> => {
     return db.getFirstSync<Customers>(
-        `SELECT id, cname, cemail, cphone, caddress, ccity, cstate, ccompany, cdetails, cphoto
+        `SELECT id, cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto
          FROM customers WHERE id = ?`,
         id
     );
@@ -62,18 +65,20 @@ export const updateCustomer = async (
     cphone: number,
     caddress: string,
     ccity: string,
+    czip: number,
     cstate: string,
     ccompany: string,
     cdetails: string,
     cphoto: string
 ): Promise<boolean> => {
     const result = db.runSync(
-        `UPDATE customers SET cname = ?, cemail = ?, cphone = ?, caddress = ?, ccity = ?, cstate = ?, ccompany = ?, cdetails = ?, cphoto = ? WHERE id = ?`,
+        `UPDATE customers SET cname = ?, cemail = ?, cphone = ?, caddress = ?, ccity = ?, czip = ?, cstate = ?, ccompany = ?, cdetails = ?, cphoto = ? WHERE id = ?`,
         cname,
         cemail,
         cphone,
         caddress,
         ccity,
+        czip,
         cstate,
         ccompany,
         cdetails,
@@ -86,7 +91,7 @@ export const updateCustomer = async (
 export const searchCustomers = async (query: string): Promise<Customers[]> => {
     const searchTerm = `%${query}%`;
     return db.getAllSync<Customers>(
-        `SELECT id, cname, cemail, cphone, caddress, ccity, cstate, ccompany, cdetails, cphoto
+        `SELECT id, cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto
          FROM customers WHERE cname LIKE ? OR cemail LIKE ? OR ccompany LIKE ? ORDER BY cname ASC`,
         searchTerm,
         searchTerm,

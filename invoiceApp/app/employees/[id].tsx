@@ -319,7 +319,7 @@ const EmployeeProfileScreen = () => {
           <TextInput
             value={ephone}
             onChangeText={setEphone}
-            placeholder="Phone number"
+            placeholder="Employee phone number"
             keyboardType="numeric"
             className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
           />

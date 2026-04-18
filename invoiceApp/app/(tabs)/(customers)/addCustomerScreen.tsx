@@ -22,6 +22,7 @@ const addCustomerScreen = () => {
   const [cphone, setCphone] = useState('');
   const [caddress, setCaddress] = useState('');
   const [ccity, setCcity] = useState('');
+  const [czip, setCzip] = useState('');
   const [cstate, setCstate] = useState('');
   const [ccompany, setCcompany] = useState('');
   const [cdetails, setCdetails] = useState('');
@@ -41,6 +42,7 @@ const addCustomerScreen = () => {
     setCphone(String(customer.cphone));
     setCaddress(customer.caddress);
     setCcity(customer.ccity);
+    setCzip(String(customer.czip));
     setCstate(customer.cstate);
     setCcompany(customer.ccompany);
     setCdetails(customer.cdetails);
@@ -91,6 +93,7 @@ const addCustomerScreen = () => {
           parsedPhone,
           caddress.trim(),
           ccity.trim(),
+          czip.trim(),
           cstate.trim(),
           ccompany.trim(),
           cdetails.trim(),
@@ -105,6 +108,7 @@ const addCustomerScreen = () => {
           parsedPhone,
           caddress.trim(),
           ccity.trim(),
+          czip.trim(),
           cstate.trim(),
           ccompany.trim(),
           cdetails.trim(),
@@ -222,6 +226,20 @@ const addCustomerScreen = () => {
             autoCapitalize='none'
             className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
           />
+          <TextInput
+            value={cphone}
+            onChangeText={setCphone}
+            placeholder='Customer phone number'
+            keyboardType='numeric'
+            className='mt-3 rounded-md border-gray-300 px-3 py-2 text-black'
+          />
+          <TextInput
+            value={caddress}
+            onChangeText={setCaddress}
+            placeholder='Custoemr stree address'
+            className='mt- 3 rounded-md border-gray-300 px-3 py-2 text-black'
+          />
+
         </>
       )}
     </ScrollView>

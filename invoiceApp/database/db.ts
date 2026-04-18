@@ -126,6 +126,7 @@ export const initDatabase = () => {
         cphone REAL NOT NULL,
         caddress TEXT NOT NULL,
         ccity TEXT NOT NULL,
+        czip REAL NOT NULL,
         cstate TEXT NOT NULL,
         ccompany TEXT NOT NULL,
         cdetails TEXT NOT NULL DEFAULT '',
