@@ -74,7 +74,7 @@ const addCustomerScreen = () => {
   const handleSave = async () => {
     const normalizedPhone = cphone.replace(/\D/g, '');
     const parsedPhone = Number(normalizedPhone);
-    
+
     if (!cname.trim()) {
       Alert.alert('Missing name', 'Please enter the customers name.');
       return;
