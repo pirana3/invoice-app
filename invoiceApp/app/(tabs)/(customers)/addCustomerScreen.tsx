@@ -115,7 +115,7 @@ const addCustomerScreen = () => {
           cphoto.trim()
         );
         if (!updated){
-          Alert.alert('Update Failed', 'Customer no longer exists.');
+          Alert.alert('Update Failed', 'Cstomer no longer exists.');
           router.back();
           return;
         }
