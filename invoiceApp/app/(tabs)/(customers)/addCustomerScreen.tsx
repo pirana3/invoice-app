@@ -80,7 +80,7 @@ const addCustomerScreen = () => {
       return;
     }
     if (!ccompany.trim()){
-      Alert.alert('Missing Company name', 'Please enter the Customers Company name.');
+      Alert.alert('Missing Company name', 'Please enter the Customers Company nae.');
       return;
     }
 
