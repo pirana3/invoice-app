@@ -236,10 +236,39 @@ const addCustomerScreen = () => {
           <TextInput
             value={caddress}
             onChangeText={setCaddress}
-            placeholder='Custoemr stree address'
+            placeholder='Customer street address'
             className='mt- 3 rounded-md border-gray-300 px-3 py-2 text-black'
           />
-
+          <TextInput
+            value={czip}
+            onChangeText={setCzip}
+            placeholder='Customer zip code'
+            className='mt- 3 rounded-md border-gray-300 px-3 py-2 text-black'
+          />
+          <TextInput
+            value={cstate}
+            onChangeText={setCstate}
+            placeholder='Customer State'
+            className='mt- 3 rounded-md border-gray-300 px-3 py-2 text-black'
+          />
+          <TextInput
+            value={cdetails}
+            onChangeText={setCaddress}
+            placeholder='Customer State'
+            className='mt- 3 rounded-md border-gray-300 px-3 py-2 text-black'
+          />
+        </>
+      ) : ( 
+        <>
+          {customer ? (
+            <>
+              <Text className ="text-2xl font-semibold text-black">{customer.cname}</Text>
+              <Text className='mt-2 text-base text-gray-700'>{customer.cemail}</Text>
+              <Text className='mt-2 text-base text-gray-700'>{customer.cphone}</Text>
+              <Text className='mt-2 text-base text-gray-700'>{customer.ccompany}</Text>
+              <Text className='mt-4 textbase text-gray-700'> {employees.cd</Text>
+            </>
+          )}
         </>
       )}
     </ScrollView>
