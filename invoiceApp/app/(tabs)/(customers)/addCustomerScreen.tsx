@@ -266,7 +266,7 @@ const addCustomerScreen = () => {
               <Text className='mt-2 text-base text-gray-700'>{customer.cemail}</Text>
               <Text className='mt-2 text-base text-gray-700'>{customer.cphone}</Text>
               <Text className='mt-2 text-base text-gray-700'>{customer.ccompany}</Text>
-              <Text className='mt-4 textbase text-gray-700'> {employees.cd</Text>
+              <Text className='mt-4 textbase text-gray-700'> {customer.cdetails}</Text>
             </>
           )}
         </>
