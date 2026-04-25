@@ -266,11 +266,22 @@ const addCustomerScreen = () => {
               <Text className='mt-2 text-base text-gray-700'>{customer.cemail}</Text>
               <Text className='mt-2 text-base text-gray-700'>{customer.cphone}</Text>
               <Text className='mt-2 text-base text-gray-700'>{customer.ccompany}</Text>
-              <Text className='mt-4 textbase text-gray-700'> {customer.cdetails}</Text>
+              <Text className='mt-4 textbase text-gray-700'> {customer.cdetails || 'No details'}</Text>
+              {customer.cphoto ? (
+                <Image
+                  source={{uri: customer.cphoto}}
+                  contentFit="cover"
+                  style={{ width: 180, height: 180, borderRadius: 12, marginTop: 12}}
+                />
+              ) : null}
             </>
-          )}
+          ) : null}
         </>
       )}
+
+      <View>
+        
+      </View>
     </ScrollView>
   )
 }
