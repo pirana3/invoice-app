@@ -278,9 +278,9 @@ const addCustomerScreen = () => {
           ) : null}
         </>
       )}
-
+l
       <View>
-        
+
       </View>
     </ScrollView>
   )
