@@ -279,7 +279,29 @@ const addCustomerScreen = () => {
         </>
       )}
 l
-      <View>
+      <View className='mt-8 flex-row gap-3'>
+        {canEdit ? (
+          <Pressable
+            onPress={handleSave}
+            disabled={isSaving || isDeleting}
+            className='flex-1 items-center rounded-md bg-black py-3'
+          >
+            {isSaving ? ( 
+              <ActivityIndicator size='small' color='#fff' />
+            ) : (
+              <Text className='text-sm font-medium text-white'>
+                {isNew ? 'Save Customer' : 'Save Changes'}
+              </Text>
+            )}
+          </Pressable>
+          {!isNew ? (
+            <Pressable
+              onPress={() => {
+                if (customer) {
+                  setCname(customer.cname);
+                }
+              }}
+          )}
 
       </View>
     </ScrollView>
