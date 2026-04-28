@@ -5,8 +5,10 @@ import CustomerSearch from '@/components/CustomerSearch';
 import CustomerImportContactsScreen from '@/components/CustomerImportContactsScreen';
 import CustomersProfile from '@/app/(tabs)/(customers)/customersProfile';
 import { getCustomers, searchCustomers, type Customers } from '@/database/customersdb';
+import { useLanguage } from '@/service/language';
 
 const customersList = () => {
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ query?: string }>();
   const [allCustomers, setAllCustomers] = useState<Customers[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<Customers[]>([]);
@@ -89,13 +91,13 @@ const customersList = () => {
             onPress={() => setImportOpen(true)}
             className="rounded-md border border-gray-300 bg-white px-3 py-2"
           >
-            <Text className="text-xs font-semibold text-black">Import</Text>
+            <Text className="text-xs font-semibold text-black">{t('import')}</Text>
           </Pressable>
           <Pressable
             onPress={handleAddCustomer}
             className="rounded-md bg-black px-3 py-2"
           >
-            <Text className="text-xs font-semibold text-white">Add</Text>
+            <Text className="text-xs font-semibold text-white">{t('add')}</Text>
           </Pressable>
         </View>
 
@@ -105,7 +107,7 @@ const customersList = () => {
           </View>
         ) : filteredCustomers.length === 0 ? (
           <View className="px-4 mt-6">
-            <Text className="text-sm text-gray-500">No customers yet.</Text>
+            <Text className="text-sm text-gray-500">{t('no_customers_yet')}</Text>
           </View>
         ) : (
           <View className="px-4 mt-4">

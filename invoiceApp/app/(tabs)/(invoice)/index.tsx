@@ -4,8 +4,10 @@ import { getInvoices, searchInvoice, deleteInvoice, toggleInvoiceCompleted, type
 import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import InvoiceSearch from '@/components/InvoiceSearch';
 import React, { useEffect, useState, useCallback } from 'react';
+import { useLanguage } from '@/service/language';
 
 const invoiceContentList = () => {
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ query?: string }>();
   const [allInvoices, setAllInvoices] = useState<InvoiceContent[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<InvoiceContent[]>([]);
@@ -60,10 +62,10 @@ const invoiceContentList = () => {
   };
 
   const handleDelete = (invoice: InvoiceContent) => {
-    Alert.alert('Delete invoice', `Delete invoice #${invoice.invoicenumber}?`, [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('delete_invoice_title'), t('delete_invoice_message').replace('{{number}}', String(invoice.invoicenumber)), [
+      { text: t('cancel'), style: 'cancel' },
       {
-        text: 'Delete',
+        text: t('delete'),
         style: 'destructive',
         onPress: async () => {
           await deleteInvoice(invoice.id);
@@ -90,7 +92,7 @@ const invoiceContentList = () => {
             onPress={handleCreate}
             className="rounded-md bg-black px-3 py-2"
           >
-            <Text className="text-sm font-semibold text-white">New</Text>
+            <Text className="text-sm font-semibold text-white">{t('new')}</Text>
           </Pressable>
         </View>
 
@@ -100,7 +102,7 @@ const invoiceContentList = () => {
           </View>
         ) : filteredInvoices.length === 0 ? (
           <View className="px-4 mt-6">
-            <Text className="text-sm text-gray-500">No invoices yet.</Text>
+            <Text className="text-sm text-gray-500">{t('no_invoices_yet')}</Text>
           </View>
         ) : (
           <View className="px-4 mt-4">

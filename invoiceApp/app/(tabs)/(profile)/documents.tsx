@@ -4,8 +4,10 @@ import { router } from 'expo-router';
 import DocumentImportButton from '@/components/DocumentImportButton';
 import DocumentProfile from '@/app/bdocuments/documentProfile';
 import { getBdocuments, type Bdocuments } from '@/database/bdocuments';
+import { useLanguage } from '@/service/language';
 
 const documents = () => {
+  const { t } = useLanguage();
   const [documents, setDocuments] = useState<Bdocuments[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,7 +38,7 @@ const documents = () => {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 py-6">
-      <Text className="text-lg font-semibold text-black">Documents</Text>
+      <Text className="text-lg font-semibold text-black">{t('documents')}</Text>
       <View className="mt-4">
         <DocumentImportButton onImported={handleImported} />
       </View>
@@ -46,7 +48,7 @@ const documents = () => {
           <ActivityIndicator size="small" color="#111827" />
         </View>
       ) : documents.length === 0 ? (
-        <Text className="mt-6 text-sm text-gray-500">No documents yet.</Text>
+        <Text className="mt-6 text-sm text-gray-500">{t('no_documents_yet')}</Text>
       ) : (
         <View className="mt-4">
           {documents.map((doc) => (

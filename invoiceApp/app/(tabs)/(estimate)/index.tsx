@@ -4,8 +4,10 @@ import { convertEstimateToInvoice, getEstimates, searchEstimates, deleteEstimate
 import { useLocalSearchParams, router } from 'expo-router';
 import EstimateSearch from '@/components/EstimateSearch';
 import React, { useEffect, useState} from 'react';
+import { useLanguage } from '@/service/language';
 
 const estimateContentList = () => {
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ query?: string}>();
   const [allEstimates, setAllEstimates] = useState<EstimateContent[]>([]);
   const [filteredEstimates, setFilteredEstimates] = useState<EstimateContent[]>([]);
@@ -54,10 +56,10 @@ const estimateContentList = () => {
   }
 
   const handleDelete = (estimate: EstimateContent) => {
-    Alert.alert('Delete estimate', `Delete estimate #${estimate.estimatenumber}?`, [
-      { text: 'Cancel', style: 'cancel'},
+    Alert.alert(t('delete_estimate_title'), t('delete_estimate_message').replace('{{number}}', String(estimate.estimatenumber)), [
+      { text: t('cancel'), style: 'cancel'},
       {
-        text: 'Delete',
+        text: t('delete'),
         style: 'destructive',
         onPress: async () => {
           await deleteEstimates(estimate.id);
@@ -70,10 +72,10 @@ const estimateContentList = () => {
   const handleToggleCompleted = async (estimate: EstimateContent) => {
     const next = estimate.estimatecompleted ? 0 : 1;
     if (next === 1) {
-      Alert.alert('Mark as won', `Convert estimate #${estimate.estimatenumber} to an invoice?`, [
-        { text: 'Cancel', style: 'cancel' },
+      Alert.alert(t('mark_as_won_title'), t('convert_estimate_message').replace('{{number}}', String(estimate.estimatenumber)), [
+        { text: t('cancel'), style: 'cancel' },
         {
-          text: 'Convert',
+          text: t('convert'),
           onPress: async () => {
             await toggleEstimateCompleted(estimate.id, 1);
             await convertEstimateToInvoice(estimate.id);
@@ -88,10 +90,10 @@ const estimateContentList = () => {
   };
 
   const handleConvert = async (estimate: EstimateContent) => {
-    Alert.alert('Convert estimate', `Convert estimate #${estimate.estimatenumber} to an invoice?`, [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('convert_estimate_title'), t('convert_estimate_message').replace('{{number}}', String(estimate.estimatenumber)), [
+      { text: t('cancel'), style: 'cancel' },
       {
-        text: 'Convert',
+        text: t('convert'),
         onPress: async () => {
           await convertEstimateToInvoice(estimate.id);
           await toggleEstimateCompleted(estimate.id, 1);
@@ -112,7 +114,7 @@ const estimateContentList = () => {
             onPress ={handleCreate}
             className='rounded-md bg-black px-3 py-2'
             >
-              <Text className='text-sm font-semibold text-white'> New Estimate</Text>
+              <Text className='text-sm font-semibold text-white'>{t('new_estimate')}</Text>
             </Pressable>
         </View>
 
@@ -122,7 +124,7 @@ const estimateContentList = () => {
           </View>
         ) : filteredEstimates.length === 0 ? (
           <View className='px-4 mt-6'>
-            <Text className='text-sm text-gray-500'> No Estimates have been created</Text>
+            <Text className='text-sm text-gray-500'>{t('no_estimates_created')}</Text>
           </View>
         ) : (
           <View className="px-4 mt-4">

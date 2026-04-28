@@ -2,8 +2,10 @@ import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { getCustomers, type Customers } from '@/database/customersdb';
+import { useLanguage } from '@/service/language';
 
 const customerAssociates = () => {
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ ccompany?: string }>();
   const [associates, setAssociates] = useState<Customers[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ const customerAssociates = () => {
 
   return (
     <ScrollView className="flex-1 bg-white px-4 py-6">
-      <Text className="text-lg font-semibold text-black">Company Associates</Text>
+      <Text className="text-lg font-semibold text-black">{t('company_associates')}</Text>
       {params.ccompany ? (
         <Text className="mt-1 text-xs text-gray-500">{params.ccompany}</Text>
       ) : null}
@@ -39,7 +41,7 @@ const customerAssociates = () => {
           <ActivityIndicator size="small" color="#111827" />
         </View>
       ) : associates.length === 0 ? (
-        <Text className="mt-6 text-sm text-gray-500">No associates found.</Text>
+        <Text className="mt-6 text-sm text-gray-500">{t('no_associates_found')}</Text>
       ) : (
         <View className="mt-4">
           {associates.map((customer) => (
@@ -56,4 +58,3 @@ const customerAssociates = () => {
 };
 
 export default customerAssociates;
-

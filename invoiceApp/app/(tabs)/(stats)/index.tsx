@@ -7,8 +7,10 @@ import StatsTopCustomers from '@/components/StatsTopCustomers';
 import StatsInvoiceCompletion from '@/components/StatsInvoiceCompletion';
 import { getEstimates, type EstimateContent } from '@/database/estimatecontent';
 import { getInvoices, type InvoiceContent } from '@/database/invoicecontent';
+import { useLanguage } from '@/service/language';
 
 const index = () => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'estimates' | 'pending' | 'revenue' | 'customers' | 'completion'>('estimates');
   const [loading, setLoading] = useState(true);
   const [estimates, setEstimates] = useState<EstimateContent[]>([]);
@@ -33,15 +35,15 @@ const index = () => {
   return (
     <ScrollView className="flex-1 bg-gray-50">
       <View className="px-4 py-6">
-        <Text className="text-lg font-semibold text-black">Business Analytics</Text>
+        <Text className="text-lg font-semibold text-black">{t('business_analytics')}</Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-4">
           {[
-            { key: 'estimates', label: 'Estimates' },
-            { key: 'pending', label: 'Pending' },
-            { key: 'revenue', label: 'Revenue' },
-            { key: 'customers', label: 'Customers' },
-            { key: 'completion', label: 'Invoices' },
+            { key: 'estimates', label: t('tab_estimates') },
+            { key: 'pending', label: t('tab_pending') },
+            { key: 'revenue', label: t('tab_revenue') },
+            { key: 'customers', label: t('tab_customers') },
+            { key: 'completion', label: t('tab_invoices') },
           ].map((tab) => (
             <Pressable
               key={tab.key}

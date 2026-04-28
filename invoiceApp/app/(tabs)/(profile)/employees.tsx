@@ -8,8 +8,10 @@ import { useLocalSearchParams, router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import EmployeeFilter from '@/components/EmployeeFilter';
 import { eAges, ePay, eYears } from '@/constants/data';
+import { useLanguage } from '@/service/language';
 
 const employees = () => {
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{
     query?: string;
     rating?: string;
@@ -116,7 +118,7 @@ const employees = () => {
           <EmployeeFilter />
           <EmployeeButton
             onPress={handleAddEmployee}
-            title="Add"
+            title={t('add')}
             style="px-3 py-2 bg-black"
             textStyle="text-sm"
           />
@@ -130,18 +132,18 @@ const employees = () => {
         ) : filteredEmployees.length === 0 ? (
           allEmployees.length === 0 ? (
             <NoResults
-              title="No employees yet"
-              subtitle="Add your first employee to get started."
+              title={t('no_employees_yet')}
+              subtitle={t('add_first_employee')}
             />
           ) : params.query && params.query.trim() !== '' ? (
             <NoResults
-              title="No results"
-              subtitle="We couldn't find any employees matching that search."
+              title={t('no_results')}
+              subtitle={t('no_employees_search_match')}
             />
           ) : (
             <NoResults
-              title="No matches"
-              subtitle="No employees match those filters."
+              title={t('no_matches')}
+              subtitle={t('no_employees_filter_match')}
             />
           )
         ) : (

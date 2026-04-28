@@ -288,7 +288,7 @@ const invoiceCreate = () => {
       setIsPreview(true); // Show preview immediately
     } catch (error) {
       console.error('PDF generation failed:', error);
-      Alert.alert('PDF failed', 'Could not generate the invoice PDF.');
+      Alert.alert(t('invoice_pdf_failed_title'), t('invoice_pdf_failed_message'));
     } finally {
       setIsGenerating(false);
     }
@@ -401,7 +401,7 @@ const invoiceCreate = () => {
 
   const handleSavePdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf_yet_title'), t('invoice_generate_pdf_first'));
       return;
     }
     try {
@@ -414,10 +414,10 @@ const invoiceCreate = () => {
       const sourceFile = new File(pdfUri);
       const destFile = new File(invoicesDir, filename);
       sourceFile.copy(destFile);
-      Alert.alert('Saved', 'PDF saved to invoices folder');
+      Alert.alert(t('invoice_saved_title'), t('invoice_pdf_saved_folder'));
     } catch (error) {
       console.error('Save failed:', error);
-      Alert.alert('Save failed', 'Could not save the PDF.');
+      Alert.alert(t('invoice_save_failed_title'), t('invoice_pdf_save_failed_message'));
     } finally {
       setIsSaving(false);
     }
@@ -432,13 +432,13 @@ const invoiceCreate = () => {
       setIsSharing(true);
       const canShare = await Sharing.isAvailableAsync();
       if (!canShare) {
-        Alert.alert('Sharing not available', 'Sharing is not available on this device.');
+        Alert.alert(t('invoice_sharing_not_available_title'), t('invoice_sharing_not_available_message'));
         return;
       }
       await Sharing.shareAsync(pdfUri);
     } catch (error) {
       console.error('Share failed:', error);
-      Alert.alert('');
+      Alert.alert(t('invoice_shared_failed'));
     } finally {
       setIsSharing(false);
     }
@@ -446,7 +446,7 @@ const invoiceCreate = () => {
 
   const handlePrintPdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf_yet_title'), t('invoice_generate_pdf_first'));
       return;
     }
     try {
@@ -469,17 +469,17 @@ const invoiceCreate = () => {
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-lg font-semibold text-black">Invoice Preview</Text>
+          <Text className="text-lg font-semibold text-black">{t('invoice_preview_title')}</Text>
           <Pressable onPress={() => router.back()}>
-            <Text className="text-sm font-medium text-gray-600">Close</Text>
+            <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
           </Pressable>
         </View>
 
         {/* Preview Content */}
         <View className="rounded-md border border-gray-200 bg-gray-50 p-4">
           <Text className="text-sm font-semibold text-gray-700 mb-2">Invoice #{invoicenumber}</Text>
-          <Text className="text-xs text-gray-600 mb-3">Client: {clientname}</Text>
-          <Text className="text-xs text-gray-600 mb-3">Date: {invoicedate}</Text>
+          <Text className="text-xs text-gray-600 mb-3">{t('client_label')}: {clientname}</Text>
+          <Text className="text-xs text-gray-600 mb-3">{t('date_label')}: {invoicedate}</Text>
           {(() => {
             const displaySubtotal = isSubtotalManuallySet ? Number(totalamount) : subtotal;
             const displayTaxAmount = (displaySubtotal * (Number(tax) || 0)) / 100;
@@ -487,16 +487,16 @@ const invoiceCreate = () => {
             const displayFinalTotal = displaySubtotal + displayTaxAmount - displayDiscountAmount;
             return (
               <>
-                <Text className="text-xs text-gray-600 mt-2">Subtotal: ${displaySubtotal.toFixed(2)}</Text>
-                <Text className="text-xs text-gray-600">Tax: ${displayTaxAmount.toFixed(2)}</Text>
-                <Text className="text-xs text-gray-600">Discount: ${displayDiscountAmount.toFixed(2)}</Text>
-                <Text className="text-sm font-semibold text-black mt-3">Total: ${displayFinalTotal.toFixed(2)}</Text>
+                <Text className="text-xs text-gray-600 mt-2">{t('subtotal_label')}: ${displaySubtotal.toFixed(2)}</Text>
+                <Text className="text-xs text-gray-600">{t('tax_label')}: ${displayTaxAmount.toFixed(2)}</Text>
+                <Text className="text-xs text-gray-600">{t('discount_label')}: ${displayDiscountAmount.toFixed(2)}</Text>
+                <Text className="text-sm font-semibold text-black mt-3">{t('total_label')}: ${displayFinalTotal.toFixed(2)}</Text>
               </>
             );
           })()}
         </View>
 
-        <Text className="mt-6 text-sm text-gray-500 text-center">PDF generated and ready to share or print</Text>
+        <Text className="mt-6 text-sm text-gray-500 text-center">{t('invoice_pdf_ready_share_print')}</Text>
 
         {/* Action Buttons */}
         <View className="mt-6 flex-row gap-3">
@@ -508,7 +508,7 @@ const invoiceCreate = () => {
             {isSaving ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="font-semibold text-white">Save PDF</Text>
+              <Text className="font-semibold text-white">{t('save_pdf')}</Text>
             )}
           </Pressable>
           <Pressable
@@ -519,7 +519,7 @@ const invoiceCreate = () => {
             {isSharing ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="font-semibold text-white">Share</Text>
+              <Text className="font-semibold text-white">{t('share')}</Text>
             )}
           </Pressable>
         </View>
@@ -533,14 +533,14 @@ const invoiceCreate = () => {
             {isPrinting ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="font-semibold text-white">Print</Text>
+              <Text className="font-semibold text-white">{t('print')}</Text>
             )}
           </Pressable>
           <Pressable
             onPress={() => setIsPreview(false)}
             className="flex-1 items-center rounded-md border border-gray-300 py-3"
           >
-            <Text className="font-semibold text-black">Back to Edit</Text>
+            <Text className="font-semibold text-black">{t('back_to_edit')}</Text>
           </Pressable>
         </View>
 
@@ -549,7 +549,7 @@ const invoiceCreate = () => {
             onPress={() => router.back()}
             className="flex-1 items-center rounded-md bg-gray-600 py-3"
           >
-            <Text className="font-semibold text-white">Done</Text>
+            <Text className="font-semibold text-white">{t('done')}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -561,20 +561,20 @@ const invoiceCreate = () => {
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-semibold text-black">{isEditing ? 'Edit Invoice' : 'New Invoice'}</Text>
+          <Text className="text-lg font-semibold text-black">{isEditing ? t('edit_invoice') : t('new_invoice')}</Text>
           <Pressable onPress={() => router.back()}>
-            <Text className="text-sm font-medium text-gray-600">Close</Text>
+            <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
           </Pressable>
         </View>
 
         <View className="mt-4 rounded-md border border-gray-200 bg-white p-3">
           <View className="flex-row items-center justify-between">
-            <Text className="text-xs text-gray-500">Logo position</Text>
+            <Text className="text-xs text-gray-500">{t('logo_position')}</Text>
             <Pressable
               onPress={() => setCenterLogo((prev) => !prev)}
               className="rounded-full border border-gray-300 px-3 py-1"
             >
-              <Text className="text-xs text-black">{centerLogo ? 'Top center' : 'Top left'}</Text>
+              <Text className="text-xs text-black">{centerLogo ? t('top_center') : t('top_left')}</Text>
             </Pressable>
           </View>
           {logoUri ? (
@@ -582,27 +582,27 @@ const invoiceCreate = () => {
               <Image source={{ uri: logoUri }} style={{ width: 80, height: 80, resizeMode: 'contain' }} />
             </View>
           ) : (
-            <Text className="mt-3 text-xs text-gray-400">No logo saved</Text>
+            <Text className="mt-3 text-xs text-gray-400">{t('no_logo_saved')}</Text>
           )}
         </View>
 
         <TextInput
           value={clientname}
           onChangeText={setClientname}
-          placeholder="Client name"
+          placeholder={t('client_name_placeholder')}
           className="mt-4 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
         <TextInput
           value={invoicenumber}
           onChangeText={setInvvoicenumber}
-          placeholder="Invoice number"
+          placeholder={t('invoice_number_placeholder')}
           keyboardType="numeric"
           className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
         <TextInput
           value={invoicedate}
           onChangeText={setInvoicedate}
-          placeholder="Invoice date (MM/DD/YYYY)"
+          placeholder={t('invoice_date_placeholder')}
           className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
 
@@ -610,13 +610,13 @@ const invoiceCreate = () => {
           onPress={() => setIsProductsModalOpen(true)}
           className="mt-2 rounded-md border border-gray-300 px-3 py-3"
         >
-          <Text className="text-sm text-black">Select products</Text>
+          <Text className="text-sm text-black">{t('select_products')}</Text>
         </Pressable>
         {Object.keys(selectedProducts).length > 0 ? (
           <View className="mt-3 rounded-md border border-gray-200 bg-white p-3">
             <View className="flex-row justify-between">
-              <Text className="text-xs font-semibold text-gray-500">Item</Text>
-              <Text className="text-xs font-semibold text-gray-500">Total</Text>
+              <Text className="text-xs font-semibold text-gray-500">{t('item_label')}</Text>
+              <Text className="text-xs font-semibold text-gray-500">{t('total_label')}</Text>
             </View>
             {Object.values(selectedProducts).map((item) => {
               const lineTotal = item.useManual
@@ -628,8 +628,8 @@ const invoiceCreate = () => {
                     <Text className="text-sm font-medium text-black">{item.name}</Text>
                     <Text className="text-xs text-gray-500">
                       {item.useManual
-                        ? `Manual: $${Number(item.manualAmount || 0).toFixed(2)}`
-                        : `Qty ${item.qty} × $${Number(item.unitPrice || 0).toFixed(2)}`}
+                        ? `${t('manual_label')}: $${Number(item.manualAmount || 0).toFixed(2)}`
+                        : `${t('qty_label')} ${item.qty} × $${Number(item.unitPrice || 0).toFixed(2)}`}
                     </Text>
                   </View>
                   <Text className="text-sm font-semibold text-black">${lineTotal.toFixed(2)}</Text>
@@ -644,7 +644,7 @@ const invoiceCreate = () => {
             setTotalamount(text);
             setIsSubtotalManuallySet(true);
           }}
-          placeholder="Subtotal (calculated)"
+          placeholder={t('subtotal_calculated_placeholder')}
           keyboardType="decimal-pad"
           className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
@@ -652,14 +652,14 @@ const invoiceCreate = () => {
           <TextInput
             value={tax}
             onChangeText={setTax}
-            placeholder="Tax (%)"
+            placeholder={t('tax_percent_placeholder')}
             keyboardType="numeric"
             className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
           />
           <TextInput
             value={percentage}
             onChangeText={setPercentage}
-            placeholder="Discount (%)"
+            placeholder={t('discount_percent_placeholder')}
             keyboardType="numeric"
             className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
           />
@@ -667,21 +667,21 @@ const invoiceCreate = () => {
         <TextInput
           value={details}
           onChangeText={setDetails}
-          placeholder="Details"
+          placeholder={t('details_placeholder')}
           multiline
           className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
         <TextInput
           value={notes}
           onChangeText={setNotes}
-          placeholder="Notes"
+          placeholder={t('notes_placeholder')}
           multiline
           className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
         <TextInput
           value={termsandconditions}
           onChangeText={setTermsandconditions}
-          placeholder="Terms and conditions"
+          placeholder={t('terms_and_conditions_placeholder')}
           multiline
           className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
@@ -695,7 +695,7 @@ const invoiceCreate = () => {
             {isGenerating ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="font-semibold text-white">Generate PDF</Text>
+              <Text className="font-semibold text-white">{t('generate_pdf')}</Text>
             )}
           </Pressable>
           <Pressable
@@ -706,7 +706,7 @@ const invoiceCreate = () => {
             {isSavingInvoice ? (
               <ActivityIndicator size="small" color="#111827" />
             ) : (
-              <Text className="font-semibold text-black">Save Invoice</Text>
+              <Text className="font-semibold text-black">{t('save_invoice')}</Text>
             )}
           </Pressable>
         </View>
@@ -714,14 +714,14 @@ const invoiceCreate = () => {
         <Modal visible={isProductsModalOpen} animationType="slide">
           <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom }}>
             <View className="flex-row items-center justify-between mb-6">
-              <Text className="text-lg font-semibold text-black">Select products</Text>
+              <Text className="text-lg font-semibold text-black">{t('select_products')}</Text>
               <Pressable onPress={() => setIsProductsModalOpen(false)}>
-                <Text className="text-sm font-medium text-gray-600">Done</Text>
+                <Text className="text-sm font-medium text-gray-600">{t('done')}</Text>
               </Pressable>
             </View>
 
             {allProducts.length === 0 ? (
-              <Text className="mt-6 text-sm text-gray-500">No products saved yet.</Text>
+              <Text className="mt-6 text-sm text-gray-500">{t('no_products_saved_yet')}</Text>
             ) : (
               <ScrollView className="mt-4">
                 {allProducts.map((product) => {
@@ -759,14 +759,14 @@ const invoiceCreate = () => {
                           className={`rounded-full px-3 py-1 ${selected ? 'bg-black' : 'bg-gray-100'}`}
                         >
                           <Text className={`text-xs ${selected ? 'text-white' : 'text-gray-700'}`}>
-                            {selected ? 'Selected' : 'Select'}
+                            {selected ? t('selected') : t('select')}
                           </Text>
                         </Pressable>
                       </View>
                       {selected ? (
                         <View className="mt-3">
                           <View className="flex-row items-center justify-between">
-                            <Text className="text-xs text-gray-500">Use manual amount</Text>
+                            <Text className="text-xs text-gray-500">{t('use_manual_amount')}</Text>
                             <Pressable
                               onPress={() =>
                                 setSelectedProducts((prev) => ({
@@ -777,13 +777,13 @@ const invoiceCreate = () => {
                               className={`rounded-full px-3 py-1 ${selected.useManual ? 'bg-black' : 'bg-gray-100'}`}
                             >
                               <Text className={`text-xs ${selected.useManual ? 'text-white' : 'text-gray-700'}`}>
-                                {selected.useManual ? 'Manual' : 'Auto'}
+                                {selected.useManual ? t('manual_label') : t('auto')}
                               </Text>
                             </Pressable>
                           </View>
                           {selected.useManual ? (
                             <View className="mt-3">
-                              <Text className="text-xs text-gray-500">Manual amount</Text>
+                              <Text className="text-xs text-gray-500">{t('manual_amount')}</Text>
                               <TextInput
                                 value={selected.manualAmount}
                                 onChangeText={(text) =>
@@ -799,7 +799,7 @@ const invoiceCreate = () => {
                           ) : (
                             <View className="mt-3 flex-row gap-3">
                               <View className="flex-1">
-                                <Text className="text-xs text-gray-500">Qty</Text>
+                                <Text className="text-xs text-gray-500">{t('qty_label')}</Text>
                                 <TextInput
                                   value={selected.qty}
                                   onChangeText={(text) =>
@@ -813,7 +813,7 @@ const invoiceCreate = () => {
                                 />
                               </View>
                               <View className="flex-1">
-                                <Text className="text-xs text-gray-500">Unit price</Text>
+                                <Text className="text-xs text-gray-500">{t('unit_price')}</Text>
                                 <TextInput
                                   value={selected.unitPrice}
                                   onChangeText={(text) =>
@@ -838,7 +838,7 @@ const invoiceCreate = () => {
           </View>
         </Modal>
         {pdfUri ? (
-          <Text className="mt-3 text-xs text-gray-500">PDF ready to export.</Text>
+          <Text className="mt-3 text-xs text-gray-500">{t('pdf_ready_to_export')}</Text>
         ) : null}
       </ScrollView>
     )
