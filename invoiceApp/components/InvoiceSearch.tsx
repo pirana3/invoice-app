@@ -4,13 +4,14 @@ import { useDebouncedCallback } from 'use-debounce';
 import { icons } from '@/constants/icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import cn from 'clsx';
-import { setParams } from 'expo-router/build/global-state/routing';
+import { useLanguage } from '@/service/language';
 
 type InvoiceSearchBarProps = {
     containerClassName?: string;
 };
 
 const InvoiceSearch = ({ containerClassName }: InvoiceSearchBarProps) => {
+    const { t } = useLanguage();
     const params = useLocalSearchParams<{ query?: string }>();
     const [search, setSearch] = useState(params.query || '');
 
@@ -37,7 +38,7 @@ const InvoiceSearch = ({ containerClassName }: InvoiceSearchBarProps) => {
             className="size-5 mr-2"
         />
         <TextInput
-            placeholder='Search Invoice'
+            placeholder={t('search_invoices_placeholder')}
             placeholderTextColor='#888'
             value={search}
             onChangeText={handleSearch}
@@ -54,4 +55,3 @@ const InvoiceSearch = ({ containerClassName }: InvoiceSearchBarProps) => {
 }
 
 export default InvoiceSearch
-

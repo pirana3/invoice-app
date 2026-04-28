@@ -4,12 +4,14 @@ import { useDebouncedCallback } from 'use-debounce';
 import { icons } from '@/constants/icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import cn from 'clsx';
+import { useLanguage } from '@/service/language';
 
 type CustomerSearchProps = {
   containerClassName?: string;
 };
 
 const CustomerSearch = ({ containerClassName }: CustomerSearchProps) => {
+  const { t } = useLanguage();
   const params = useLocalSearchParams<{ query?: string }>();
   const [search, setSearch] = useState(params.query || '');
 
@@ -37,7 +39,7 @@ const CustomerSearch = ({ containerClassName }: CustomerSearchProps) => {
       <View className="flex flex-row items-center flex-1">
         <Image source={icons.search} resizeMode="contain" className="size-5 mr-2" />
         <TextInput
-          placeholder="Search customer name, email, company..."
+          placeholder={t('search_customers_placeholder')}
           placeholderTextColor="#888"
           value={search}
           onChangeText={handleSearch}

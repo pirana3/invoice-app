@@ -110,17 +110,20 @@ const employees = () => {
   return (
     <ScrollView className="flex-1 bg-gray-50">
       <View className="py-4">
-        {/* Search + Filters + Add */}
+        {/* Search + Filters */}
         <View className="flex-row items-center gap-2 px-4">
           <View className="flex-1">
             <EmployeesSearchBar containerClassName="mx-0" />
           </View>
           <EmployeeFilter />
+        </View>
+
+        {/* Add Button */}
+        <View className="mt-3 px-4">
           <EmployeeButton
             onPress={handleAddEmployee}
-            title={t('add')}
-            style="px-3 py-2 bg-black"
-            textStyle="text-sm"
+            title={t('employees_add')}
+            style="mb-0"
           />
         </View>
 

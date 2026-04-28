@@ -9,9 +9,11 @@ import { getBusinessInfo } from '@/database/businessinfodb';
 import { createEstimate, getEstimateById, updateEstimate } from '@/database/estimatecontent';
 import { getProducts, type Product } from '@/database/productdb';
 import { createEstimateItem, deleteEstimateItemsByEstimateId, getEstimateItemsByEstimateId } from '@/database/estimateitemsdb';
+import { useLanguage } from '@/service/language';
 
 const estimateCreate = () => {
   const router = useRouter();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
 
   const [clientname, setClientname] = useState('');
@@ -260,7 +262,7 @@ const estimateCreate = () => {
       setIsPreview(true); // Show preview immediately
     } catch (error) {
       console.error('PDF generation failed:', error);
-      Alert.alert('PDF failed', 'Could not generate the estimate PDF.');
+      Alert.alert(t('estimate_pdf_failed_title'), t('estimate_pdf_failed_message'));
     } finally {
       setIsGenerating(false);
     }
@@ -274,34 +276,34 @@ const estimateCreate = () => {
     const parsedTax = Number(estimatetax);
 
     if (!clientname.trim()) {
-      Alert.alert('Missing client', 'Please enter a client name.');
+      Alert.alert(t('estimate_missing_client_title'), t('estimate_missing_client_message'));
       return;
     }
     if (!Number.isFinite(parsedEstimateNumber)) {
-      Alert.alert('Invalid estimate number', 'Please enter a valid estimate number.');
+      Alert.alert(t('estimate_invalid_number_title'), t('estimate_invalid_number_message'));
       return;
     }
     if (!Number.isFinite(parsedEstimateDate)) {
-      Alert.alert('Invalid date', 'Please enter a valid estimate date.');
+      Alert.alert(t('estimate_invalid_date_title'), t('estimate_invalid_date_message'));
       return;
     }
     if (!Number.isFinite(parsedTotal)) {
-      Alert.alert('Invalid total', 'Please enter a valid subtotal.');
+      Alert.alert(t('estimate_invalid_total_title'), t('estimate_invalid_total_message'));
       return;
     }
     if (!Number.isFinite(parsedPercentage)) {
-      Alert.alert('Invalid discount', 'Please enter a valid discount.');
+      Alert.alert(t('estimate_invalid_discount_title'), t('estimate_invalid_discount_message'));
       return;
     }
     if (!Number.isFinite(parsedTax)) {
-      Alert.alert('Invalid tax', 'Please enter a valid tax.');
+      Alert.alert(t('estimate_invalid_tax_title'), t('estimate_invalid_tax_message'));
       return;
     }
 
     try {
       setIsSavingEstimate(true);
       if (parsedTotal <= 0) {
-        Alert.alert('Invalid total', 'Total amount must be greater than 0.');
+        Alert.alert(t('estimate_invalid_total_title'), t('estimate_total_gt_zero'));
         return;
       }
 
@@ -362,11 +364,11 @@ const estimateCreate = () => {
           )
         );
       }
-      Alert.alert('Saved', 'Estimate saved.');
+      Alert.alert(t('invoice_saved_title'), t('estimate_saved_message'));
       router.back();
     } catch (error) {
       console.error('Estimate save failed:', error);
-      Alert.alert('Save failed', 'Could not save the estimate.');
+      Alert.alert(t('invoice_save_failed_title'), t('estimate_save_failed_message'));
     } finally {
       setIsSavingEstimate(false);
     }
@@ -374,7 +376,7 @@ const estimateCreate = () => {
 
   const handleSavePdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf_yet_title'), t('invoice_generate_pdf_first'));
       return;
     }
     try {
@@ -387,10 +389,10 @@ const estimateCreate = () => {
       const sourceFile = new File(pdfUri);
       const destFile = new File(estimatesDir, filename);
       sourceFile.copy(destFile);
-      Alert.alert('Saved', `Saved to estimates folder`);
+      Alert.alert(t('invoice_saved_title'), t('estimate_saved_folder_message'));
     } catch (error) {
       console.error('Save failed:', error);
-      Alert.alert('Save failed', 'Could not save the PDF.');
+      Alert.alert(t('invoice_save_failed_title'), t('invoice_pdf_save_failed_message'));
     } finally {
       setIsSaving(false);
     }
@@ -398,20 +400,20 @@ const estimateCreate = () => {
 
   const handleSharePdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf_yet_title'), t('invoice_generate_pdf_first'));
       return;
     }
     try {
       setIsSharing(true);
       const canShare = await Sharing.isAvailableAsync();
       if (!canShare) {
-        Alert.alert('Sharing not available', 'Sharing is not available on this device.');
+        Alert.alert(t('invoice_sharing_not_available_title'), t('invoice_sharing_not_available_message'));
         return;
       }
       await Sharing.shareAsync(pdfUri);
     } catch (error) {
       console.error('Share failed:', error);
-      Alert.alert('Share failed', 'Could not share the PDF.');
+      Alert.alert(t('invoice_shared_failed'));
     } finally {
       setIsSharing(false);
     }
@@ -419,7 +421,7 @@ const estimateCreate = () => {
 
   const handlePrintPdf = async () => {
     if (!pdfUri) {
-      Alert.alert('No PDF yet', 'Generate the PDF first.');
+      Alert.alert(t('invoice_no_pdf_yet_title'), t('invoice_generate_pdf_first'));
       return;
     }
     try {
@@ -427,7 +429,7 @@ const estimateCreate = () => {
       await Print.printAsync({ uri: pdfUri });
     } catch (error) {
       console.error('Print failed:', error);
-      Alert.alert('Print failed', 'Could not print the PDF.');
+      Alert.alert(t('invoice_print_failed'));
     } finally {
       setIsPrinting(false);
     }
@@ -440,20 +442,20 @@ const estimateCreate = () => {
       keyboardShouldPersistTaps="handled"
     >
       <View className="flex-row items-center justify-between">
-        <Text className="text-lg font-semibold text-black">{isEditing ? 'Edit Estimate' : 'New Estimate'}</Text>
+        <Text className="text-lg font-semibold text-black">{isEditing ? t('estimate_edit_title') : t('estimate_new_title')}</Text>
         <Pressable onPress={() => router.back()}>
-          <Text className="text-sm font-medium text-gray-600">Close</Text>
+          <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
         </Pressable>
       </View>
 
       <View className="mt-4 rounded-md border border-gray-200 bg-white p-3">
         <View className="flex-row items-center justify-between">
-          <Text className="text-xs text-gray-500">Logo position</Text>
+          <Text className="text-xs text-gray-500">{t('logo_position')}</Text>
           <Pressable
             onPress={() => setCenterLogo((prev) => !prev)}
             className="rounded-full border border-gray-300 px-3 py-1"
           >
-            <Text className="text-xs text-black">{centerLogo ? 'Top center' : 'Top left'}</Text>
+            <Text className="text-xs text-black">{centerLogo ? t('top_center') : t('top_left')}</Text>
           </Pressable>
         </View>
         {logoUri ? (
@@ -461,34 +463,34 @@ const estimateCreate = () => {
             <Image source={{ uri: logoUri }} style={{ width: 80, height: 80, resizeMode: 'contain' }} />
           </View>
         ) : (
-          <Text className="mt-3 text-xs text-gray-400">No logo saved</Text>
+          <Text className="mt-3 text-xs text-gray-400">{t('no_logo_saved')}</Text>
         )}
       </View>
 
       <TextInput
         value={clientname}
         onChangeText={setClientname}
-        placeholder="Client name"
+        placeholder={t('client_name_placeholder')}
         className="mt-4 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
       <TextInput
         value={estimatenumber}
         onChangeText={setEstimatenumber}
-        placeholder="Estimate number"
+        placeholder={t('estimate_number_placeholder')}
         keyboardType="numeric"
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
       <TextInput
         value={estimatedate}
         onChangeText={setEstimatedate}
-        placeholder="Estimate date (MM/DD/YYYY)"
+        placeholder={t('estimate_date_placeholder')}
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
       <Pressable
         onPress={() => setIsProductsModalOpen(true)}
         className="mt-3 rounded-md border border-gray-300 px-3 py-3"
       >
-        <Text className="text-sm text-black">Select products</Text>
+        <Text className="text-sm text-black">{t('select_products')}</Text>
       </Pressable>
       <TextInput
         value={estimatetotalamount}
@@ -496,7 +498,7 @@ const estimateCreate = () => {
           setEstimatetotalamount(text);
           setIsSubtotalManuallySet(true);
         }}
-        placeholder="Subtotal (calculated)"
+        placeholder={t('subtotal_calculated_placeholder')}
         keyboardType="decimal-pad"
         className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
@@ -504,14 +506,14 @@ const estimateCreate = () => {
         <TextInput
           value={estimatetax}
           onChangeText={setEstimatetax}
-          placeholder="Tax (%)"
+          placeholder={t('tax_percent_placeholder')}
           keyboardType="numeric"
           className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
         <TextInput
           value={estimatepercentage}
           onChangeText={setEstimatepercentage}
-          placeholder="Discount (%)"
+          placeholder={t('discount_percent_placeholder')}
           keyboardType="numeric"
           className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
         />
@@ -519,21 +521,21 @@ const estimateCreate = () => {
       <TextInput
         value={estimatedetails}
         onChangeText={setEstimatedetails}
-        placeholder="Details"
+        placeholder={t('details_placeholder')}
         multiline
         className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
       <TextInput
         value={estimatenotes}
         onChangeText={setEstimatenotes}
-        placeholder="Notes"
+        placeholder={t('notes_placeholder')}
         multiline
         className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
       <TextInput
         value={estimatetermsandconditions}
         onChangeText={setEstimatetermsandconditions}
-        placeholder="Terms and conditions"
+        placeholder={t('terms_and_conditions_placeholder')}
         multiline
         className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
       />
@@ -547,7 +549,7 @@ const estimateCreate = () => {
           {isGenerating ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text className="font-semibold text-white">Generate PDF</Text>
+            <Text className="font-semibold text-white">{t('generate_pdf')}</Text>
           )}
         </Pressable>
         <Pressable
@@ -558,7 +560,7 @@ const estimateCreate = () => {
           {isSavingEstimate ? (
             <ActivityIndicator size="small" color="#111827" />
           ) : (
-            <Text className="font-semibold text-black">Save Estimate</Text>
+            <Text className="font-semibold text-black">{t('save_estimate')}</Text>
           )}
         </Pressable>
       </View>
@@ -572,7 +574,7 @@ const estimateCreate = () => {
           {isSaving ? (
             <ActivityIndicator size="small" color="#111827" />
           ) : (
-            <Text className="font-semibold text-black">Save</Text>
+            <Text className="font-semibold text-black">{t('save_pdf')}</Text>
           )}
         </Pressable>
       </View>
@@ -585,7 +587,7 @@ const estimateCreate = () => {
           {isSharing ? (
             <ActivityIndicator size="small" color="#111827" />
           ) : (
-            <Text className="font-semibold text-black">Share</Text>
+            <Text className="font-semibold text-black">{t('share')}</Text>
           )}
         </Pressable>
         <Pressable
@@ -596,7 +598,7 @@ const estimateCreate = () => {
           {isPrinting ? (
             <ActivityIndicator size="small" color="#111827" />
           ) : (
-            <Text className="font-semibold text-black">Print</Text>
+            <Text className="font-semibold text-black">{t('print')}</Text>
           )}
         </Pressable>
       </View>
@@ -604,14 +606,14 @@ const estimateCreate = () => {
       <Modal visible={isProductsModalOpen} animationType="slide">
         <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom }}>
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="text-lg font-semibold text-black">Select products</Text>
+            <Text className="text-lg font-semibold text-black">{t('select_products')}</Text>
             <Pressable onPress={() => setIsProductsModalOpen(false)}>
-              <Text className="text-sm font-medium text-gray-600">Done</Text>
+              <Text className="text-sm font-medium text-gray-600">{t('done')}</Text>
             </Pressable>
           </View>
 
           {allProducts.length === 0 ? (
-            <Text className="mt-6 text-sm text-gray-500">No products saved yet.</Text>
+            <Text className="mt-6 text-sm text-gray-500">{t('no_products_saved_yet')}</Text>
           ) : (
             <ScrollView className="mt-4">
               {allProducts.map((product) => {
@@ -646,14 +648,14 @@ const estimateCreate = () => {
                         className={`rounded-full px-3 py-1 ${selected ? 'bg-black' : 'bg-gray-100'}`}
                       >
                         <Text className={`text-xs ${selected ? 'text-white' : 'text-gray-700'}`}>
-                          {selected ? 'Selected' : 'Select'}
+                          {selected ? t('selected') : t('select')}
                         </Text>
                       </Pressable>
                     </View>
                     {selected ? (
                       <View className="mt-3">
                         <View className="flex-row items-center justify-between">
-                          <Text className="text-xs text-gray-500">Use manual amount</Text>
+                          <Text className="text-xs text-gray-500">{t('use_manual_amount')}</Text>
                           <Pressable
                             onPress={() =>
                               setSelectedProducts((prev) => ({
@@ -664,13 +666,13 @@ const estimateCreate = () => {
                             className={`rounded-full px-3 py-1 ${selected.useManual ? 'bg-black' : 'bg-gray-100'}`}
                           >
                             <Text className={`text-xs ${selected.useManual ? 'text-white' : 'text-gray-700'}`}>
-                              {selected.useManual ? 'Manual' : 'Auto'}
+                              {selected.useManual ? t('manual_label') : t('auto')}
                             </Text>
                           </Pressable>
                         </View>
                         {selected.useManual ? (
                           <View className="mt-3">
-                            <Text className="text-xs text-gray-500">Manual amount</Text>
+                            <Text className="text-xs text-gray-500">{t('manual_amount')}</Text>
                             <TextInput
                               value={selected.manualAmount}
                               onChangeText={(text) =>
@@ -686,7 +688,7 @@ const estimateCreate = () => {
                         ) : (
                           <View className="mt-3 flex-row gap-3">
                             <View className="flex-1">
-                              <Text className="text-xs text-gray-500">Qty</Text>
+                              <Text className="text-xs text-gray-500">{t('qty_label')}</Text>
                               <TextInput
                                 value={selected.qty}
                                 onChangeText={(text) =>
@@ -700,7 +702,7 @@ const estimateCreate = () => {
                               />
                             </View>
                             <View className="flex-1">
-                              <Text className="text-xs text-gray-500">Unit price</Text>
+                              <Text className="text-xs text-gray-500">{t('unit_price')}</Text>
                               <TextInput
                                 value={selected.unitPrice}
                                 onChangeText={(text) =>

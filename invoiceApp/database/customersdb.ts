@@ -44,18 +44,18 @@ export const createCustomer = async (
 };
 
 export const getCustomers = async (): Promise<Customers[]> => {
-    return db.getAllSync<Customers>(
+    return db.getAllSync(
         `SELECT id, cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto
          FROM customers ORDER BY id DESC`
-    );
+    ) as Customers[];
 };
 
 export const getCustomerById = async (id: number): Promise<Customers | null> => {
-    return db.getFirstSync<Customers>(
+    return db.getFirstSync(
         `SELECT id, cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto
          FROM customers WHERE id = ?`,
         id
-    );
+    ) as Customers | null;
 };
 
 export const updateCustomer = async (
@@ -90,13 +90,13 @@ export const updateCustomer = async (
 
 export const searchCustomers = async (query: string): Promise<Customers[]> => {
     const searchTerm = `%${query}%`;
-    return db.getAllSync<Customers>(
+    return db.getAllSync(
         `SELECT id, cname, cemail, cphone, caddress, ccity, czip, cstate, ccompany, cdetails, cphoto
          FROM customers WHERE cname LIKE ? OR cemail LIKE ? OR ccompany LIKE ? ORDER BY cname ASC`,
         searchTerm,
         searchTerm,
         searchTerm
-    );
+    ) as Customers[];
 };
 
 export const deleteCustomer = async (id: number): Promise<boolean> => {

@@ -2,12 +2,14 @@ import { Alert, Text, View, Pressable } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import React, { useState } from 'react';
 import { db } from '@/database/db';
+import { useLanguage } from '@/service/language';
 
 type DocumentImportButtonProps = {
     onImported?: (id: number) => void;
 };
 
 const DocumentImportButton = ({ onImported }: DocumentImportButtonProps) => {
+    const { t } = useLanguage();
     const [docName, setDocName] = useState<string | null>(null);
 
     const pickDocument = async () => {
@@ -47,7 +49,7 @@ const DocumentImportButton = ({ onImported }: DocumentImportButtonProps) => {
         onPress={pickDocument}
         className="mb-2 items-center rounded-md border border-gray-200 bg-white px-3 py-3"
         >
-        <Text className="text-sm font-medium text-black">Import Document</Text>
+        <Text className="text-sm font-medium text-black">{t('document_import')}</Text>
       </Pressable>
       {docName ? <Text className="text-xs text-gray-600">{docName}</Text> : null}
         

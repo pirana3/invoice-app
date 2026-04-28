@@ -4,12 +4,14 @@ import { useDebouncedCallback } from "use-debounce";
 import { icons } from '@/constants/icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import cn from 'clsx';
+import { useLanguage } from '@/service/language';
 
 type EmployeesSearchBarProps = {
     containerClassName?: string;
 };
 
 const EmployeesSearchBar = ({ containerClassName }: EmployeesSearchBarProps) => {
+    const { t } = useLanguage();
     const params = useLocalSearchParams<{ query?: string }>();
     const [search, setSearch] = useState(params.query || '');
 
@@ -36,7 +38,7 @@ const EmployeesSearchBar = ({ containerClassName }: EmployeesSearchBarProps) => 
                     className="size-5 mr-2"
                 />
                 <TextInput
-                    placeholder="Search employee name, email, position..."
+                    placeholder={t('search_employees_placeholder')}
                     placeholderTextColor="#888"
                     value={search}
                     onChangeText={handleSearch}
