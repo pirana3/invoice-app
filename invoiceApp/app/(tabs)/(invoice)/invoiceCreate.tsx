@@ -592,25 +592,34 @@ const invoiceCreate = () => {
           )}
         </View>
 
-        <TextInput
-          value={clientname}
-          onChangeText={setClientname}
-          placeholder={t('client_name_placeholder')}
-          className="mt-4 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-        <TextInput
-          value={invoicenumber}
-          onChangeText={setInvvoicenumber}
-          placeholder={t('invoice_number_placeholder')}
-          keyboardType="numeric"
-          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-        <TextInput
-          value={invoicedate}
-          onChangeText={setInvoicedate}
-          placeholder={t('invoice_date_placeholder')}
-          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
+        <View className="mt-4">
+          <Text className="text-sm font-bold text-black mb-2">{t('client_name_placeholder')}</Text>
+          <TextInput
+            value={clientname}
+            onChangeText={setClientname}
+            placeholder={t('client_name_placeholder')}
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('invoice_number_placeholder')}</Text>
+          <TextInput
+            value={invoicenumber}
+            onChangeText={setInvvoicenumber}
+            placeholder={t('invoice_number_placeholder')}
+            keyboardType="numeric"
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('invoice_date_placeholder')}</Text>
+          <TextInput
+            value={invoicedate}
+            onChangeText={setInvoicedate}
+            placeholder={t('invoice_date_placeholder')}
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
 
         <Pressable
           onPress={() => setIsProductsModalOpen(true)}
@@ -644,53 +653,69 @@ const invoiceCreate = () => {
             })}
           </View>
         ) : null}
-        <TextInput
-          value={totalamount}
-          onChangeText={(text) => {
-            setTotalamount(text);
-            setIsSubtotalManuallySet(true);
-          }}
-          placeholder={t('subtotal_calculated_placeholder')}
-          keyboardType="decimal-pad"
-          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-        <View className="mt-3 flex-row gap-3">
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('subtotal_calculated_placeholder')}</Text>
+          <TextInput
+            value={totalamount}
+            onChangeText={(text) => {
+              setTotalamount(text);
+              setIsSubtotalManuallySet(true);
+            }}
+            placeholder={t('subtotal_calculated_placeholder')}
+            keyboardType="decimal-pad"
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('tax_percent_placeholder')}</Text>
           <TextInput
             value={tax}
             onChangeText={setTax}
             placeholder={t('tax_percent_placeholder')}
             keyboardType="numeric"
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
           />
+        </View>
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('discount_percent_placeholder')}</Text>
           <TextInput
             value={percentage}
             onChangeText={setPercentage}
             placeholder={t('discount_percent_placeholder')}
             keyboardType="numeric"
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
+            className="rounded-md border border-gray-300 px-3 py-2 text-black"
           />
         </View>
-        <TextInput
-          value={details}
-          onChangeText={setDetails}
-          placeholder={t('details_placeholder')}
-          multiline
-          className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-        <TextInput
-          value={notes}
-          onChangeText={setNotes}
-          placeholder={t('notes_placeholder')}
-          multiline
-          className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-        <TextInput
-          value={termsandconditions}
-          onChangeText={setTermsandconditions}
-          placeholder={t('terms_and_conditions_placeholder')}
-          multiline
-          className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('details_placeholder')}</Text>
+          <TextInput
+            value={details}
+            onChangeText={setDetails}
+            placeholder={t('details_placeholder')}
+            multiline
+            className="min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('notes_placeholder')}</Text>
+          <TextInput
+            value={notes}
+            onChangeText={setNotes}
+            placeholder={t('notes_placeholder')}
+            multiline
+            className="min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
+        <View className="mt-3">
+          <Text className="text-sm font-bold text-black mb-2">{t('terms_and_conditions_placeholder')}</Text>
+          <TextInput
+            value={termsandconditions}
+            onChangeText={setTermsandconditions}
+            placeholder={t('terms_and_conditions_placeholder')}
+            multiline
+            className="min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
 
         <View className="mt-5 flex-row gap-3">
           <Pressable

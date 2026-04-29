@@ -248,64 +248,91 @@ const AddCustomerScreen = () => {
             </View>
           </View>
 
-          <TextInput
-            value={cname}
-            onChangeText={setCname}
-            placeholder='Customer name'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={cemail}
-            onChangeText={setCemail}
-            placeholder='Customer email'
-            keyboardType='email-address'
-            autoCapitalize='none'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={cphone}
-            onChangeText={setCphone}
-            placeholder='Customer phone number'
-            keyboardType='phone-pad'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={ccompany}
-            onChangeText={setCcompany}
-            placeholder='Customer company'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={caddress}
-            onChangeText={setCaddress}
-            placeholder='Customer street address'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={ccity}
-            onChangeText={setCcity}
-            placeholder='Customer city'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={cstate}
-            onChangeText={setCstate}
-            placeholder='Customer state'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={czip}
-            onChangeText={setCzip}
-            placeholder='Customer zip code'
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
-          <TextInput
-            value={cdetails}
-            onChangeText={setCdetails}
-            placeholder='Customer details'
-            multiline
-            className='mt-3 rounded-md border border-gray-300 px-3 py-2 text-black'
-          />
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Customer Name</Text>
+            <TextInput
+              value={cname}
+              onChangeText={setCname}
+              placeholder='Customer name'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Email</Text>
+            <TextInput
+              value={cemail}
+              onChangeText={setCemail}
+              placeholder='Customer email'
+              keyboardType='email-address'
+              autoCapitalize='none'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Phone Number</Text>
+            <TextInput
+              value={cphone}
+              onChangeText={setCphone}
+              placeholder='Customer phone number'
+              keyboardType='phone-pad'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Company</Text>
+            <TextInput
+              value={ccompany}
+              onChangeText={setCcompany}
+              placeholder='Customer company'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Street Address</Text>
+            <TextInput
+              value={caddress}
+              onChangeText={setCaddress}
+              placeholder='Customer street address'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>City</Text>
+            <TextInput
+              value={ccity}
+              onChangeText={setCcity}
+              placeholder='Customer city'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>State</Text>
+            <TextInput
+              value={cstate}
+              onChangeText={setCstate}
+              placeholder='Customer state'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Zip Code</Text>
+            <TextInput
+              value={czip}
+              onChangeText={setCzip}
+              placeholder='Customer zip code'
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
+          <View className='mt-3'>
+            <Text className='text-sm font-bold text-black mb-2'>Details</Text>
+            <TextInput
+              value={cdetails}
+              onChangeText={setCdetails}
+              placeholder='Customer details'
+              multiline
+              className='rounded-md border border-gray-300 px-3 py-2 text-black'
+            />
+          </View>
         </>
       ) : (
         <>

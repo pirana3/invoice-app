@@ -302,62 +302,86 @@ const EmployeeProfileScreen = () => {
               </Pressable>
             </View>
           </View>
-          <TextInput
-            value={ename}
-            onChangeText={setEname}
-            placeholder="Employee name"
-            className="rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={eemail}
-            onChangeText={setEemail}
-            placeholder="Employee email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={ephone}
-            onChangeText={setEphone}
-            placeholder="Employee phone number"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={eage}
-            onChangeText={setEage}
-            placeholder="Age"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <Pressable
-            onPress={() => setIsPositionModalOpen(true)}
-            className="mt-3 rounded-md border border-gray-300 px-3 py-3"
-          >
-            <Text className={`text-sm ${eposition ? 'text-black' : 'text-gray-500'}`}>
-              {eposition || 'Select rank'}
-            </Text>
-          </Pressable>
-          <TextInput
-            value={erole}
-            onChangeText={setErole}
-            placeholder="Role"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={edetails}
-            onChangeText={setEdetails}
-            placeholder="Details"
-            multiline
-            className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={epay}
-            onChangeText={setEpay}
-            placeholder="Pay"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <View>
+            <Text className="text-sm font-bold text-black mb-2">Employee Name</Text>
+            <TextInput
+              value={ename}
+              onChangeText={setEname}
+              placeholder="Employee name"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Email</Text>
+            <TextInput
+              value={eemail}
+              onChangeText={setEemail}
+              placeholder="Employee email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Phone Number</Text>
+            <TextInput
+              value={ephone}
+              onChangeText={setEphone}
+              placeholder="Employee phone number"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Age</Text>
+            <TextInput
+              value={eage}
+              onChangeText={setEage}
+              placeholder="Age"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Position</Text>
+            <Pressable
+              onPress={() => setIsPositionModalOpen(true)}
+              className="rounded-md border border-gray-300 px-3 py-3"
+            >
+              <Text className={`text-sm ${eposition ? 'text-black' : 'text-gray-500'}`}>
+                {eposition || 'Select rank'}
+              </Text>
+            </Pressable>
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Role</Text>
+            <TextInput
+              value={erole}
+              onChangeText={setErole}
+              placeholder="Role"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Details</Text>
+            <TextInput
+              value={edetails}
+              onChangeText={setEdetails}
+              placeholder="Details"
+              multiline
+              className="min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Pay</Text>
+            <TextInput
+              value={epay}
+              onChangeText={setEpay}
+              placeholder="Pay"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
           <View className="mt-3 rounded-md border border-gray-300 px-3 py-3">
             <Text className="text-xs text-gray-500">Performance rating</Text>
             <View className="mt-2">
@@ -401,13 +425,16 @@ const EmployeeProfileScreen = () => {
               </View>
             )}
           </View>
-          <TextInput
-            value={eyears}
-            onChangeText={setEyears}
-            placeholder="Years"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Years of Experience</Text>
+            <TextInput
+              value={eyears}
+              onChangeText={setEyears}
+              placeholder="Years"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
           <EPositionModal
             isVisible={isPositionModalOpen}
             options={ePositions}

@@ -132,26 +132,35 @@ const ProductProfileScreen = () => {
     >
       {canEdit ? (
         <>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder="Product name"
-            className="rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={details}
-            onChangeText={setDetails}
-            placeholder="Product description"
-            multiline
-            className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={price}
-            onChangeText={setPrice}
-            placeholder="Product price"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <View>
+            <Text className="text-sm font-bold text-black mb-2">Product Name</Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              placeholder="Product name"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Description</Text>
+            <TextInput
+              value={details}
+              onChangeText={setDetails}
+              placeholder="Product description"
+              multiline
+              className="min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Price</Text>
+            <TextInput
+              value={price}
+              onChangeText={setPrice}
+              placeholder="Product price"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
         </>
       ) : (
         <>

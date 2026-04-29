@@ -22,6 +22,7 @@ export default function RootLayout() {
           />
           <Stack.Screen name="employees/[id]" options={{ title: "Employee", href: null }} />
           <Stack.Screen name="products/[id]" options={{ title: "Product" }} />
+          <Stack.Screen name="customers/addCustomer" options={{ title: "Customers", href: null }} />
         </Stack>
       </SafeAreaProvider>
     </LanguageProvider>

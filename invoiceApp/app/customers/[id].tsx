@@ -185,65 +185,92 @@ const CustomerProfileScreen = () => {
     <ScrollView className="flex-1 bg-white px-4 py-6">
       {canEdit ? (
         <>
-          <TextInput
-            value={cname}
-            onChangeText={setCname}
-            placeholder="Customer name"
-            className="rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={cemail}
-            onChangeText={setCemail}
-            placeholder="Customer email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={cphone}
-            onChangeText={setCphone}
-            placeholder="Phone number"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={caddress}
-            onChangeText={setCaddress}
-            placeholder="Address"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={ccity}
-            onChangeText={setCcity}
-            placeholder="City"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={cstate}
-            onChangeText={setCstate}
-            placeholder="State"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={czip}
-            onChangeText={setCzip}
-            placeholder="Zip code"
-            keyboardType="numeric"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={ccompany}
-            onChangeText={setCcompany}
-            placeholder="Company"
-            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
-          <TextInput
-            value={cdetails}
-            onChangeText={setCdetails}
-            placeholder="Details"
-            multiline
-            className="mt-3 min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
-          />
+          <View>
+            <Text className="text-sm font-bold text-black mb-2">Customer Name</Text>
+            <TextInput
+              value={cname}
+              onChangeText={setCname}
+              placeholder="Customer name"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Email</Text>
+            <TextInput
+              value={cemail}
+              onChangeText={setCemail}
+              placeholder="Customer email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Phone Number</Text>
+            <TextInput
+              value={cphone}
+              onChangeText={setCphone}
+              placeholder="Phone number"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Address</Text>
+            <TextInput
+              value={caddress}
+              onChangeText={setCaddress}
+              placeholder="Address"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">City</Text>
+            <TextInput
+              value={ccity}
+              onChangeText={setCcity}
+              placeholder="City"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">State</Text>
+            <TextInput
+              value={cstate}
+              onChangeText={setCstate}
+              placeholder="State"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Zip Code</Text>
+            <TextInput
+              value={czip}
+              onChangeText={setCzip}
+              placeholder="Zip code"
+              keyboardType="numeric"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Company</Text>
+            <TextInput
+              value={ccompany}
+              onChangeText={setCcompany}
+              placeholder="Company"
+              className="rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
+          <View className="mt-3">
+            <Text className="text-sm font-bold text-black mb-2">Details</Text>
+            <TextInput
+              value={cdetails}
+              onChangeText={setCdetails}
+              placeholder="Details"
+              multiline
+              className="min-h-20 rounded-md border border-gray-300 px-3 py-2 text-black"
+            />
+          </View>
         </>
       ) : (
         <>
