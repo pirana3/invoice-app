@@ -22,7 +22,13 @@ import useFetch from '@/service/usefetch';
 
 const AddCustomerScreen = () => {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    id?: string | string[];
+    cname?: string | string[];
+    cemail?: string | string[];
+    cphone?: string | string[];
+    ccompany?: string | string[];
+  }>();
 
   const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
   const isNew = rawId === 'new' || rawId === undefined;
@@ -33,14 +39,19 @@ const AddCustomerScreen = () => {
   const { data: customer, loading, error, refetch } = useFetch(fetchCustomer, canFetch);
 
   const [isEditing, setIsEditing] = useState(isNew);
-  const [cname, setCname] = useState('');
-  const [cemail, setCemail] = useState('');
-  const [cphone, setCphone] = useState('');
+  const initialName = Array.isArray(params.cname) ? params.cname[0] : params.cname;
+  const initialEmail = Array.isArray(params.cemail) ? params.cemail[0] : params.cemail;
+  const initialPhone = Array.isArray(params.cphone) ? params.cphone[0] : params.cphone;
+  const initialCompany = Array.isArray(params.ccompany) ? params.ccompany[0] : params.ccompany;
+
+  const [cname, setCname] = useState(initialName ?? '');
+  const [cemail, setCemail] = useState(initialEmail ?? '');
+  const [cphone, setCphone] = useState(initialPhone ?? '');
   const [caddress, setCaddress] = useState('');
   const [ccity, setCcity] = useState('');
   const [czip, setCzip] = useState('');
   const [cstate, setCstate] = useState('');
-  const [ccompany, setCcompany] = useState('');
+  const [ccompany, setCcompany] = useState(initialCompany ?? '');
   const [cdetails, setCdetails] = useState('');
   const [cphoto, setCphoto] = useState('');
   const [isSaving, setIsSaving] = useState(false);

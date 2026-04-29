@@ -30,6 +30,7 @@ const CustomerProfileScreen = () => {
   const [cphone, setCphone] = useState(params.cphone ?? '');
   const [caddress, setCaddress] = useState('');
   const [ccity, setCcity] = useState('');
+  const [czip, setCzip] = useState('');
   const [cstate, setCstate] = useState('');
   const [ccompany, setCcompany] = useState(params.ccompany ?? '');
   const [cdetails, setCdetails] = useState('');
@@ -46,6 +47,7 @@ const CustomerProfileScreen = () => {
     setCphone(String(customer.cphone));
     setCaddress(customer.caddress);
     setCcity(customer.ccity);
+    setCzip(String(customer.czip ?? ''));
     setCstate(customer.cstate);
     setCcompany(customer.ccompany);
     setCdetails(customer.cdetails);
@@ -57,6 +59,8 @@ const CustomerProfileScreen = () => {
   const handleSave = async () => {
     const normalizedPhone = cphone.replace(/\D/g, '');
     const parsedPhone = Number(normalizedPhone);
+    const normalizedZip = czip.replace(/\D/g, '');
+    const parsedZip = Number(normalizedZip || '0');
 
     if (!cname.trim()) {
       Alert.alert('Missing name', 'Please enter the customer name.');
@@ -93,6 +97,7 @@ const CustomerProfileScreen = () => {
           parsedPhone,
           caddress.trim(),
           ccity.trim(),
+          parsedZip,
           cstate.trim(),
           companyValue,
           cdetails.trim(),
@@ -107,6 +112,7 @@ const CustomerProfileScreen = () => {
           parsedPhone,
           caddress.trim(),
           ccity.trim(),
+          parsedZip,
           cstate.trim(),
           companyValue,
           cdetails.trim(),
@@ -219,6 +225,13 @@ const CustomerProfileScreen = () => {
             className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
           />
           <TextInput
+            value={czip}
+            onChangeText={setCzip}
+            placeholder="Zip code"
+            keyboardType="numeric"
+            className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
             value={ccompany}
             onChangeText={setCcompany}
             placeholder="Company"
@@ -249,7 +262,7 @@ const CustomerProfileScreen = () => {
           <View className="mt-6 flex-row gap-3">
             <Pressable
               onPress={() =>
-                router.push({ pathname: '/(tabs)/(customers)/customerJobs', params: { cname } } as never)
+                router.push({ pathname: '/customers/customerJobs', params: { cname } } as never)
               }
               className="flex-1 items-center rounded-md border border-gray-300 py-3"
             >
@@ -257,7 +270,7 @@ const CustomerProfileScreen = () => {
             </Pressable>
             <Pressable
               onPress={() =>
-                router.push({ pathname: '/(tabs)/(customers)/customerAssociates', params: { ccompany } } as never)
+                router.push({ pathname: '/customers/customerAssociates', params: { ccompany } } as never)
               }
               className="flex-1 items-center rounded-md border border-gray-300 py-3"
             >

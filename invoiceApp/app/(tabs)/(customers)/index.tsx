@@ -3,7 +3,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
 import CustomerSearch from '@/components/CustomerSearch';
 import CustomerImportContactsScreen from '@/components/CustomerImportContactsScreen';
-import CustomersProfile from '@/app/(tabs)/(customers)/customersProfile';
+import CustomersProfile from '@/components/CustomersProfile';
+import EmployeeButton from '@/components/EmployeesButton';
 import { getCustomers, searchCustomers, type Customers } from '@/database/customersdb';
 import { useLanguage } from '@/service/language';
 
@@ -77,7 +78,7 @@ const customersList = () => {
   }, [params.query, allCustomers]);
 
   const handleAddCustomer = () => {
-    router.push('/customers/new' as never);
+    router.push('/customers/addCustomer' as never);
   };
 
   return (
@@ -93,12 +94,9 @@ const customersList = () => {
           >
             <Text className="text-xs font-semibold text-black">{t('import')}</Text>
           </Pressable>
-          <Pressable
-            onPress={handleAddCustomer}
-            className="rounded-md bg-black px-3 py-2"
-          >
-            <Text className="text-xs font-semibold text-white">{t('add')}</Text>
-          </Pressable>
+        </View>
+        <View className="mt-3 px-4">
+          <EmployeeButton onPress={handleAddCustomer} title={t('customers_add')} style="mb-0" />
         </View>
 
         {loading ? (
@@ -135,7 +133,7 @@ const customersList = () => {
         onSelect={(contact) => {
           setImportOpen(false);
           router.push({
-            pathname: '/customers/new',
+            pathname: '/customers/addCustomer',
             params: {
               cname: contact.name,
               cemail: contact.email ?? '',

@@ -97,7 +97,7 @@ const CustomerCompanyScreen = () => {
                 key={group.companyName.toLowerCase()}
                 onPress={() =>
                   router.push({
-                    pathname: '/(tabs)/(customers)/customerAssociates',
+                    pathname: '/customers/customerAssociates',
                     params: { ccompany: group.companyName },
                   } as never)
                 }
