@@ -135,4 +135,12 @@ export const initDatabase = () => {
 
   `);
 
+  // Lightweight schema migration for existing installs.
+  // Older app versions may have created `customers` without `czip`.
+  try {
+    db.execSync(`ALTER TABLE customers ADD COLUMN czip REAL NOT NULL DEFAULT 0;`);
+  } catch (error) {
+    // Ignore if column already exists.
+  }
+
 };

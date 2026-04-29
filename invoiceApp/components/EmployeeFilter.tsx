@@ -7,15 +7,18 @@ import { icons } from '@/constants/icons';
 import EmployeeYearsFillterButton from '@/components/EmployeeYearsFillterButton';
 import EmployeeAgesFillterButton from './EmployeeAgesFillterButton';
 import EmployeePayFillterButton from './EmployeePayFillterButton';
+import { useLanguage } from '@/service/language';
 
 const EmployeeFilter = () => {
+  const { t } = useLanguage();
+  const ALL = 'All';
   const params = useLocalSearchParams<{ position?: string; rating?: string; years?: string; age?: string; pay?: string }>();
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState('All');
+  const [selectedPosition, setSelectedPosition] = useState(ALL);
   const [selectedRating, setSelectedRating] = useState(0);
-  const [selectedYearsLabel, setSelectedYearsLabel] = useState('All');
-  const [selectedAge, setSelectedAge] = useState('All');
-  const [selectedPay, setSelectedPay] = useState('All');
+  const [selectedYearsLabel, setSelectedYearsLabel] = useState(ALL);
+  const [selectedAge, setSelectedAge] = useState(ALL);
+  const [selectedPay, setSelectedPay] = useState(ALL);
   const [isYearsOpen, setIsYearsOpen] = useState(false);
   const [isRankOpen, setIsRankOpen] = useState(true);
   const [isRatingOpen, setIsRatingOpen] = useState(true);
@@ -23,41 +26,41 @@ const EmployeeFilter = () => {
   const [isPayOpen, setIsPayOpen] = useState(false);
 
   const positionOptions = useMemo(
-    () => [{ label: 'All', value: 'All' }, ...ePositions],
+    () => [{ label: ALL, value: ALL }, ...ePositions],
     []
   );
 
   useEffect(() => {
     if (!isVisible) return;
-    const positionParam = params.position ? String(params.position) : 'All';
+    const positionParam = params.position ? String(params.position) : ALL;
     const ratingParam = Number(params.rating);
-    const yearsParam = params.years ? String(params.years) : 'All';
-    const ageParam = params.age ? String(params.age) : 'All';
-    const payParam = params.pay ? String(params.pay) : 'All';
-    setSelectedPosition(positionParam || 'All');
+    const yearsParam = params.years ? String(params.years) : ALL;
+    const ageParam = params.age ? String(params.age) : ALL;
+    const payParam = params.pay ? String(params.pay) : ALL;
+    setSelectedPosition(positionParam || ALL);
     setSelectedRating(Number.isFinite(ratingParam) ? ratingParam : 0);
-    setSelectedYearsLabel(yearsParam || 'All');
-    setSelectedAge(ageParam || 'All');
-    setSelectedPay(payParam || 'All');
+    setSelectedYearsLabel(yearsParam || ALL);
+    setSelectedAge(ageParam || ALL);
+    setSelectedPay(payParam || ALL);
   }, [isVisible, params.position, params.rating, params.years, params.age, params.pay]);
 
   const handleApply = () => {
     router.setParams({
-      position: selectedPosition === 'All' ? '' : selectedPosition,
+      position: selectedPosition === ALL ? '' : selectedPosition,
       rating: selectedRating ? String(selectedRating) : '',
-      years: selectedYearsLabel === 'All' ? '' : selectedYearsLabel,
-      age: selectedAge === 'All' ? '' : selectedAge,
-      pay: selectedPay === 'All' ? '' : selectedPay,
+      years: selectedYearsLabel === ALL ? '' : selectedYearsLabel,
+      age: selectedAge === ALL ? '' : selectedAge,
+      pay: selectedPay === ALL ? '' : selectedPay,
     });
     setIsVisible(false);
   };
 
   const handleClear = () => {
-    setSelectedPosition('All');
+    setSelectedPosition(ALL);
     setSelectedRating(0);
-    setSelectedYearsLabel('All');
-    setSelectedAge('All');
-    setSelectedPay('All');
+    setSelectedYearsLabel(ALL);
+    setSelectedAge(ALL);
+    setSelectedPay(ALL);
     router.setParams({ position: '', rating: '', years: '', age: '', pay: '' });
     setIsVisible(false);
   };
@@ -77,9 +80,9 @@ const EmployeeFilter = () => {
             <TouchableWithoutFeedback>
               <View className="max-h-[70%] rounded-t-2xl bg-white px-4 pb-6 pt-4">
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-base font-semibold text-black">Filter employees</Text>
+                  <Text className="text-base font-semibold text-black">{t('filter_employees')}</Text>
                   <Pressable onPress={() => setIsVisible(false)}>
-                    <Text className="text-sm font-medium text-gray-600">Close</Text>
+                    <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
                   </Pressable>
                 </View>
 
@@ -89,12 +92,12 @@ const EmployeeFilter = () => {
                     className="flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3"
                   >
                     <View>
-                      <Text className="text-xs text-gray-500">Rank</Text>
+                      <Text className="text-xs text-gray-500">{t('rank')}</Text>
                       <Text className="mt-1 text-sm text-black">
-                        {selectedPosition === 'All' ? 'Any' : selectedPosition}
+                        {selectedPosition === ALL ? t('any') : selectedPosition}
                       </Text>
                     </View>
-                    <Text className="text-sm text-gray-600">{isRankOpen ? 'Hide' : 'Show'}</Text>
+                    <Text className="text-sm text-gray-600">{isRankOpen ? t('hide') : t('show')}</Text>
                   </Pressable>
                   {isRankOpen ? (
                     <ScrollView className="mt-2" style={{ maxHeight: 220 }}>
@@ -109,7 +112,7 @@ const EmployeeFilter = () => {
                             }`}
                           >
                             <Text className={`text-sm ${isSelected ? 'text-white' : 'text-black'}`}>
-                              {option.label}
+                              {option.label === ALL ? t('all') : option.label}
                             </Text>
                           </Pressable>
                         );
@@ -124,17 +127,17 @@ const EmployeeFilter = () => {
                     className="flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3"
                   >
                     <View>
-                      <Text className="text-xs text-gray-500">Years of experience</Text>
+                      <Text className="text-xs text-gray-500">{t('years_of_experience')}</Text>
                       <Text className="mt-1 text-sm text-black">
-                        {selectedYearsLabel === 'All' ? 'Any' : selectedYearsLabel}
+                        {selectedYearsLabel === ALL ? t('any') : selectedYearsLabel}
                       </Text>
                     </View>
-                    <Text className="text-sm text-gray-600">{isYearsOpen ? 'Hide' : 'Show'}</Text>
+                    <Text className="text-sm text-gray-600">{isYearsOpen ? t('hide') : t('show')}</Text>
                   </Pressable>
                   {isYearsOpen ? (
                     <ScrollView className="mt-2" style={{ maxHeight: 220 }}>
                       <EmployeeYearsFillterButton
-                        options={[{ label: 'All', min: 0, max: Infinity }, ...eYears]}
+                        options={[{ label: ALL, min: 0, max: Infinity }, ...eYears]}
                         selectedLabel={selectedYearsLabel}
                         onSelect={setSelectedYearsLabel}
                       />
@@ -148,12 +151,12 @@ const EmployeeFilter = () => {
                     className="flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3"
                   >
                     <View>
-                      <Text className="text-xs text-gray-500">Minimum rating</Text>
+                      <Text className="text-xs text-gray-500">{t('minimum_rating')}</Text>
                       <Text className="mt-1 text-sm text-black">
-                        {selectedRating ? `${selectedRating.toFixed(1)}+` : 'Any'}
+                        {selectedRating ? `${selectedRating.toFixed(1)}+` : t('any')}
                       </Text>
                     </View>
-                    <Text className="text-sm text-gray-600">{isRatingOpen ? 'Hide' : 'Show'}</Text>
+                    <Text className="text-sm text-gray-600">{isRatingOpen ? t('hide') : t('show')}</Text>
                   </Pressable>
                   {isRatingOpen ? (
                     <View className="mt-2 rounded-md border border-gray-200 px-3 py-3">
@@ -168,17 +171,17 @@ const EmployeeFilter = () => {
                     className="flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3"
                   >
                     <View>
-                      <Text className="text-xs text-gray-500"> Age of Employee</Text>
-                      <Text className="mt-1 text-sm text-black">
-                        {selectedAge !== 'All' ? `${selectedAge}` : 'Any'}
-                      </Text>
-                    </View>
-                    <Text className= "text-sm text-gray-600">{isAgeOpen ? 'Hide' : 'Show'}</Text>
+                        <Text className="text-xs text-gray-500">{t('employee_age')}</Text>
+                        <Text className="mt-1 text-sm text-black">
+                        {selectedAge !== ALL ? `${selectedAge}` : t('any')}
+                        </Text>
+                      </View>
+                    <Text className= "text-sm text-gray-600">{isAgeOpen ? t('hide') : t('show')}</Text>
                   </Pressable>
                   {isAgeOpen ? (
                     <ScrollView className='mt-2' style={{ maxHeight: 220 }}>
                       <EmployeeAgesFillterButton 
-                        options={[{label: 'All', min: 0, max: Infinity }, ...eAges]}
+                        options={[{label: ALL, min: 0, max: Infinity }, ...eAges]}
                         selectedLabel={selectedAge}
                         onSelect={setSelectedAge}
                       />
@@ -192,17 +195,17 @@ const EmployeeFilter = () => {
                     className="flex-row items-center justify-between rounded-md border border-gray-200 px-3 py-3"
                     >
                       <View>
-                        <Text className="text-xs text-gray-500"> Weekly Salary</Text>
+                        <Text className="text-xs text-gray-500">{t('weekly_salary')}</Text>
                         <Text className="mt-1 text-sm text-black">
-                          {selectedPay !== 'All' ? `${selectedPay}`: 'Any'}
+                          {selectedPay !== ALL ? `${selectedPay}`: t('any')}
                         </Text>
                       </View>
-                      <Text className='text-sm text-gray-600'>{isPayOpen ? 'Hide' : 'Show'}</Text>
+                      <Text className='text-sm text-gray-600'>{isPayOpen ? t('hide') : t('show')}</Text>
                   </Pressable>
                   {isPayOpen ? (
                     <ScrollView className='mt-2' style={{ maxHeight: 200 }}>
                       <EmployeePayFillterButton
-                        options={[{label: 'All', min: 0, max: Infinity}, ...ePay]}
+                        options={[{label: ALL, min: 0, max: Infinity}, ...ePay]}
                         selectedLabel={selectedPay}
                         onSelect={setSelectedPay}
                         />
@@ -215,13 +218,13 @@ const EmployeeFilter = () => {
                     onPress={handleClear}
                     className="flex-1 items-center rounded-md border border-gray-300 py-3"
                   >
-                    <Text className="font-semibold text-black">Clear</Text>
+                    <Text className="font-semibold text-black">{t('clear')}</Text>
                   </Pressable>
                   <Pressable
                     onPress={handleApply}
                     className="flex-1 items-center rounded-md bg-black py-3"
                   >
-                    <Text className="font-semibold text-white">Apply</Text>
+                    <Text className="font-semibold text-white">{t('apply')}</Text>
                   </Pressable>
                 </View>
               </View>

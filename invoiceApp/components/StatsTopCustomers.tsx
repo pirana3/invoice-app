@@ -2,16 +2,18 @@ import React, { useMemo } from 'react';
 import { Text, View, Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import type { InvoiceContent } from '@/database/invoicecontent';
+import { useLanguage } from '@/service/language';
 
 type StatsTopCustomersProps = {
   invoices: InvoiceContent[];
 };
 
 const StatsTopCustomers = ({ invoices }: StatsTopCustomersProps) => {
+  const { t } = useLanguage();
   const { topCustomers, chartData } = useMemo(() => {
     const totals = new Map<string, number>();
     invoices.forEach((invoice) => {
-      const name = invoice.clientname || 'Unknown';
+      const name = invoice.clientname || t('stats_unknown_customer');
       const current = totals.get(name) ?? 0;
       totals.set(name, current + (Number(invoice.totalamount) || 0));
     });
@@ -30,20 +32,20 @@ const StatsTopCustomers = ({ invoices }: StatsTopCustomersProps) => {
         ],
       },
     };
-  }, [invoices]);
+  }, [invoices, t]);
 
   if (topCustomers.length === 0) {
     return (
       <View className="rounded-md border border-gray-200 bg-white p-4">
-        <Text className="text-base font-semibold text-black">Top Customers</Text>
-        <Text className="mt-4 text-sm text-gray-500">No invoices yet.</Text>
+        <Text className="text-base font-semibold text-black">{t('stats_top_customers')}</Text>
+        <Text className="mt-4 text-sm text-gray-500">{t('stats_no_invoices_yet')}</Text>
       </View>
     );
   }
 
   return (
     <View className="rounded-md border border-gray-200 bg-white p-4">
-      <Text className="text-base font-semibold text-black">Top Customers by Revenue</Text>
+      <Text className="text-base font-semibold text-black">{t('stats_top_customers_by_revenue')}</Text>
       <BarChart
         data={chartData}
         width={Dimensions.get('window').width - 48}
