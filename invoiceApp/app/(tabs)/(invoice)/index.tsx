@@ -54,7 +54,7 @@ const invoiceContentList = () => {
   }, [params.query, allInvoices]);
 
   const handleCreate = () => {
-    router.push('/(tabs)/(invoice)/invoiceCreate' as never);
+    router.push({ pathname: '/(tabs)/(invoice)/invoiceCreate', params: { id: 'new', nonce: String(Date.now()) } } as never);
   };
 
   const handleEdit = (id: number) => {

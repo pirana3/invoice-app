@@ -279,7 +279,36 @@ const invoiceCreate = () => {
     `;
   };
 
+  const validateInvoiceForm = () => {
+    const parsedInvoiceNumber = Number(invoicenumber);
+    const parsedInvoiceDate = Number(invoicedate);
+    const parsedTotal = Number(totalamount);
+    const parsedPercentage = Number(percentage);
+    const parsedTax = Number(tax);
+
+    if (!clientname.trim()) {
+      Alert.alert(t('invoice_client_missing'));
+      return null;
+    }
+    if (!Number.isFinite(parsedInvoiceNumber)) {
+      Alert.alert(t('invoice_number_invalid'));
+      return null;
+    }
+    if (!Number.isFinite(parsedInvoiceDate)) {
+      Alert.alert(t('invoice_date_invalid'));
+      return null;
+    }
+    if (!Number.isFinite(parsedTotal) || parsedTotal <= 0) {
+      Alert.alert(t('invoice_total_invalid'));
+      return null;
+    }
+
+    return { parsedInvoiceNumber, parsedInvoiceDate, parsedTotal, parsedPercentage, parsedTax };
+  };
+
   const handleGeneratePdf = async () => {
+    const validated = validateInvoiceForm();
+    if (!validated) return;
     try {
       setIsGenerating(true);
       const html = buildHtml();
@@ -295,35 +324,12 @@ const invoiceCreate = () => {
   };
 
   const handleSaveInvoice = async () => {
-    const parsedInvoiceNumber = Number(invoicenumber);
-    const parsedInvoiceDate = Number(invoicedate);
-    const parsedTotal = Number(totalamount);
-    const parsedPercentage = Number(percentage);
-    const parsedTax = Number(tax);
-
-    if (!clientname.trim()) {
-      Alert.alert(t('invoice_client_missing'));
-      return;
-    }
-    if (!Number.isFinite(parsedInvoiceNumber)) {
-      Alert.alert(t('invoice_number_invalid'));
-      return;
-    }
-    if (!Number.isFinite(parsedInvoiceDate)) {
-      Alert.alert(t('invoice_date_invalid'));
-      return;
-    }
-    if (!Number.isFinite(parsedTotal)) {
-      Alert.alert(t('invoice_total_invalid'));
-      return;
-    }
+    const validated = validateInvoiceForm();
+    if (!validated) return;
+    const { parsedInvoiceNumber, parsedInvoiceDate, parsedTotal, parsedPercentage, parsedTax } = validated;
 
     try {
       setIsSavingInvoice(true);
-      if (parsedTotal <= 0) {
-        Alert.alert(t('invoice_total_invalid'));
-        return;
-      }
 
       if (isEditing) {
         await updateInvoice(

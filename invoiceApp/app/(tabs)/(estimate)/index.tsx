@@ -48,7 +48,7 @@ const estimateContentList = () => {
   }, [params.query, allEstimates]);
 
   const handleCreate = () => {
-    router.push('/(tabs)/(estimate)/estimateCreate' as never);
+    router.push({ pathname: '/(tabs)/(estimate)/estimateCreate', params: { id: 'new', nonce: String(Date.now()) } } as never);
   }
 
   const handleEdit = (id: number) => {

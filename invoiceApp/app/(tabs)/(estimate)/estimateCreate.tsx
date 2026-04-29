@@ -253,7 +253,48 @@ const estimateCreate = () => {
     `;
   };
 
+  const validateEstimateForm = () => {
+    const parsedEstimateNumber = Number(estimatenumber);
+    const parsedEstimateDate = Number(estimatedate);
+    const parsedTotal = Number(estimatetotalamount);
+    const parsedPercentage = Number(estimatepercentage);
+    const parsedTax = Number(estimatetax);
+
+    if (!clientname.trim()) {
+      Alert.alert(t('estimate_missing_client_title'), t('estimate_missing_client_message'));
+      return null;
+    }
+    if (!Number.isFinite(parsedEstimateNumber)) {
+      Alert.alert(t('estimate_invalid_number_title'), t('estimate_invalid_number_message'));
+      return null;
+    }
+    if (!Number.isFinite(parsedEstimateDate)) {
+      Alert.alert(t('estimate_invalid_date_title'), t('estimate_invalid_date_message'));
+      return null;
+    }
+    if (!Number.isFinite(parsedTotal)) {
+      Alert.alert(t('estimate_invalid_total_title'), t('estimate_invalid_total_message'));
+      return null;
+    }
+    if (!Number.isFinite(parsedPercentage)) {
+      Alert.alert(t('estimate_invalid_discount_title'), t('estimate_invalid_discount_message'));
+      return null;
+    }
+    if (!Number.isFinite(parsedTax)) {
+      Alert.alert(t('estimate_invalid_tax_title'), t('estimate_invalid_tax_message'));
+      return null;
+    }
+    if (parsedTotal <= 0) {
+      Alert.alert(t('estimate_invalid_total_title'), t('estimate_total_gt_zero'));
+      return null;
+    }
+
+    return { parsedEstimateNumber, parsedEstimateDate, parsedTotal, parsedPercentage, parsedTax };
+  };
+
   const handleGeneratePdf = async () => {
+    const validated = validateEstimateForm();
+    if (!validated) return;
     try {
       setIsGenerating(true);
       const html = buildHtml();
@@ -269,43 +310,12 @@ const estimateCreate = () => {
   };
 
   const handleSaveEstimate = async () => {
-    const parsedEstimateNumber = Number(estimatenumber);
-    const parsedEstimateDate = Number(estimatedate);
-    const parsedTotal = Number(estimatetotalamount);
-    const parsedPercentage = Number(estimatepercentage);
-    const parsedTax = Number(estimatetax);
-
-    if (!clientname.trim()) {
-      Alert.alert(t('estimate_missing_client_title'), t('estimate_missing_client_message'));
-      return;
-    }
-    if (!Number.isFinite(parsedEstimateNumber)) {
-      Alert.alert(t('estimate_invalid_number_title'), t('estimate_invalid_number_message'));
-      return;
-    }
-    if (!Number.isFinite(parsedEstimateDate)) {
-      Alert.alert(t('estimate_invalid_date_title'), t('estimate_invalid_date_message'));
-      return;
-    }
-    if (!Number.isFinite(parsedTotal)) {
-      Alert.alert(t('estimate_invalid_total_title'), t('estimate_invalid_total_message'));
-      return;
-    }
-    if (!Number.isFinite(parsedPercentage)) {
-      Alert.alert(t('estimate_invalid_discount_title'), t('estimate_invalid_discount_message'));
-      return;
-    }
-    if (!Number.isFinite(parsedTax)) {
-      Alert.alert(t('estimate_invalid_tax_title'), t('estimate_invalid_tax_message'));
-      return;
-    }
+    const validated = validateEstimateForm();
+    if (!validated) return;
+    const { parsedEstimateNumber, parsedEstimateDate, parsedTotal, parsedPercentage, parsedTax } = validated;
 
     try {
       setIsSavingEstimate(true);
-      if (parsedTotal <= 0) {
-        Alert.alert(t('estimate_invalid_total_title'), t('estimate_total_gt_zero'));
-        return;
-      }
 
       if (isEditing) {
         await updateEstimate(
@@ -436,297 +446,380 @@ const estimateCreate = () => {
   };
 
   return (
-    <ScrollView
-      className="flex-1 bg-white px-4"
-      contentContainerStyle={{ paddingTop: 24, paddingBottom: insets.bottom + 120 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View className="flex-row items-center justify-between">
-        <Text className="text-lg font-semibold text-black">{isEditing ? t('estimate_edit_title') : t('estimate_new_title')}</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
-        </Pressable>
-      </View>
-
-      <View className="mt-4 rounded-md border border-gray-200 bg-white p-3">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-xs text-gray-500">{t('logo_position')}</Text>
-          <Pressable
-            onPress={() => setCenterLogo((prev) => !prev)}
-            className="rounded-full border border-gray-300 px-3 py-1"
-          >
-            <Text className="text-xs text-black">{centerLogo ? t('top_center') : t('top_left')}</Text>
+    isPreview ? (
+      <ScrollView
+        className="flex-1 bg-white px-4 py-6"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex-row items-center justify-between mb-4">
+          <Text className="text-lg font-semibold text-black">{t('invoice_preview_title')}</Text>
+          <Pressable onPress={() => router.back()}>
+            <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
           </Pressable>
         </View>
-        {logoUri ? (
-          <View className={`mt-3 ${centerLogo ? 'items-center' : 'items-start'}`}>
-            <Image source={{ uri: logoUri }} style={{ width: 80, height: 80, resizeMode: 'contain' }} />
-          </View>
-        ) : (
-          <Text className="mt-3 text-xs text-gray-400">{t('no_logo_saved')}</Text>
-        )}
-      </View>
 
-      <TextInput
-        value={clientname}
-        onChangeText={setClientname}
-        placeholder={t('client_name_placeholder')}
-        className="mt-4 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
-      <TextInput
-        value={estimatenumber}
-        onChangeText={setEstimatenumber}
-        placeholder={t('estimate_number_placeholder')}
-        keyboardType="numeric"
-        className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
-      <TextInput
-        value={estimatedate}
-        onChangeText={setEstimatedate}
-        placeholder={t('estimate_date_placeholder')}
-        className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
-      <Pressable
-        onPress={() => setIsProductsModalOpen(true)}
-        className="mt-3 rounded-md border border-gray-300 px-3 py-3"
+        <View className="rounded-md border border-gray-200 bg-gray-50 p-4">
+          <Text className="text-sm font-semibold text-gray-700 mb-2">Estimate #{estimatenumber}</Text>
+          <Text className="text-xs text-gray-600 mb-3">{t('client_label')}: {clientname}</Text>
+          <Text className="text-xs text-gray-600 mb-3">{t('date_label')}: {estimatedate}</Text>
+          {(() => {
+            const displaySubtotal = isSubtotalManuallySet ? Number(estimatetotalamount) : subtotal;
+            const displayTaxAmount = (displaySubtotal * (Number(estimatetax) || 0)) / 100;
+            const displayDiscountAmount = (displaySubtotal * (Number(estimatepercentage) || 0)) / 100;
+            const displayFinalTotal = displaySubtotal + displayTaxAmount - displayDiscountAmount;
+            return (
+              <>
+                <Text className="text-xs text-gray-600 mt-2">{t('subtotal_label')}: ${displaySubtotal.toFixed(2)}</Text>
+                <Text className="text-xs text-gray-600">{t('tax_label')}: ${displayTaxAmount.toFixed(2)}</Text>
+                <Text className="text-xs text-gray-600">{t('discount_label')}: ${displayDiscountAmount.toFixed(2)}</Text>
+                <Text className="text-sm font-semibold text-black mt-3">{t('total_label')}: ${displayFinalTotal.toFixed(2)}</Text>
+              </>
+            );
+          })()}
+        </View>
+
+        <Text className="mt-6 text-sm text-gray-500 text-center">{t('invoice_pdf_ready_share_print')}</Text>
+
+        <View className="mt-6 flex-row gap-3">
+          <Pressable
+            onPress={handleSavePdf}
+            className="flex-1 items-center rounded-md bg-blue-600 py-3"
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="font-semibold text-white">{t('save_pdf')}</Text>
+            )}
+          </Pressable>
+          <Pressable
+            onPress={handleSharePdf}
+            className="flex-1 items-center rounded-md bg-green-600 py-3"
+            disabled={isSharing}
+          >
+            {isSharing ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="font-semibold text-white">{t('share')}</Text>
+            )}
+          </Pressable>
+        </View>
+
+        <View className="mt-3 flex-row gap-3">
+          <Pressable
+            onPress={handlePrintPdf}
+            className="flex-1 items-center rounded-md bg-purple-600 py-3"
+            disabled={isPrinting}
+          >
+            {isPrinting ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="font-semibold text-white">{t('print')}</Text>
+            )}
+          </Pressable>
+          <Pressable
+            onPress={() => setIsPreview(false)}
+            className="flex-1 items-center rounded-md border border-gray-300 py-3"
+          >
+            <Text className="font-semibold text-black">{t('back_to_edit')}</Text>
+          </Pressable>
+        </View>
+
+        <View className="mt-3 flex-row gap-3">
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-1 items-center rounded-md bg-gray-600 py-3"
+          >
+            <Text className="font-semibold text-white">{t('done')}</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    ) : (
+      <ScrollView
+        className="flex-1 bg-white px-4 py-6"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-sm text-black">{t('select_products')}</Text>
-      </Pressable>
-      <TextInput
-        value={estimatetotalamount}
-        onChangeText={(text) => {
-          setEstimatetotalamount(text);
-          setIsSubtotalManuallySet(true);
-        }}
-        placeholder={t('subtotal_calculated_placeholder')}
-        keyboardType="decimal-pad"
-        className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
-      <View className="mt-3 flex-row gap-3">
-        <TextInput
-          value={estimatetax}
-          onChangeText={setEstimatetax}
-          placeholder={t('tax_percent_placeholder')}
-          keyboardType="numeric"
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-        <TextInput
-          value={estimatepercentage}
-          onChangeText={setEstimatepercentage}
-          placeholder={t('discount_percent_placeholder')}
-          keyboardType="numeric"
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
-        />
-      </View>
-      <TextInput
-        value={estimatedetails}
-        onChangeText={setEstimatedetails}
-        placeholder={t('details_placeholder')}
-        multiline
-        className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
-      <TextInput
-        value={estimatenotes}
-        onChangeText={setEstimatenotes}
-        placeholder={t('notes_placeholder')}
-        multiline
-        className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
-      <TextInput
-        value={estimatetermsandconditions}
-        onChangeText={setEstimatetermsandconditions}
-        placeholder={t('terms_and_conditions_placeholder')}
-        multiline
-        className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
-      />
+        <View className="flex-row items-center justify-between">
+          <Text className="text-lg font-semibold text-black">{isEditing ? t('estimate_edit_title') : t('estimate_new_title')}</Text>
+          <Pressable onPress={() => router.back()}>
+            <Text className="text-sm font-medium text-gray-600">{t('close')}</Text>
+          </Pressable>
+        </View>
 
-      <View className="mt-5 flex-row gap-3">
-        <Pressable
-          onPress={handleGeneratePdf}
-          className="flex-1 items-center rounded-md bg-black py-3"
-          disabled={isGenerating}
-        >
-          {isGenerating ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <Text className="font-semibold text-white">{t('generate_pdf')}</Text>
-          )}
-        </Pressable>
-        <Pressable
-          onPress={handleSaveEstimate}
-          className="flex-1 items-center rounded-md border border-gray-300 py-3"
-          disabled={isSavingEstimate}
-        >
-          {isSavingEstimate ? (
-            <ActivityIndicator size="small" color="#111827" />
-          ) : (
-            <Text className="font-semibold text-black">{t('save_estimate')}</Text>
-          )}
-        </Pressable>
-      </View>
-
-      <View className="mt-3 flex-row gap-3">
-        <Pressable
-          onPress={handleSavePdf}
-          className="flex-1 items-center rounded-md border border-gray-300 py-3"
-          disabled={isSaving}
-        >
-          {isSaving ? (
-            <ActivityIndicator size="small" color="#111827" />
-          ) : (
-            <Text className="font-semibold text-black">{t('save_pdf')}</Text>
-          )}
-        </Pressable>
-      </View>
-      <View className="mt-3 flex-row gap-3">
-        <Pressable
-          onPress={handleSharePdf}
-          className="flex-1 items-center rounded-md border border-gray-300 py-3"
-          disabled={isSharing}
-        >
-          {isSharing ? (
-            <ActivityIndicator size="small" color="#111827" />
-          ) : (
-            <Text className="font-semibold text-black">{t('share')}</Text>
-          )}
-        </Pressable>
-        <Pressable
-          onPress={handlePrintPdf}
-          className="flex-1 items-center rounded-md border border-gray-300 py-3"
-          disabled={isPrinting}
-        >
-          {isPrinting ? (
-            <ActivityIndicator size="small" color="#111827" />
-          ) : (
-            <Text className="font-semibold text-black">{t('print')}</Text>
-          )}
-        </Pressable>
-      </View>
-
-      <Modal visible={isProductsModalOpen} animationType="slide">
-        <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom }}>
-          <View className="flex-row items-center justify-between mb-6">
-            <Text className="text-lg font-semibold text-black">{t('select_products')}</Text>
-            <Pressable onPress={() => setIsProductsModalOpen(false)}>
-              <Text className="text-sm font-medium text-gray-600">{t('done')}</Text>
+        <View className="mt-4 rounded-md border border-gray-200 bg-white p-3">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-xs text-gray-500">{t('logo_position')}</Text>
+            <Pressable
+              onPress={() => setCenterLogo((prev) => !prev)}
+              className="rounded-full border border-gray-300 px-3 py-1"
+            >
+              <Text className="text-xs text-black">{centerLogo ? t('top_center') : t('top_left')}</Text>
             </Pressable>
           </View>
-
-          {allProducts.length === 0 ? (
-            <Text className="mt-6 text-sm text-gray-500">{t('no_products_saved_yet')}</Text>
+          {logoUri ? (
+            <View className={`mt-3 ${centerLogo ? 'items-center' : 'items-start'}`}>
+              <Image source={{ uri: logoUri }} style={{ width: 80, height: 80, resizeMode: 'contain' }} />
+            </View>
           ) : (
-            <ScrollView className="mt-4">
-              {allProducts.map((product) => {
-                const selected = selectedProducts[product.id];
-                return (
-                  <View key={product.id} className="mb-3 rounded-md border border-gray-200 bg-white p-3">
-                    <View className="flex-row items-center justify-between">
-                      <View>
-                        <Text className="text-sm font-semibold text-black">{product.name}</Text>
-                        <Text className="text-xs text-gray-500">${product.price.toFixed(2)}</Text>
-                      </View>
-                      <Pressable
-                        onPress={() => {
-                          setSelectedProducts((prev) => {
-                            const next = { ...prev };
-                            if (next[product.id]) {
-                              delete next[product.id];
-                            } else {
-                              next[product.id] = {
-                                id: product.id,
-                                name: product.name,
-                                price: product.price,
-                                qty: '1',
-                                unitPrice: product.price.toFixed(2),
-                                manualAmount: product.price.toFixed(2),
-                                useManual: false,
-                              };
-                            }
-                            return next;
-                          });
-                        }}
-                        className={`rounded-full px-3 py-1 ${selected ? 'bg-black' : 'bg-gray-100'}`}
-                      >
-                        <Text className={`text-xs ${selected ? 'text-white' : 'text-gray-700'}`}>
-                          {selected ? t('selected') : t('select')}
-                        </Text>
-                      </Pressable>
-                    </View>
-                    {selected ? (
-                      <View className="mt-3">
-                        <View className="flex-row items-center justify-between">
-                          <Text className="text-xs text-gray-500">{t('use_manual_amount')}</Text>
-                          <Pressable
-                            onPress={() =>
-                              setSelectedProducts((prev) => ({
-                                ...prev,
-                                [product.id]: { ...prev[product.id], useManual: !prev[product.id].useManual },
-                              }))
-                            }
-                            className={`rounded-full px-3 py-1 ${selected.useManual ? 'bg-black' : 'bg-gray-100'}`}
-                          >
-                            <Text className={`text-xs ${selected.useManual ? 'text-white' : 'text-gray-700'}`}>
-                              {selected.useManual ? t('manual_label') : t('auto')}
-                            </Text>
-                          </Pressable>
-                        </View>
-                        {selected.useManual ? (
-                          <View className="mt-3">
-                            <Text className="text-xs text-gray-500">{t('manual_amount')}</Text>
-                            <TextInput
-                              value={selected.manualAmount}
-                              onChangeText={(text) =>
-                                setSelectedProducts((prev) => ({
-                                  ...prev,
-                                  [product.id]: { ...prev[product.id], manualAmount: text },
-                                }))
-                              }
-                              keyboardType="numeric"
-                              className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
-                            />
-                          </View>
-                        ) : (
-                          <View className="mt-3 flex-row gap-3">
-                            <View className="flex-1">
-                              <Text className="text-xs text-gray-500">{t('qty_label')}</Text>
-                              <TextInput
-                                value={selected.qty}
-                                onChangeText={(text) =>
-                                  setSelectedProducts((prev) => ({
-                                    ...prev,
-                                    [product.id]: { ...prev[product.id], qty: text },
-                                  }))
-                                }
-                                keyboardType="numeric"
-                                className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
-                              />
-                            </View>
-                            <View className="flex-1">
-                              <Text className="text-xs text-gray-500">{t('unit_price')}</Text>
-                              <TextInput
-                                value={selected.unitPrice}
-                                onChangeText={(text) =>
-                                  setSelectedProducts((prev) => ({
-                                    ...prev,
-                                    [product.id]: { ...prev[product.id], unitPrice: text },
-                                  }))
-                                }
-                                keyboardType="numeric"
-                                className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
-                              />
-                            </View>
-                          </View>
-                        )}
-                      </View>
-                    ) : null}
-                  </View>
-                );
-              })}
-            </ScrollView>
+            <Text className="mt-3 text-xs text-gray-400">{t('no_logo_saved')}</Text>
           )}
         </View>
-      </Modal>
-    </ScrollView>
+
+        <TextInput
+          value={clientname}
+          onChangeText={setClientname}
+          placeholder={t('client_name_placeholder')}
+          className="mt-4 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+        <TextInput
+          value={estimatenumber}
+          onChangeText={setEstimatenumber}
+          placeholder={t('estimate_number_placeholder')}
+          keyboardType="numeric"
+          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+        <TextInput
+          value={estimatedate}
+          onChangeText={setEstimatedate}
+          placeholder={t('estimate_date_placeholder')}
+          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+
+        <Pressable
+          onPress={() => setIsProductsModalOpen(true)}
+          className="mt-2 rounded-md border border-gray-300 px-3 py-3"
+        >
+          <Text className="text-sm text-black">{t('select_products')}</Text>
+        </Pressable>
+        {Object.keys(selectedProducts).length > 0 ? (
+          <View className="mt-3 rounded-md border border-gray-200 bg-white p-3">
+            <View className="flex-row justify-between">
+              <Text className="text-xs font-semibold text-gray-500">{t('item_label')}</Text>
+              <Text className="text-xs font-semibold text-gray-500">{t('total_label')}</Text>
+            </View>
+            {Object.values(selectedProducts).map((item) => {
+              const lineTotal = item.useManual
+                ? Number(item.manualAmount) || 0
+                : (Number(item.qty) || 0) * (Number(item.unitPrice) || 0);
+              return (
+                <View key={item.id} className="mt-2 flex-row items-start justify-between">
+                  <View className="flex-1 pr-3">
+                    <Text className="text-sm font-medium text-black">{item.name}</Text>
+                    <Text className="text-xs text-gray-500">
+                      {item.useManual
+                        ? `${t('manual_label')}: $${Number(item.manualAmount || 0).toFixed(2)}`
+                        : `${t('qty_label')} ${item.qty} × $${Number(item.unitPrice || 0).toFixed(2)}`}
+                    </Text>
+                  </View>
+                  <Text className="text-sm font-semibold text-black">${lineTotal.toFixed(2)}</Text>
+                </View>
+              );
+            })}
+          </View>
+        ) : null}
+        <TextInput
+          value={estimatetotalamount}
+          onChangeText={(text) => {
+            setEstimatetotalamount(text);
+            setIsSubtotalManuallySet(true);
+          }}
+          placeholder={t('subtotal_calculated_placeholder')}
+          keyboardType="decimal-pad"
+          className="mt-3 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+        <View className="mt-3 flex-row gap-3">
+          <TextInput
+            value={estimatetax}
+            onChangeText={setEstimatetax}
+            placeholder={t('tax_percent_placeholder')}
+            keyboardType="numeric"
+            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+          <TextInput
+            value={estimatepercentage}
+            onChangeText={setEstimatepercentage}
+            placeholder={t('discount_percent_placeholder')}
+            keyboardType="numeric"
+            className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-black"
+          />
+        </View>
+        <TextInput
+          value={estimatedetails}
+          onChangeText={setEstimatedetails}
+          placeholder={t('details_placeholder')}
+          multiline
+          className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+        <TextInput
+          value={estimatenotes}
+          onChangeText={setEstimatenotes}
+          placeholder={t('notes_placeholder')}
+          multiline
+          className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+        <TextInput
+          value={estimatetermsandconditions}
+          onChangeText={setEstimatetermsandconditions}
+          placeholder={t('terms_and_conditions_placeholder')}
+          multiline
+          className="mt-3 min-h-16 rounded-md border border-gray-300 px-3 py-2 text-black"
+        />
+
+        <View className="mt-5 flex-row gap-3">
+          <Pressable
+            onPress={handleGeneratePdf}
+            className="flex-1 items-center rounded-md bg-black py-3"
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="font-semibold text-white">{t('generate_pdf')}</Text>
+            )}
+          </Pressable>
+          <Pressable
+            onPress={handleSaveEstimate}
+            className="flex-1 items-center rounded-md border border-gray-300 py-3"
+            disabled={isSavingEstimate}
+          >
+            {isSavingEstimate ? (
+              <ActivityIndicator size="small" color="#111827" />
+            ) : (
+              <Text className="font-semibold text-black">{t('save_estimate')}</Text>
+            )}
+          </Pressable>
+        </View>
+
+        <Modal visible={isProductsModalOpen} animationType="slide">
+          <View className="flex-1 bg-white px-4" style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom }}>
+            <View className="flex-row items-center justify-between mb-6">
+              <Text className="text-lg font-semibold text-black">{t('select_products')}</Text>
+              <Pressable onPress={() => setIsProductsModalOpen(false)}>
+                <Text className="text-sm font-medium text-gray-600">{t('done')}</Text>
+              </Pressable>
+            </View>
+
+            {allProducts.length === 0 ? (
+              <Text className="mt-6 text-sm text-gray-500">{t('no_products_saved_yet')}</Text>
+            ) : (
+              <ScrollView className="mt-4">
+                {allProducts.map((product) => {
+                  const selected = selectedProducts[product.id];
+                  return (
+                    <View key={product.id} className="mb-3 rounded-md border border-gray-200 bg-white p-3">
+                      <View className="flex-row items-center justify-between">
+                        <View>
+                          <Text className="text-sm font-semibold text-black">{product.name}</Text>
+                          <Text className="text-xs text-gray-500">${product.price.toFixed(2)}</Text>
+                        </View>
+                        <Pressable
+                          onPress={() => {
+                            setSelectedProducts((prev) => {
+                              const next = { ...prev };
+                              if (next[product.id]) {
+                                delete next[product.id];
+                              } else {
+                                next[product.id] = {
+                                  id: product.id,
+                                  name: product.name,
+                                  price: product.price,
+                                  qty: '1',
+                                  unitPrice: product.price.toFixed(2),
+                                  manualAmount: product.price.toFixed(2),
+                                  useManual: false,
+                                };
+                              }
+                              return next;
+                            });
+                          }}
+                          className={`rounded-full px-3 py-1 ${selected ? 'bg-black' : 'bg-gray-100'}`}
+                        >
+                          <Text className={`text-xs ${selected ? 'text-white' : 'text-gray-700'}`}>
+                            {selected ? t('selected') : t('select')}
+                          </Text>
+                        </Pressable>
+                      </View>
+                      {selected ? (
+                        <View className="mt-3">
+                          <View className="flex-row items-center justify-between">
+                            <Text className="text-xs text-gray-500">{t('use_manual_amount')}</Text>
+                            <Pressable
+                              onPress={() =>
+                                setSelectedProducts((prev) => ({
+                                  ...prev,
+                                  [product.id]: { ...prev[product.id], useManual: !prev[product.id].useManual },
+                                }))
+                              }
+                              className={`rounded-full px-3 py-1 ${selected.useManual ? 'bg-black' : 'bg-gray-100'}`}
+                            >
+                              <Text className={`text-xs ${selected.useManual ? 'text-white' : 'text-gray-700'}`}>
+                                {selected.useManual ? t('manual_label') : t('auto')}
+                              </Text>
+                            </Pressable>
+                          </View>
+                          {selected.useManual ? (
+                            <View className="mt-3">
+                              <Text className="text-xs text-gray-500">{t('manual_amount')}</Text>
+                              <TextInput
+                                value={selected.manualAmount}
+                                onChangeText={(text) =>
+                                  setSelectedProducts((prev) => ({
+                                    ...prev,
+                                    [product.id]: { ...prev[product.id], manualAmount: text },
+                                  }))
+                                }
+                                keyboardType="numeric"
+                                className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
+                              />
+                            </View>
+                          ) : (
+                            <View className="mt-3 flex-row gap-3">
+                              <View className="flex-1">
+                                <Text className="text-xs text-gray-500">{t('qty_label')}</Text>
+                                <TextInput
+                                  value={selected.qty}
+                                  onChangeText={(text) =>
+                                    setSelectedProducts((prev) => ({
+                                      ...prev,
+                                      [product.id]: { ...prev[product.id], qty: text },
+                                    }))
+                                  }
+                                  keyboardType="numeric"
+                                  className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
+                                />
+                              </View>
+                              <View className="flex-1">
+                                <Text className="text-xs text-gray-500">{t('unit_price')}</Text>
+                                <TextInput
+                                  value={selected.unitPrice}
+                                  onChangeText={(text) =>
+                                    setSelectedProducts((prev) => ({
+                                      ...prev,
+                                      [product.id]: { ...prev[product.id], unitPrice: text },
+                                    }))
+                                  }
+                                  keyboardType="numeric"
+                                  className="mt-2 rounded-md border border-gray-300 px-3 py-2 text-black"
+                                />
+                              </View>
+                            </View>
+                          )}
+                        </View>
+                      ) : null}
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            )}
+          </View>
+        </Modal>
+        {pdfUri ? (
+          <Text className="mt-3 text-xs text-gray-500">{t('pdf_ready_to_export')}</Text>
+        ) : null}
+      </ScrollView>
+    )
   );
 };
 
