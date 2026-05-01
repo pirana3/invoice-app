@@ -103,3 +103,4 @@ export const deleteCustomer = async (id: number): Promise<boolean> => {
     const result = db.runSync(`DELETE FROM customers WHERE id = ?`, id);
     return result.changes > 0;
 };
+
