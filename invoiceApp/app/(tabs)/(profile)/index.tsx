@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Image, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useLanguage } from '@/service/language';
-import BusinessinfoButton from '@/components/BusinessinfoButton';
+import BusinessInfoButton from '@/components/BusinessInfoButton';
 import useFetch from '@/service/usefetch';
 import { getBusinessInfo } from '@/database/businessinfodb';
 
@@ -55,7 +55,7 @@ const ProfileBusiness = () => {
         <Text>{t('business_info_not_saved')}</Text>
       )}
 
-      <BusinessinfoButton
+      <BusinessInfoButton
         title={latestInfo ? 'Edit Business' : 'Add Business Info'}
         onPress={() => router.push('/startScreen/companyDetail')}
         style="mt-3"

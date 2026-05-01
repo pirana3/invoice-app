@@ -4,7 +4,7 @@ import React from 'react';
 import { icons } from "@/constants/icons";
 import cn from "clsx";
 
-const BusinessinfoButton = ({
+const BusinessInfoButton = ({
     onPress,
     title = "Add Info",
     style,
@@ -27,4 +27,4 @@ const BusinessinfoButton = ({
   );
 };
 
-export default BusinessinfoButton
+export default BusinessInfoButton

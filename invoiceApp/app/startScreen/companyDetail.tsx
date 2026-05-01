@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import useFetch from '@/service/usefetch';
 import { setOnboardingComplete } from '@/database/appstate';
-import BusinessinfoButton from '@/components/BusinessinfoButton';
+import BusinessInfoButton from '@/components/BusinessInfoButton';
 import { useLanguage } from '@/service/language';
 import {
   createBusinessInfo,
@@ -178,14 +178,14 @@ const CompanyDetail = () => {
         className="rounded-md border border-gray-300 px-3 py-2"
       />
 
-      <BusinessinfoButton
+      <BusinessInfoButton
         title={logo.trim() ? t('business_photo_change') : t('business_photo_upload')}
         onPress={handlePickLogo}
         style="mt-1"
       />
 
       {logo.trim() ? (
-        <BusinessinfoButton
+        <BusinessInfoButton
           title={t('business_photo_remove')}
           onPress={() => setLogo('')}
           style="mt-1 bg-red-500"
@@ -199,7 +199,7 @@ const CompanyDetail = () => {
         />
       ) : null}
 
-      <BusinessinfoButton
+      <BusinessInfoButton
         title={latestInfo ? t('business_save_changes') : t('business_save_info')}
         onPress={handleSave}
         isLoading={isSaving}
