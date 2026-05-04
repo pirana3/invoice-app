@@ -142,39 +142,39 @@ const CompanyDetail = () => {
         {latestInfo ? t('business_title_edit') : t('business_title_new')}
       </Text>
 
+      <Text className="text-sm font-bold text-black mb-2">{t('business_name')}</Text>
       <TextInput
         onChangeText={setBname}
         value={bname}
-        placeholder={t('business_name')}
-        className="rounded-md border border-gray-300 px-3 py-2"
+        className="rounded-md border border-gray-300 px-3 py-2 mb-3"
       />
 
+      <Text className="text-sm font-bold text-black mb-2">{t('business_email')}</Text>
       <TextInput
         onChangeText={setEmail}
         value={email}
-        placeholder={t('business_email')}
-        className="rounded-md border border-gray-300 px-3 py-2"
+        className="rounded-md border border-gray-300 px-3 py-2 mb-3"
       />
 
+      <Text className="text-sm font-bold text-black mb-2">{t('business_phone')}</Text>
       <TextInput
         onChangeText={setPhone}
         value={phone}
-        placeholder={t('business_phone')}
         keyboardType="numeric"
-        className="rounded-md border border-gray-300 px-3 py-2"
+        className="rounded-md border border-gray-300 px-3 py-2 mb-3"
       />
 
+      <Text className="text-sm font-bold text-black mb-2">{t('business_address')}</Text>
       <TextInput
         onChangeText={setAddress}
         value={address}
-        placeholder={t('business_address')}
-        className="rounded-md border border-gray-300 px-3 py-2"
+        className="rounded-md border border-gray-300 px-3 py-2 mb-3"
       />
 
+      <Text className="text-sm font-bold text-black mb-2">{t('business_industry')}</Text>
       <TextInput
         onChangeText={setIndustry}
         value={industry}
-        placeholder={t('business_industry')}
         className="rounded-md border border-gray-300 px-3 py-2"
       />
 
