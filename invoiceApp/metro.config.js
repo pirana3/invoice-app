@@ -1,5 +1,3 @@
-const { getDefaultConfig } = require("expo/metro-config");
-const { withNativeWind } = require("nativewind/metro");
 const path = require("path");
 
 // EAS/Xcode can execute Metro from ios/, but NativeWind's Expo integration
@@ -7,6 +5,9 @@ const path = require("path");
 if (process.cwd() !== __dirname) {
   process.chdir(__dirname);
 }
+
+const { getDefaultConfig } = require("expo/metro-config");
+const { withNativeWind } = require("nativewind/metro");
 
 const config = getDefaultConfig(__dirname);
 
