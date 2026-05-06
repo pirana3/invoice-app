@@ -95,7 +95,7 @@ const customersList = () => {
             <Text className="text-xs font-semibold text-black">{t('import')}</Text>
           </Pressable>
         </View>
-        <View className="mt-3 px-4">
+        <View className="mt-4 mb-2 px-4">
           <EmployeeButton onPress={handleAddCustomer} title={t('customers_add')} style="mb-0" />
         </View>
 

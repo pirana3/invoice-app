@@ -24,7 +24,7 @@ const Products = () => {
       <ProductButton
         title={t('add_product')}
         onPress={() => router.push('/products/new')}
-        style="mb-4"
+        style="mt-1 mb-6"
       />
 
       {loading ? (

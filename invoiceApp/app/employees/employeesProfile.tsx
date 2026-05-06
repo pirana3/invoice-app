@@ -16,7 +16,7 @@ const EmployeesProfile = ({ employees, onPress}: EmployeesProfileProps) => {
             {employees.edetails || 'No description'}
         </Text>
         <View className="mt-3">
-            <Text className='text-sm font-medium text-black'>${employees.ephone} </Text>
+            <Text className='text-sm font-medium text-black'>{employees.ephone}</Text>
         </View>
     </Pressable>
   )

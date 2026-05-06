@@ -20,9 +20,9 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />
-          <Stack.Screen name="employees/[id]" options={{ title: "Employee", href: null }} />
+          <Stack.Screen name="employees/[id]" options={{ title: "Employee" }} />
           <Stack.Screen name="products/[id]" options={{ title: "Product" }} />
-          <Stack.Screen name="customers/addCustomer" options={{ title: "Customers", href: null }} />
+          <Stack.Screen name="customers/addCustomer" options={{ title: "Customers" }} />
         </Stack>
       </SafeAreaProvider>
     </LanguageProvider>

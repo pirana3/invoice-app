@@ -50,6 +50,8 @@ const StatsTopCustomers = ({ invoices }: StatsTopCustomersProps) => {
         data={chartData}
         width={Dimensions.get('window').width - 48}
         height={220}
+        yAxisLabel=""
+        yAxisSuffix=""
         chartConfig={{
           backgroundColor: '#ffffff',
           backgroundGradientFrom: '#ffffff',

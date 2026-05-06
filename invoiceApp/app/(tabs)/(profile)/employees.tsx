@@ -6,6 +6,7 @@ import NoResults from '@/components/NoResults';
 import { getEmployees, searchEmployees, type Employees } from '@/database/employeesdb';
 import { useLocalSearchParams, router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import EmployeeFilter from '@/components/EmployeeFilter';
 import { eAges, ePay, eYears } from '@/constants/data';
 import { useLanguage } from '@/service/language';
@@ -24,23 +25,30 @@ const employees = () => {
   const [filteredEmployees, setFilteredEmployees] = useState<Employees[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load all employees on mount
-  useEffect(() => {
-    const loadEmployees = async () => {
-      try {
-        setLoading(true);
-        const data = await getEmployees();
-        setAllEmployees(data);
-        setFilteredEmployees(data);
-      } catch (error) {
-        console.error('Error loading employees:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadEmployees();
+  const loadEmployees = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getEmployees();
+      setAllEmployees(data);
+      setFilteredEmployees(data);
+    } catch (error) {
+      console.error('Error loading employees:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Load on first mount
+  useEffect(() => {
+    loadEmployees();
+  }, [loadEmployees]);
+
+  // Refresh list whenever returning to this screen
+  useFocusEffect(
+    React.useCallback(() => {
+      loadEmployees();
+    }, [loadEmployees])
+  );
 
   // Filter employees when search query or filters change
   useEffect(() => {
@@ -119,7 +127,7 @@ const employees = () => {
         </View>
 
         {/* Add Button */}
-        <View className="mt-3 px-4">
+        <View className="mt-4 mb-2 px-4">
           <EmployeeButton
             onPress={handleAddEmployee}
             title={t('employees_add')}

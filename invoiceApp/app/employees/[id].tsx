@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
@@ -270,8 +270,17 @@ const EmployeeProfileScreen = () => {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 py-6">
-      {canEdit ? (
+    <KeyboardAvoidingView
+      className="flex-1 bg-white"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+    >
+      <ScrollView
+        className="flex-1 bg-white px-4 py-6"
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {canEdit ? (
         <>
           <View className="items-start">
             {ephoto ? (
@@ -483,7 +492,7 @@ const EmployeeProfileScreen = () => {
         </>
       )}
 
-      <View className="mt-8 flex-row gap-3">
+        <View className="mt-8 flex-row gap-3">
         {canEdit ? (
           <>
             <Pressable
@@ -548,8 +557,9 @@ const EmployeeProfileScreen = () => {
             </Pressable>
           </>
         )}
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
